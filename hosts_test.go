@@ -3,6 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -112,4 +113,46 @@ func TestFindHosts(t *testing.T) {
 		t.Errorf("Wrong data for roles: %v", hosts[0].Roles)
 	}
 
+}
+
+func TestUpdateHostStatus(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/status" {
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/status but :", req.URL.Path)
+		}
+
+		if req.Method != "PUT" {
+			t.Error("request method should be PUT but: ", req.Method)
+		}
+
+		body, _ := ioutil.ReadAll(req.Body)
+
+		var data struct {
+			Status string `json:"status"`
+		}
+
+		err := json.Unmarshal(body, &data)
+		if err != nil {
+			t.Fatal("request body should be decoded as json", string(body))
+		}
+
+		if data.Status != "maintenance" {
+			t.Error("request sends json including status but: ", data.Status)
+		}
+
+		respJson, _ := json.Marshal(map[string]bool{
+			"success": true,
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJson))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	err := client.UpdateHostStatus("9rxGOHfVF8F", "maintenance")
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
 }

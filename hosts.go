@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -127,4 +128,31 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	}
 
 	return data.Hosts, err
+}
+
+func (c *Client) UpdateHostStatus(hostId string, status string) error {
+	requestJson, err := json.Marshal(map[string]string{
+		"status": status,
+	})
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(
+		"PUT",
+		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/status", hostId)).String(),
+		bytes.NewReader(requestJson),
+	)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return nil
 }
