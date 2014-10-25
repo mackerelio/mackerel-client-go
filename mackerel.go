@@ -25,6 +25,13 @@ type Client struct {
 	Verbose bool
 }
 
+type FindHostsParam struct {
+	Service  string
+	Roles    []string
+	Name     string
+	Statuses []string
+}
+
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
@@ -109,4 +116,54 @@ func (c *Client) FindHost(id string) (*Host, error) {
 	}
 
 	return data.Host, err
+}
+
+func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
+	v := url.Values{}
+	if param.Service != "" {
+		v.Set("service", param.Service)
+	}
+	if len(param.Roles) >= 1 {
+		for _, role := range param.Roles {
+			v.Add("role", role)
+		}
+	}
+	if param.Name != "" {
+		v.Set("name", param.Name)
+	}
+	if len(param.Statuses) >= 1 {
+		for _, status := range param.Statuses {
+			v.Add("status", status)
+		}
+	}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/hosts.json").String(), v.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New("status code is not 200")
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Hosts []*(Host) `json:"hosts"`
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.Hosts, err
 }
