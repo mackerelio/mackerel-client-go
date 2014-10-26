@@ -260,7 +260,7 @@ func (c *Client) UpdateHostStatus(hostId string, status string) error {
 	}
 
 	req, err := http.NewRequest(
-		"PUT",
+		"POST",
 		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/status", hostId)).String(),
 		bytes.NewReader(requestJson),
 	)

@@ -246,8 +246,8 @@ func TestUpdateHostStatus(t *testing.T) {
 			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/status but :", req.URL.Path)
 		}
 
-		if req.Method != "PUT" {
-			t.Error("request method should be PUT but: ", req.Method)
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
 		}
 
 		body, _ := ioutil.ReadAll(req.Body)
