@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Host struct {
@@ -79,6 +80,15 @@ func (h *Host) GetRoleFullnames() []string {
 	}
 
 	return fullnames
+}
+
+func (h *Host) DateFromCreatedAt() time.Time {
+	return time.Unix(int64(h.CreatedAt), 0)
+}
+
+func (h *Host) DateStringFromCreatedAt() string {
+	const layout = "Jan 2, 2006 at 3:04pm (MST)"
+	return h.DateFromCreatedAt().Format(layout)
 }
 
 func (c *Client) FindHost(id string) (*Host, error) {
