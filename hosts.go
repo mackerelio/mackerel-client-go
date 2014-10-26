@@ -55,12 +55,14 @@ type FindHostsParam struct {
 	Statuses []string
 }
 
-type UpdateHostParam struct {
+type CreateHostParam struct {
 	Name          string      `json:"name,omitempty"`
 	Meta          HostMeta    `json:"meta,omitempty"`
 	Interfaces    []Interface `json:"interfaces,omitempty"`
 	RoleFullnames []string    `json:"roleFullnames,omitempty"`
 }
+
+type UpdateHostParam CreateHostParam
 
 func (c *Client) FindHost(id string) (*Host, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)
@@ -142,6 +144,45 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	}
 
 	return data.Hosts, err
+}
+
+func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
+	requestJson, err := json.Marshal(param)
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest(
+		"POST",
+		c.urlFor("/api/v0/hosts").String(),
+		bytes.NewReader(requestJson),
+	)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var data struct {
+		Id string `json:"id"`
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return "", err
+	}
+
+	return data.Id, nil
 }
 
 func (c *Client) UpdateHost(hostId string, param *UpdateHostParam) (string, error) {
