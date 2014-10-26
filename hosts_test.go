@@ -52,6 +52,61 @@ func TestFindHost(t *testing.T) {
 
 }
 
+func TestUpdateHost(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/123456ABCD" {
+			t.Error("request URL should be /api/v0/hosts/123456ABCD but: ", req.URL.Path)
+		}
+
+		if req.Method != "PUT" {
+			t.Error("request method should be PUT but: ", req.Method)
+		}
+
+		body, _ := ioutil.ReadAll(req.Body)
+
+		var data struct {
+			Name          string      `json:"name"`
+			Meta          HostMeta    `json:"meta"`
+			Interfaces    []Interface `json:"interfaces"`
+			RoleFullnames []string    `json:"roleFullnames"`
+		}
+
+		err := json.Unmarshal(body, &data)
+		if err != nil {
+			t.Fatal("request body should be decoded as json", string(body))
+		}
+
+		if data.Name != "mydb002" {
+			t.Error("request sends json including name but: ", data.Name)
+		}
+		if !reflect.DeepEqual(data.RoleFullnames, []string{"My-Service:db-master", "My-Service:db-slave"}) {
+			t.Error("request sends json including roleFullnames but: ", data.RoleFullnames)
+		}
+
+		respJson, _ := json.Marshal(map[string]string{
+			"id": "123456ABCD",
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJson))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	hostId, err := client.UpdateHost("123456ABCD", &UpdateHostParam{
+		Name:          "mydb002",
+		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
+	})
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if hostId != "123456ABCD" {
+		t.Error("hostId shoud be empty but: ", hostId)
+	}
+}
+
 func TestFindHosts(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts.json" {

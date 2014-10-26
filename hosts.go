@@ -48,6 +48,13 @@ type Interface struct {
 	MacAddress string `json:"macAddress,omitempty"`
 }
 
+type UpdateHostParam struct {
+	Name          string      `json:"name,omitempty"`
+	Meta          HostMeta    `json:"meta,omitempty"`
+	Interfaces    []Interface `json:"interfaces,omitempty"`
+	RoleFullnames []string    `json:"roleFullnames,omitempty"`
+}
+
 func (c *Client) FindHost(id string) (*Host, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)
 	if err != nil {
@@ -128,6 +135,45 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	}
 
 	return data.Hosts, err
+}
+
+func (c *Client) UpdateHost(hostId string, param *UpdateHostParam) (string, error) {
+	requestJson, err := json.Marshal(param)
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest(
+		"PUT",
+		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", hostId)).String(),
+		bytes.NewReader(requestJson),
+	)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var data struct {
+		Id string `json:"id"`
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return "", err
+	}
+
+	return data.Id, nil
 }
 
 func (c *Client) UpdateHostStatus(hostId string, status string) error {
