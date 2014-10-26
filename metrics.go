@@ -55,6 +55,19 @@ func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	return nil
 }
 
+func (c *Client) PostHostMetricValuesByHostId(hostId string, metricValues [](*MetricValue)) error {
+	var hostMetricValues []*HostMetricValue
+	for _, metricValue := range metricValues {
+		hostMetricValues = append(hostMetricValues, &HostMetricValue{
+			HostId: hostId,
+			Name:   metricValue.Name,
+			Value:  metricValue.Value,
+			Time:   metricValue.Time,
+		})
+	}
+	return c.PostHostMetricValues(hostMetricValues)
+}
+
 func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*ServiceMetricValue)) error {
 	requestJson, err := json.Marshal(metricValues)
 	if err != nil {
