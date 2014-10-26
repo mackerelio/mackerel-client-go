@@ -12,14 +12,14 @@ import (
 
 type MetricValue struct {
 	Name  string      `json:"name,omitempty"`
-	Time  float64     `json:"time,omitempty"`
+	Time  int64       `json:"time,omitempty"`
 	Value interface{} `json:"value,omitempty"`
 }
 
 type HostMetricValue struct {
 	HostId string      `json:"hostId",omitempty`
 	Name   string      `json:"name,omitempty"`
-	Time   float64     `json:"time,omitempty"`
+	Time   int64       `json:"time,omitempty"`
 	Value  interface{} `json:"value,omitempty"`
 }
 
