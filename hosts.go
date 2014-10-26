@@ -156,3 +156,29 @@ func (c *Client) UpdateHostStatus(hostId string, status string) error {
 
 	return nil
 }
+
+func (c *Client) RetireHost(id string) error {
+	requestJson, _ := json.Marshal("{}")
+
+	req, err := http.NewRequest(
+		"POST",
+		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/retire", id)).String(),
+		bytes.NewReader(requestJson),
+	)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return errors.New("status code is not 200")
+	}
+
+	return nil
+}

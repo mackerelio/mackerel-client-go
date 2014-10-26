@@ -156,3 +156,38 @@ func TestUpdateHostStatus(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 }
+
+func TestRetireHost(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/123456ABCD/retire" {
+			t.Error("request URL should be /api/v0/hosts/123456ABCD/retire but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be PUT but: ", req.Method)
+		}
+
+		body, _ := ioutil.ReadAll(req.Body)
+
+		var data interface{}
+		err := json.Unmarshal(body, &data)
+		if err != nil {
+			t.Fatal("request body should be decoded as json", string(body))
+		}
+
+		respJson, _ := json.Marshal(map[string]bool{
+			"success": true,
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJson))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	err := client.RetireHost("123456ABCD")
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+}
