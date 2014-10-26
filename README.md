@@ -11,9 +11,18 @@ import mkr "github.com/mackerelio/mackerel-client-go"
 
 ```go
 client = mkr.NewClient("<Put your API key>")
-hosts, err := client.FindHosts(&mkr.FindHostsParam{Service: "My-Service", Role: "proxy", Status: 'working'})
-params := []*mkr.MetricParam{
-        &mkr.MetricParam{name: 'proxy.access_log.latency', time: '1414146305', value: '250'},
-}
-ret, err := client.PostServiceMetric("My-Service", params)
+
+hosts, err := client.FindHosts(&mkr.FindHostsParam{
+        Service: "My-Service",
+        Roles: []string{"proxy"},
+        Statuses: []string{"working"}
+})
+
+err := client.PostServiceMetricValues("My-Service", []*mkr.ServiceMetricValue{
+        &mkr.ServiceMetricValue{
+              Name:  "proxy.access_log.latency",
+              Time:  123456789,
+              Value: 500,
+        },
+})
 ```
