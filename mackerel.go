@@ -20,13 +20,6 @@ type Client struct {
 	Verbose bool
 }
 
-type FindHostsParam struct {
-	Service  string
-	Roles    []string
-	Name     string
-	Statuses []string
-}
-
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }

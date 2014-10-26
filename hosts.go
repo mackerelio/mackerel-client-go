@@ -48,6 +48,13 @@ type Interface struct {
 	MacAddress string `json:"macAddress,omitempty"`
 }
 
+type FindHostsParam struct {
+	Service  string
+	Roles    []string
+	Name     string
+	Statuses []string
+}
+
 type UpdateHostParam struct {
 	Name          string      `json:"name,omitempty"`
 	Meta          HostMeta    `json:"meta,omitempty"`
