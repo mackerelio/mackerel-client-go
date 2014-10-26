@@ -114,8 +114,8 @@ func TestPostServiceMetricValues(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientForTest("dummy-key", ts.URL, false)
-	err := client.PostServiceMetricValues("My-Service", []*ServiceMetricValue{
-		&ServiceMetricValue{
+	err := client.PostServiceMetricValues("My-Service", []*MetricValue{
+		&MetricValue{
 			Name:  "proxy.access_log.latency",
 			Time:  123456789,
 			Value: 500,

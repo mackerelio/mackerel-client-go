@@ -23,8 +23,6 @@ type HostMetricValue struct {
 	Value  interface{} `json:"value,omitempty"`
 }
 
-type ServiceMetricValue MetricValue
-
 type LatestMetricValues map[string]map[string]*MetricValue
 
 func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
@@ -68,7 +66,7 @@ func (c *Client) PostHostMetricValuesByHostId(hostId string, metricValues [](*Me
 	return c.PostHostMetricValues(hostMetricValues)
 }
 
-func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*ServiceMetricValue)) error {
+func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
 	requestJson, err := json.Marshal(metricValues)
 	if err != nil {
 		return err

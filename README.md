@@ -18,8 +18,8 @@ hosts, err := client.FindHosts(&mkr.FindHostsParam{
         Statuses: []string{"working"}
 })
 
-err := client.PostServiceMetricValues("My-Service", []*mkr.ServiceMetricValue{
-        &mkr.ServiceMetricValue{
+err := client.PostServiceMetricValues("My-Service", []*mkr.MetricValue{
+        &mkr.MetricValue{
               Name:  "proxy.access_log.latency",
               Time:  123456789,
               Value: 500,
