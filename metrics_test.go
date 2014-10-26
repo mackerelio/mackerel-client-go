@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -123,5 +124,75 @@ func TestPostServiceMetricValues(t *testing.T) {
 
 	if err != nil {
 		t.Error("err shoud be nil but: ", err)
+	}
+}
+
+func TestFetchLatestMetricValues(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/tsdb/latest" {
+			t.Error("request URL should be /api/v0/tsdb/latest but :", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		query := req.URL.Query()
+		if !reflect.DeepEqual(query["hostId"], []string{"123456ABCD", "654321ABCD"}) {
+			t.Error("request query 'hostId' param should be ['123456ABCD', '654321ABCD'] but: ", query["hostId"])
+		}
+		if !reflect.DeepEqual(query["name"], []string{"mysql.connections.Connections", "mysql.connections.Thread_created"}) {
+			t.Error("request query 'hostId' param should be ['mysql.connections.Connections', 'mysql.connections.Thread_created'] but: ", query["name"])
+		}
+
+		respJson, _ := json.Marshal(map[string]map[string]map[string]*MetricValue{
+			"tsdbLatest": map[string]map[string]*MetricValue{
+				"123456ABCD": map[string]*MetricValue{
+					"mysql.connections.Connections": &MetricValue{
+						Name:  "mysql.connections.Connections",
+						Time:  123456789,
+						Value: 200,
+					},
+					"mysql.connections.Thread_created": &MetricValue{
+						Name:  "mysql.connections.Thread_created",
+						Time:  123456789,
+						Value: 220,
+					},
+				},
+				"654321ABCD": map[string]*MetricValue{
+					"mysql.connections.Connections": &MetricValue{
+						Name:  "mysql.connections.Connections",
+						Time:  123456789,
+						Value: 300,
+					},
+					"mysql.connections.Thread_created": &MetricValue{
+						Name:  "mysql.connections.Thread_created",
+						Time:  123456789,
+						Value: 310,
+					},
+				},
+			},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJson))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	hostIds := []string{"123456ABCD", "654321ABCD"}
+	metricNames := []string{"mysql.connections.Connections", "mysql.connections.Thread_created"}
+	latestMetricValues, err := client.FetchLatestMetricValues(hostIds, metricNames)
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if latestMetricValues["123456ABCD"]["mysql.connections.Connections"].Value.(float64) != 200 {
+		t.Error("123456ABCD host mysql.connections.Connections should be 200 but: ", latestMetricValues["123456ABCD"]["mysql.connections.Connections"].Value)
+	}
+
+	if latestMetricValues["654321ABCD"]["mysql.connections.Connections"].Value.(float64) != 300 {
+		t.Error("654321ABCD host mysql.connections.Connections should be 300 but: ", latestMetricValues["654321ABCD"]["mysql.connections.Connections"].Value)
 	}
 }
