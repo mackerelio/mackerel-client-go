@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Host struct {
@@ -63,6 +64,22 @@ type CreateHostParam struct {
 }
 
 type UpdateHostParam CreateHostParam
+
+func (h *Host) GetRoleFullnames() []string {
+	if len(h.Roles) < 1 {
+		return nil
+	}
+
+	var fullnames []string
+	for service, roles := range h.Roles {
+		for _, role := range roles {
+			fullname := strings.Join([]string{service, role}, ":")
+			fullnames = append(fullnames, fullname)
+		}
+	}
+
+	return fullnames
+}
 
 func (c *Client) FindHost(id string) (*Host, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)

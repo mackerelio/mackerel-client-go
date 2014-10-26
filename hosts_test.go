@@ -10,6 +10,21 @@ import (
 	"testing"
 )
 
+func TestGetRoleFullnames(t *testing.T) {
+	host := &Host{
+		Roles: Roles{
+			"My-Service":  []string{"db-master", "db-slave"},
+			"My-Service2": []string{"proxy"},
+		},
+	}
+
+	fullnames := host.GetRoleFullnames()
+
+	if !reflect.DeepEqual(fullnames, []string{"My-Service:db-master", "My-Service:db-slave", "My-Service2:proxy"}) {
+		t.Error("RoleFullnames shoud be ['My-Service:db-master', 'My-Service:db-slave', 'My-Service2:proxy'] but: ", fullnames)
+	}
+}
+
 func TestFindHost(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F" {
