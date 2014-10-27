@@ -91,6 +91,18 @@ func (h *Host) DateStringFromCreatedAt() string {
 	return h.DateFromCreatedAt().Format(layout)
 }
 
+func (h *Host) IpAddresses() map[string]string {
+	if len(h.Interfaces) < 1 {
+		return nil
+	}
+
+	ipAddresses := make(map[string]string, 0)
+	for _, iface := range h.Interfaces {
+		ipAddresses[iface.Name] = iface.IPAddress
+	}
+	return ipAddresses
+}
+
 func (c *Client) FindHost(id string) (*Host, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)
 	if err != nil {
