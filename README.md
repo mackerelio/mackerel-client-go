@@ -1,4 +1,4 @@
-mackerel-client-go
+mackerel-client-go [![Build Status](https://travis-ci.org/mackerelio/mackerel-client-go.svg?branch=master)](https://travis-ci.org/mackerelio/mackerel-client-go)
 ==================
 
 mackerel-client-go is a Go client library for [mackerel.io API](http://help-ja.mackerel.io/entry/spec/api/v0).
