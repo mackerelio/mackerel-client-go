@@ -1,0 +1,9 @@
+language: go
+go:
+- 1.3
+env: PATH=/home/travis/gopath/bin:$PATH
+script:
+  - make all
+notifications:
+  slack:
+    secure: cPeJRg+ouTlemEV5UM4muhDwtIM0dktcs3mnfB73oZ2MGOimv/DFpL+VTRLlkWau8l0dT4ngLlGPcveLrXQXwps2LsJMr+gS6Az/CAQCIl21oj4bnjs5uGYTG8hM8ymVzGINPNnj5Fnn5DUMunA2sow30qxfuCnSUMGot2nFRKw=
