@@ -27,6 +27,10 @@ err := client.PostServiceMetricValues("My-Service", []*mkr.MetricValue{
 })
 ```
 
+# CAUTION
+
+Now, mackerel-client-go is an ALPHA version. In the future release, it may change it's interface.
+
 # CONTRIBUTION
 
 1. Fork ([https://github.com/mackerelio/gomkr/fork](https://github.com/mackerelio/mackerel-client-go/fork))
