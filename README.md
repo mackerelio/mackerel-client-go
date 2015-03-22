@@ -33,7 +33,7 @@ Now, mackerel-client-go is an ALPHA version. In the future release, it may chang
 
 # CONTRIBUTION
 
-1. Fork ([https://github.com/mackerelio/gomkr/fork](https://github.com/mackerelio/mackerel-client-go/fork))
+1. Fork ([https://github.com/mackerelio/mackerel-client-go/fork](https://github.com/mackerelio/mackerel-client-go/fork))
 1. Create a feature branch
 1. Commit your changes
 1. Rebase your local changes against the master branch
