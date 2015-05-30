@@ -99,10 +99,12 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	return resp, nil
 }
 
+// PostJSON shortcut method for posting json
 func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
 	return c.requestJSON("POST", path, payload)
 }
 
+// PutJSON shortcut method for putting json
 func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
 	return c.requestJSON("PUT", path, payload)
 }
