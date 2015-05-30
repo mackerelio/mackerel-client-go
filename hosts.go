@@ -1,7 +1,6 @@
 package mackerel
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -209,26 +208,13 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 
 // CreateHost creating host
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
-	requestJSON, err := json.Marshal(param)
+	resp, err := c.PostJSON("/api/v0/hosts", param)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return "", err
 	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor("/api/v0/hosts").String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -249,26 +235,13 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 
 // UpdateHost update host
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
-	requestJSON, err := json.Marshal(param)
+	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s", hostID), param)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return "", err
 	}
-
-	req, err := http.NewRequest(
-		"PUT",
-		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", hostID)).String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -289,55 +262,30 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 
 // UpdateHostStatus update host status
 func (c *Client) UpdateHostStatus(hostID string, status string) error {
-	requestJSON, err := json.Marshal(map[string]string{
+	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/status", hostID), map[string]string{
 		"status": status,
 	})
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/status", hostID)).String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
 
 	return nil
 }
 
 // RetireHost retuire the host
 func (c *Client) RetireHost(id string) error {
-	requestJSON, _ := json.Marshal("{}")
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/retire", id)).String(),
-		bytes.NewReader(requestJSON),
-	)
+	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/retire", id), "{}")
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
 	if resp.StatusCode != 200 {
 		return errors.New("status code is not 200")
 	}
-
 	return nil
 }

@@ -1,7 +1,6 @@
 package mackerel
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -27,31 +26,11 @@ type LatestMetricValues map[string]map[string]*MetricValue
 
 // PostHostMetricValues post host metrics
 func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
-	requestJSON, err := json.Marshal(metricValues)
-	if err != nil {
-		return err
+	resp, err := c.PostJSON("/api/v0/tsdb", metricValues)
+	if resp != nil {
+		defer resp.Body.Close()
 	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor("/api/v0/tsdb").String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("API result failed: %s", resp.Status)
-	}
-
-	return nil
+	return err
 }
 
 // PostHostMetricValuesByHostID post host metrics
@@ -68,31 +47,11 @@ func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*Me
 
 // PostServiceMetricValues post service metrics
 func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
-	requestJSON, err := json.Marshal(metricValues)
-	if err != nil {
-		return err
+	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName), metricValues)
+	if resp != nil {
+		defer resp.Body.Close()
 	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName)).String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("API result failed: %s", resp.Status)
-	}
-
-	return nil
+	return err
 }
 
 // FetchLatestMetricValues fetch latest metrics
