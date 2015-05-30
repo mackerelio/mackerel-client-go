@@ -3,30 +3,33 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 )
 
+// MetricValue metric value
 type MetricValue struct {
 	Name  string      `json:"name,omitempty"`
 	Time  int64       `json:"time,omitempty"`
 	Value interface{} `json:"value,omitempty"`
 }
 
+// HostMetricValue host metric value
 type HostMetricValue struct {
-	HostId string      `json:"hostId",omitempty`
+	HostID string      `json:"hostID,omitempty"`
 	Name   string      `json:"name,omitempty"`
 	Time   int64       `json:"time,omitempty"`
 	Value  interface{} `json:"value,omitempty"`
 }
 
+// LatestMetricValues latest metric value
 type LatestMetricValues map[string]map[string]*MetricValue
 
+// PostHostMetricValues post host metrics
 func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
-	requestJson, err := json.Marshal(metricValues)
+	requestJSON, err := json.Marshal(metricValues)
 	if err != nil {
 		return err
 	}
@@ -34,7 +37,7 @@ func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	req, err := http.NewRequest(
 		"POST",
 		c.urlFor("/api/v0/tsdb").String(),
-		bytes.NewReader(requestJson),
+		bytes.NewReader(requestJSON),
 	)
 	if err != nil {
 		return err
@@ -47,17 +50,18 @@ func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	}
 
 	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("API result failed: %s", resp.Status))
+		return fmt.Errorf("API result failed: %s", resp.Status)
 	}
 
 	return nil
 }
 
-func (c *Client) PostHostMetricValuesByHostId(hostId string, metricValues [](*MetricValue)) error {
+// PostHostMetricValuesByHostID post host metrics
+func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*MetricValue)) error {
 	var hostMetricValues []*HostMetricValue
 	for _, metricValue := range metricValues {
 		hostMetricValues = append(hostMetricValues, &HostMetricValue{
-			HostId: hostId,
+			HostID: hostID,
 			Name:   metricValue.Name,
 			Value:  metricValue.Value,
 			Time:   metricValue.Time,
@@ -66,8 +70,9 @@ func (c *Client) PostHostMetricValuesByHostId(hostId string, metricValues [](*Me
 	return c.PostHostMetricValues(hostMetricValues)
 }
 
+// PostServiceMetricValues post service metrics
 func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
-	requestJson, err := json.Marshal(metricValues)
+	requestJSON, err := json.Marshal(metricValues)
 	if err != nil {
 		return err
 	}
@@ -75,7 +80,7 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 	req, err := http.NewRequest(
 		"POST",
 		c.urlFor(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName)).String(),
-		bytes.NewReader(requestJson),
+		bytes.NewReader(requestJSON),
 	)
 	if err != nil {
 		return err
@@ -88,16 +93,17 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 	}
 
 	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("API result failed: %s", resp.Status))
+		return fmt.Errorf("API result failed: %s", resp.Status)
 	}
 
 	return nil
 }
 
-func (c *Client) FetchLatestMetricValues(hostIds []string, metricNames []string) (LatestMetricValues, error) {
+// FetchLatestMetricValues fetch latest metrics
+func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string) (LatestMetricValues, error) {
 	v := url.Values{}
-	for _, hostId := range hostIds {
-		v.Add("hostId", hostId)
+	for _, hostID := range hostIDs {
+		v.Add("hostID", hostID)
 	}
 	for _, metricName := range metricNames {
 		v.Add("name", metricName)
@@ -114,7 +120,7 @@ func (c *Client) FetchLatestMetricValues(hostIds []string, metricNames []string)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
+		return nil, fmt.Errorf("status code is not 200")
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)

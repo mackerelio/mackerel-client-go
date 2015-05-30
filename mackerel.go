@@ -9,48 +9,64 @@ import (
 )
 
 const (
-	baseURL           = "https://mackerel.io/api/v0"
-	userAgent         = "mackerel-client-go"
+	defaultBaseURL    = "https://mackerel.io/api/v0"
+	defaultUserAgent  = "mackerel-client-go"
 	apiRequestTimeout = 30 * time.Second
 )
 
+// Client api client for mackerel
 type Client struct {
-	BaseUrl *url.URL
-	ApiKey  string
-	Verbose bool
+	BaseURL           *url.URL
+	APIKey            string
+	Verbose           bool
+	UserAgent         string
+	AdditionalHeaders http.Header
 }
 
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
+// NewClient returns new mackerel.Client
 func NewClient(apikey string) *Client {
-	u, _ := url.Parse(baseURL)
-	return &Client{u, apikey, false}
+	u, _ := url.Parse(defaultBaseURL)
+	return &Client{u, apikey, false, defaultUserAgent, http.Header{}}
 }
 
+// NewClientForTest returns new mackerel.Client
 func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err
 	}
-	return &Client{u, apikey, verbose}, nil
+	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}}, nil
 }
 
 func (c *Client) urlFor(path string) *url.URL {
-	newUrl, err := url.Parse(c.BaseUrl.String())
+	newURL, err := url.Parse(c.BaseURL.String())
 	if err != nil {
 		panic("invalid url passed")
 	}
 
-	newUrl.Path = path
+	newURL.Path = path
 
-	return newUrl
+	return newURL
 }
 
+func (c *Client) buildReq(req *http.Request) *http.Request {
+	for header, values := range c.AdditionalHeaders {
+		for _, v := range values {
+			req.Header.Add(header, v)
+		}
+	}
+	req.Header.Set("X-Api-Key", c.APIKey)
+	req.Header.Set("User-Agent", c.UserAgent)
+	return req
+}
+
+// Request request to mackerel and receive response
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
-	req.Header.Add("X-Api-Key", c.ApiKey)
-	req.Header.Set("User-Agent", userAgent)
+	req = c.buildReq(req)
 
 	if c.Verbose {
 		dump, err := httputil.DumpRequest(req, true)

@@ -35,7 +35,7 @@ func TestFindHost(t *testing.T) {
 			t.Error("request method should be GET but :", req.Method)
 		}
 
-		respJson, _ := json.Marshal(map[string]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
 			"host": map[string]interface{}{
 				"id":     "9rxGOHfVF8F",
 				"name":   "mydb001",
@@ -46,7 +46,7 @@ func TestFindHost(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
@@ -91,7 +91,7 @@ func TestFindHosts(t *testing.T) {
 			t.Error("request method should be GET but :", req.Method)
 		}
 
-		respJson, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
 			"hosts": []map[string]interface{}{
 				map[string]interface{}{
 					"id":     "9rxGOHfVF8F",
@@ -104,7 +104,7 @@ func TestFindHosts(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
@@ -161,17 +161,17 @@ func TestCreateHost(t *testing.T) {
 			t.Error("request sends json including roleFullnames but: ", data.RoleFullnames)
 		}
 
-		respJson, _ := json.Marshal(map[string]string{
+		respJSON, _ := json.Marshal(map[string]string{
 			"id": "123456ABCD",
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
 	client, _ := NewClientForTest("dummy-key", ts.URL, false)
-	hostId, err := client.CreateHost(&CreateHostParam{
+	hostID, err := client.CreateHost(&CreateHostParam{
 		Name:          "mydb002",
 		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
 	})
@@ -180,8 +180,8 @@ func TestCreateHost(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 
-	if hostId != "123456ABCD" {
-		t.Error("hostId shoud be empty but: ", hostId)
+	if hostID != "123456ABCD" {
+		t.Error("hostID shoud be empty but: ", hostID)
 	}
 }
 
@@ -216,17 +216,17 @@ func TestUpdateHost(t *testing.T) {
 			t.Error("request sends json including roleFullnames but: ", data.RoleFullnames)
 		}
 
-		respJson, _ := json.Marshal(map[string]string{
+		respJSON, _ := json.Marshal(map[string]string{
 			"id": "123456ABCD",
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
 	client, _ := NewClientForTest("dummy-key", ts.URL, false)
-	hostId, err := client.UpdateHost("123456ABCD", &UpdateHostParam{
+	hostID, err := client.UpdateHost("123456ABCD", &UpdateHostParam{
 		Name:          "mydb002",
 		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
 	})
@@ -235,8 +235,8 @@ func TestUpdateHost(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 
-	if hostId != "123456ABCD" {
-		t.Error("hostId shoud be empty but: ", hostId)
+	if hostID != "123456ABCD" {
+		t.Error("hostID shoud be empty but: ", hostID)
 	}
 }
 
@@ -265,12 +265,12 @@ func TestUpdateHostStatus(t *testing.T) {
 			t.Error("request sends json including status but: ", data.Status)
 		}
 
-		respJson, _ := json.Marshal(map[string]bool{
+		respJSON, _ := json.Marshal(map[string]bool{
 			"success": true,
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
@@ -300,12 +300,12 @@ func TestRetireHost(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJson, _ := json.Marshal(map[string]bool{
+		respJSON, _ := json.Marshal(map[string]bool{
 			"success": true,
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
