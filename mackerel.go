@@ -15,10 +15,11 @@ const (
 )
 
 type Client struct {
-	BaseUrl   *url.URL
-	ApiKey    string
-	Verbose   bool
-	UserAgent string
+	BaseUrl           *url.URL
+	ApiKey            string
+	Verbose           bool
+	UserAgent         string
+	AdditionalHeaders http.Header
 }
 
 func init() {
@@ -27,7 +28,7 @@ func init() {
 
 func NewClient(apikey string) *Client {
 	u, _ := url.Parse(defaultBaseURL)
-	return &Client{u, apikey, false, defaultUserAgent}
+	return &Client{u, apikey, false, defaultUserAgent, http.Header{}}
 }
 
 func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, error) {
@@ -35,7 +36,7 @@ func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, erro
 	if err != nil {
 		return nil, err
 	}
-	return &Client{u, apikey, verbose, defaultUserAgent}, nil
+	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}}, nil
 }
 
 func (c *Client) urlFor(path string) *url.URL {
@@ -50,9 +51,13 @@ func (c *Client) urlFor(path string) *url.URL {
 }
 
 func (c *Client) buildReq(req *http.Request) *http.Request {
+	for header, values := range c.AdditionalHeaders {
+		for _, v := range values {
+			req.Header.Add(header, v)
+		}
+	}
 	req.Header.Set("X-Api-Key", c.ApiKey)
 	req.Header.Set("User-Agent", c.UserAgent)
-
 	return req
 }
 
