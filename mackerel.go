@@ -49,7 +49,7 @@ func (c *Client) urlFor(path string) *url.URL {
 }
 
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
-	req.Header.Add("X-Api-Key", c.ApiKey)
+	req.Header.Set("X-Api-Key", c.ApiKey)
 	req.Header.Set("User-Agent", userAgent)
 
 	if c.Verbose {
