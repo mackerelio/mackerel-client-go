@@ -9,12 +9,14 @@ import (
 	"net/url"
 )
 
+// MetricValue metric value
 type MetricValue struct {
 	Name  string      `json:"name,omitempty"`
 	Time  int64       `json:"time,omitempty"`
 	Value interface{} `json:"value,omitempty"`
 }
 
+// HostMetricValue host metric value
 type HostMetricValue struct {
 	HostID string      `json:"hostID,omitempty"`
 	Name   string      `json:"name,omitempty"`
@@ -22,8 +24,10 @@ type HostMetricValue struct {
 	Value  interface{} `json:"value,omitempty"`
 }
 
+// LatestMetricValues latest metric value
 type LatestMetricValues map[string]map[string]*MetricValue
 
+// PostHostMetricValues post host metrics
 func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	requestJSON, err := json.Marshal(metricValues)
 	if err != nil {
@@ -52,6 +56,7 @@ func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	return nil
 }
 
+// PostHostMetricValuesByHostID post host metrics
 func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*MetricValue)) error {
 	var hostMetricValues []*HostMetricValue
 	for _, metricValue := range metricValues {
@@ -65,6 +70,7 @@ func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*Me
 	return c.PostHostMetricValues(hostMetricValues)
 }
 
+// PostServiceMetricValues post service metrics
 func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
 	requestJSON, err := json.Marshal(metricValues)
 	if err != nil {
@@ -93,6 +99,7 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 	return nil
 }
 
+// FetchLatestMetricValues fetch latest metrics
 func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string) (LatestMetricValues, error) {
 	v := url.Values{}
 	for _, hostID := range hostIDs {

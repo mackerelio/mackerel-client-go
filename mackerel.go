@@ -14,6 +14,7 @@ const (
 	apiRequestTimeout = 30 * time.Second
 )
 
+// Client api client for mackerel
 type Client struct {
 	BaseURL           *url.URL
 	APIKey            string
@@ -26,11 +27,13 @@ func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
+// NewClient returns new mackerel.Client
 func NewClient(apikey string) *Client {
 	u, _ := url.Parse(defaultBaseURL)
 	return &Client{u, apikey, false, defaultUserAgent, http.Header{}}
 }
 
+// NewClientForTest returns new mackerel.Client
 func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
@@ -61,6 +64,7 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 	return req
 }
 
+// Request request to mackerel and receive response
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	req = c.buildReq(req)
 

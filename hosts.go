@@ -27,8 +27,10 @@ type Host struct {
 	Interfaces    []Interface `json:"interfaces,omitempty"`
 }
 
+// Roles host role maps
 type Roles map[string][]string
 
+// HostMeta host meta informations
 type HostMeta struct {
 	AgentRevision string      `json:"agent-revision,omitempty"`
 	AgentVersion  string      `json:"agent-version,omitempty"`
@@ -39,18 +41,29 @@ type HostMeta struct {
 	Memory        Memory      `json:"memory,omitempty"`
 }
 
+// BlockDevice blockdevice
 type BlockDevice map[string]map[string]interface{}
+
+// CPU cpu
 type CPU []map[string]interface{}
+
+// FileSystem filesystem
 type FileSystem map[string]interface{}
+
+// Kernel kernel
 type Kernel map[string]string
+
+// Memory memory
 type Memory map[string]string
 
+// Interface network interface
 type Interface struct {
 	Name       string `json:"name,omitempty"`
 	IPAddress  string `json:"ipAddress,omitempty"`
 	MacAddress string `json:"macAddress,omitempty"`
 }
 
+// FindHostsParam parameters for FindHosts
 type FindHostsParam struct {
 	Service  string
 	Roles    []string
@@ -58,6 +71,7 @@ type FindHostsParam struct {
 	Statuses []string
 }
 
+// CreateHostParam parameters for CreateHost
 type CreateHostParam struct {
 	Name          string      `json:"name,omitempty"`
 	Meta          HostMeta    `json:"meta,omitempty"`
@@ -65,8 +79,10 @@ type CreateHostParam struct {
 	RoleFullnames []string    `json:"roleFullnames,omitempty"`
 }
 
+// UpdateHostParam parameters for UpdateHost
 type UpdateHostParam CreateHostParam
 
+// GetRoleFullnames getrolefullnames
 func (h *Host) GetRoleFullnames() []string {
 	if len(h.Roles) < 1 {
 		return nil
@@ -83,15 +99,18 @@ func (h *Host) GetRoleFullnames() []string {
 	return fullnames
 }
 
+// DateFromCreatedAt returns time.Time
 func (h *Host) DateFromCreatedAt() time.Time {
 	return time.Unix(int64(h.CreatedAt), 0)
 }
 
+// DateStringFromCreatedAt returns date string
 func (h *Host) DateStringFromCreatedAt() string {
 	const layout = "Jan 2, 2006 at 3:04pm (MST)"
 	return h.DateFromCreatedAt().Format(layout)
 }
 
+// IPAddresses returns ipaddresses
 func (h *Host) IPAddresses() map[string]string {
 	if len(h.Interfaces) < 1 {
 		return nil
@@ -104,6 +123,7 @@ func (h *Host) IPAddresses() map[string]string {
 	return ipAddresses
 }
 
+// FindHost find the host
 func (c *Client) FindHost(id string) (*Host, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)
 	if err != nil {
@@ -136,6 +156,7 @@ func (c *Client) FindHost(id string) (*Host, error) {
 	return data.Host, err
 }
 
+// FindHosts find hosts
 func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	v := url.Values{}
 	if param.Service != "" {
@@ -186,6 +207,7 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	return data.Hosts, err
 }
 
+// CreateHost creating host
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	requestJSON, err := json.Marshal(param)
 	if err != nil {
@@ -225,6 +247,7 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	return data.ID, nil
 }
 
+// UpdateHost update host
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
 	requestJSON, err := json.Marshal(param)
 	if err != nil {
@@ -264,6 +287,7 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 	return data.ID, nil
 }
 
+// UpdateHostStatus update host status
 func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	requestJSON, err := json.Marshal(map[string]string{
 		"status": status,
@@ -291,6 +315,7 @@ func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	return nil
 }
 
+// RetireHost retuire the host
 func (c *Client) RetireHost(id string) error {
 	requestJSON, _ := json.Marshal("{}")
 
