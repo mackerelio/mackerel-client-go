@@ -12,8 +12,8 @@ func TestRequest(t *testing.T) {
 			t.Error("X-Api-Key header should contains passed key")
 		}
 
-		if h := req.Header.Get("User-Agent"); h != userAgent {
-			t.Errorf("User-Agent shoud be '%s' but %s", userAgent, h)
+		if h := req.Header.Get("User-Agent"); h != defaultUserAgent {
+			t.Errorf("User-Agent shoud be '%s' but %s", defaultUserAgent, h)
 		}
 	}))
 	defer ts.Close()

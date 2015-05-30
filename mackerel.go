@@ -9,15 +9,16 @@ import (
 )
 
 const (
-	baseURL           = "https://mackerel.io/api/v0"
-	userAgent         = "mackerel-client-go"
+	defaultBaseURL    = "https://mackerel.io/api/v0"
+	defaultUserAgent  = "mackerel-client-go"
 	apiRequestTimeout = 30 * time.Second
 )
 
 type Client struct {
-	BaseUrl *url.URL
-	ApiKey  string
-	Verbose bool
+	BaseUrl   *url.URL
+	ApiKey    string
+	Verbose   bool
+	UserAgent string
 }
 
 func init() {
@@ -25,8 +26,8 @@ func init() {
 }
 
 func NewClient(apikey string) *Client {
-	u, _ := url.Parse(baseURL)
-	return &Client{u, apikey, false}
+	u, _ := url.Parse(defaultBaseURL)
+	return &Client{u, apikey, false, defaultUserAgent}
 }
 
 func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, error) {
@@ -34,7 +35,7 @@ func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, erro
 	if err != nil {
 		return nil, err
 	}
-	return &Client{u, apikey, verbose}, nil
+	return &Client{u, apikey, verbose, defaultUserAgent}, nil
 }
 
 func (c *Client) urlFor(path string) *url.URL {
@@ -50,7 +51,7 @@ func (c *Client) urlFor(path string) *url.URL {
 
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	req.Header.Set("X-Api-Key", c.ApiKey)
-	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("User-Agent", c.UserAgent)
 
 	if c.Verbose {
 		dump, err := httputil.DumpRequest(req, true)
