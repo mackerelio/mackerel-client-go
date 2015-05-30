@@ -15,8 +15,8 @@ const (
 )
 
 type Client struct {
-	BaseUrl           *url.URL
-	ApiKey            string
+	BaseURL           *url.URL
+	APIKey            string
 	Verbose           bool
 	UserAgent         string
 	AdditionalHeaders http.Header
@@ -40,14 +40,14 @@ func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, erro
 }
 
 func (c *Client) urlFor(path string) *url.URL {
-	newUrl, err := url.Parse(c.BaseUrl.String())
+	newURL, err := url.Parse(c.BaseURL.String())
 	if err != nil {
 		panic("invalid url passed")
 	}
 
-	newUrl.Path = path
+	newURL.Path = path
 
-	return newUrl
+	return newURL
 }
 
 func (c *Client) buildReq(req *http.Request) *http.Request {
@@ -56,7 +56,7 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 			req.Header.Add(header, v)
 		}
 	}
-	req.Header.Set("X-Api-Key", c.ApiKey)
+	req.Header.Set("X-Api-Key", c.APIKey)
 	req.Header.Set("User-Agent", c.UserAgent)
 	return req
 }

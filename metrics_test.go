@@ -23,7 +23,7 @@ func TestPostHostMetricValues(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var values []struct {
-			HostId string      `json:"hostId"`
+			HostID string      `json:"hostID"`
 			Name   string      `json:"name"`
 			Time   float64     `json:"time"`
 			Value  interface{} `json:"value"`
@@ -34,8 +34,8 @@ func TestPostHostMetricValues(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		if values[0].HostId != "9rxGOHfVF8F" {
-			t.Error("request sends json including hostId but: ", values[0].HostId)
+		if values[0].HostID != "9rxGOHfVF8F" {
+			t.Error("request sends json including hostID but: ", values[0].HostID)
 		}
 		if values[0].Name != "custom.metric.mysql.connections" {
 			t.Error("request sends json including name but: ", values[0].Name)
@@ -47,19 +47,19 @@ func TestPostHostMetricValues(t *testing.T) {
 			t.Error("request sends json including value but: ", values[0].Value)
 		}
 
-		respJson, _ := json.Marshal(map[string]bool{
+		respJSON, _ := json.Marshal(map[string]bool{
 			"success": true,
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
 	client, _ := NewClientForTest("dummy-key", ts.URL, false)
 	err := client.PostHostMetricValues([]*HostMetricValue{
 		&HostMetricValue{
-			HostId: "9rxGOHfVF8F",
+			HostID: "9rxGOHfVF8F",
 			Name:   "custom.metric.mysql.connections",
 			Time:   123456789,
 			Value:  100,
@@ -104,12 +104,12 @@ func TestPostServiceMetricValues(t *testing.T) {
 			t.Error("request sends json including value but: ", values[0].Value)
 		}
 
-		respJson, _ := json.Marshal(map[string]bool{
+		respJSON, _ := json.Marshal(map[string]bool{
 			"success": true,
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
@@ -138,14 +138,14 @@ func TestFetchLatestMetricValues(t *testing.T) {
 		}
 
 		query := req.URL.Query()
-		if !reflect.DeepEqual(query["hostId"], []string{"123456ABCD", "654321ABCD"}) {
-			t.Error("request query 'hostId' param should be ['123456ABCD', '654321ABCD'] but: ", query["hostId"])
+		if !reflect.DeepEqual(query["hostID"], []string{"123456ABCD", "654321ABCD"}) {
+			t.Error("request query 'hostID' param should be ['123456ABCD', '654321ABCD'] but: ", query["hostID"])
 		}
 		if !reflect.DeepEqual(query["name"], []string{"mysql.connections.Connections", "mysql.connections.Thread_created"}) {
-			t.Error("request query 'hostId' param should be ['mysql.connections.Connections', 'mysql.connections.Thread_created'] but: ", query["name"])
+			t.Error("request query 'hostID' param should be ['mysql.connections.Connections', 'mysql.connections.Thread_created'] but: ", query["name"])
 		}
 
-		respJson, _ := json.Marshal(map[string]map[string]map[string]*MetricValue{
+		respJSON, _ := json.Marshal(map[string]map[string]map[string]*MetricValue{
 			"tsdbLatest": map[string]map[string]*MetricValue{
 				"123456ABCD": map[string]*MetricValue{
 					"mysql.connections.Connections": &MetricValue{
@@ -175,14 +175,14 @@ func TestFetchLatestMetricValues(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJson))
+		fmt.Fprint(res, string(respJSON))
 	}))
 	defer ts.Close()
 
 	client, _ := NewClientForTest("dummy-key", ts.URL, false)
-	hostIds := []string{"123456ABCD", "654321ABCD"}
+	hostIDs := []string{"123456ABCD", "654321ABCD"}
 	metricNames := []string{"mysql.connections.Connections", "mysql.connections.Thread_created"}
-	latestMetricValues, err := client.FetchLatestMetricValues(hostIds, metricNames)
+	latestMetricValues, err := client.FetchLatestMetricValues(hostIDs, metricNames)
 
 	if err != nil {
 		t.Error("err shoud be nil but: ", err)
