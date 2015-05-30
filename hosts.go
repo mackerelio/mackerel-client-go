@@ -129,10 +129,10 @@ func (c *Client) FindHost(id string) (*Host, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
+	defer closeResp(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return nil, errors.New("status code is not 200")
@@ -180,10 +180,10 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
+	defer closeResp(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return nil, errors.New("status code is not 200")
@@ -209,9 +209,7 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 // CreateHost creating host
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	resp, err := c.PostJSON("/api/v0/hosts", param)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
+	defer closeResp(resp)
 	if err != nil {
 		return "", err
 	}
@@ -236,9 +234,7 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 // UpdateHost update host
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
 	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s", hostID), param)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
+	defer closeResp(resp)
 	if err != nil {
 		return "", err
 	}
@@ -265,9 +261,7 @@ func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/status", hostID), map[string]string{
 		"status": status,
 	})
-	if resp != nil {
-		defer resp.Body.Close()
-	}
+	defer closeResp(resp)
 	if err != nil {
 		return err
 	}
@@ -278,9 +272,7 @@ func (c *Client) UpdateHostStatus(hostID string, status string) error {
 // RetireHost retuire the host
 func (c *Client) RetireHost(id string) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/retire", id), "{}")
-	if resp != nil {
-		defer resp.Body.Close()
-	}
+	defer closeResp(resp)
 	if err != nil {
 		return err
 	}

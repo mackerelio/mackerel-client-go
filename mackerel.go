@@ -67,6 +67,12 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 	return req
 }
 
+func closeResp(resp *http.Response) {
+	if resp != nil {
+		resp.Body.Close()
+	}
+}
+
 // Request request to mackerel and receive response
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	req = c.buildReq(req)
