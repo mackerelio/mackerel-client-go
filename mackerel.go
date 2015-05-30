@@ -49,9 +49,15 @@ func (c *Client) urlFor(path string) *url.URL {
 	return newUrl
 }
 
-func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
+func (c *Client) buildReq(req *http.Request) *http.Request {
 	req.Header.Set("X-Api-Key", c.ApiKey)
 	req.Header.Set("User-Agent", c.UserAgent)
+
+	return req
+}
+
+func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
+	req = c.buildReq(req)
 
 	if c.Verbose {
 		dump, err := httputil.DumpRequest(req, true)
