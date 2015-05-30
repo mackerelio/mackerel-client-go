@@ -18,7 +18,7 @@ func TestRequest(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
 	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
 	client.Request(req)

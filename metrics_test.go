@@ -56,7 +56,7 @@ func TestPostHostMetricValues(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.PostHostMetricValues([]*HostMetricValue{
 		&HostMetricValue{
 			HostID: "9rxGOHfVF8F",
@@ -113,7 +113,7 @@ func TestPostServiceMetricValues(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.PostServiceMetricValues("My-Service", []*MetricValue{
 		&MetricValue{
 			Name:  "proxy.access_log.latency",
@@ -179,7 +179,7 @@ func TestFetchLatestMetricValues(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	hostIDs := []string{"123456ABCD", "654321ABCD"}
 	metricNames := []string{"mysql.connections.Connections", "mysql.connections.Thread_created"}
 	latestMetricValues, err := client.FetchLatestMetricValues(hostIDs, metricNames)

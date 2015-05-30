@@ -33,8 +33,8 @@ func NewClient(apikey string) *Client {
 	return &Client{u, apikey, false, defaultUserAgent, http.Header{}}
 }
 
-// NewClientForTest returns new mackerel.Client
-func NewClientForTest(apikey string, rawurl string, verbose bool) (*Client, error) {
+// NewClientWithOptions returns new mackerel.Client
+func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err

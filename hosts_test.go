@@ -50,7 +50,7 @@ func TestFindHost(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	host, err := client.FindHost("9rxGOHfVF8F")
 
 	if err != nil {
@@ -108,7 +108,7 @@ func TestFindHosts(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	hosts, err := client.FindHosts(&FindHostsParam{
 		Service:  "My-Service",
 		Roles:    []string{"db-master"},
@@ -170,7 +170,7 @@ func TestCreateHost(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	hostID, err := client.CreateHost(&CreateHostParam{
 		Name:          "mydb002",
 		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
@@ -225,7 +225,7 @@ func TestUpdateHost(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	hostID, err := client.UpdateHost("123456ABCD", &UpdateHostParam{
 		Name:          "mydb002",
 		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
@@ -274,7 +274,7 @@ func TestUpdateHostStatus(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.UpdateHostStatus("9rxGOHfVF8F", "maintenance")
 
 	if err != nil {
@@ -309,7 +309,7 @@ func TestRetireHost(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, _ := NewClientForTest("dummy-key", ts.URL, false)
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.RetireHost("123456ABCD")
 
 	if err != nil {
