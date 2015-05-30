@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -34,12 +35,21 @@ func TestCreateGraphDefs(t *testing.T) {
 		data := datas[0]
 
 		if data.Name != "mackerel" {
-			t.Error("request sends json including name but: %s", data.Name)
+			t.Errorf("request sends json including name but: %s", data.Name)
 		}
 		if data.DisplayName != "HorseMackerel" {
-			t.Error("request sends json including DisplayName but: %s", data.Name)
+			t.Errorf("request sends json including DisplayName but: %s", data.Name)
 		}
-
+		if !reflect.DeepEqual(
+			data.Metrics[0],
+			&GraphDefsMetric{
+				Name:        "saba1",
+				DisplayName: "aji1",
+				IsStacked:   false,
+			},
+		) {
+			t.Error("request sends json including GraphDefsMetric but: ", data.Metrics[0])
+		}
 		respJSON, _ := json.Marshal(map[string]string{
 			"result": "OK",
 		})
