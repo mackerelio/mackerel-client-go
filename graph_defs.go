@@ -2,10 +2,10 @@ package mackerel
 
 // GraphDefsParam parameters for posting graph definitions
 type GraphDefsParam struct {
-	Name        string            `json:"name"`
-	DisplayName string            `json:"displayName"`
-	Unit        string            `json:"unit"`
-	Metrics     []GraphDefsMetric `json:"metrics"`
+	Name        string             `json:"name"`
+	DisplayName string             `json:"displayName"`
+	Unit        string             `json:"unit"`
+	Metrics     []*GraphDefsMetric `json:"metrics"`
 }
 
 // GraphDefsMetric graph metric
@@ -16,7 +16,7 @@ type GraphDefsMetric struct {
 }
 
 // CreateGraphDefs create graph defs
-func (c *Client) CreateGraphDefs(payloads []GraphDefsParam) error {
+func (c *Client) CreateGraphDefs(payloads []*GraphDefsParam) error {
 	resp, err := c.PostJSON("/api/v0/graph-defs/create", payloads)
 	defer closeResp(resp)
 	return err

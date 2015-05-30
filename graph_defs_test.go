@@ -21,10 +21,10 @@ func TestCreateGraphDefs(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var datas []struct {
-			Name        string            `json:"name"`
-			DisplayName string            `json:"displayName"`
-			Unit        string            `json:"unit"`
-			Metrics     []GraphDefsMetric `json:"metrics"`
+			Name        string             `json:"name"`
+			DisplayName string             `json:"displayName"`
+			Unit        string             `json:"unit"`
+			Metrics     []*GraphDefsMetric `json:"metrics"`
 		}
 
 		err := json.Unmarshal(body, &datas)
@@ -49,18 +49,18 @@ func TestCreateGraphDefs(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	err := client.CreateGraphDefs([]GraphDefsParam{
-		GraphDefsParam{
+	err := client.CreateGraphDefs([]*GraphDefsParam{
+		&GraphDefsParam{
 			Name:        "mackerel",
 			DisplayName: "HorseMackerel",
 			Unit:        "percentage",
-			Metrics: []GraphDefsMetric{
-				GraphDefsMetric{
+			Metrics: []*GraphDefsMetric{
+				&GraphDefsMetric{
 					Name:        "saba1",
 					DisplayName: "aji1",
 					IsStacked:   false,
 				},
-				GraphDefsMetric{
+				&GraphDefsMetric{
 					Name:        "saba2",
 					DisplayName: "aji2",
 					IsStacked:   false,
