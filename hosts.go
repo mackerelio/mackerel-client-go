@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -138,20 +137,13 @@ func (c *Client) FindHost(id string) (*Host, error) {
 		return nil, errors.New("status code is not 200")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var data struct {
 		Host *Host `json:"host"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-
 	return data.Host, err
 }
 
@@ -189,16 +181,10 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		return nil, errors.New("status code is not 200")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var data struct {
 		Hosts []*(Host) `json:"hosts"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
@@ -214,20 +200,13 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 		return "", err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
 	var data struct {
 		ID string `json:"id"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return "", err
 	}
-
 	return data.ID, nil
 }
 
@@ -239,16 +218,10 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 		return "", err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
 	var data struct {
 		ID string `json:"id"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return "", err
 	}
