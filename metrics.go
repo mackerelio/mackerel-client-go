@@ -3,7 +3,6 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -74,16 +73,10 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 		return nil, fmt.Errorf("status code is not 200")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var data struct {
 		LatestMetricValues *LatestMetricValues `json:"tsdbLatest"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
