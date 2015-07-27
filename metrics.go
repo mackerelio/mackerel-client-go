@@ -18,7 +18,7 @@ type MetricValue struct {
 
 // HostMetricValue host metric value
 type HostMetricValue struct {
-	HostID string      `json:"hostID,omitempty"`
+	HostID string      `json:"hostId,omitempty"`
 	Name   string      `json:"name,omitempty"`
 	Time   int64       `json:"time,omitempty"`
 	Value  interface{} `json:"value,omitempty"`
@@ -103,7 +103,7 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string) (LatestMetricValues, error) {
 	v := url.Values{}
 	for _, hostID := range hostIDs {
-		v.Add("hostID", hostID)
+		v.Add("hostId", hostID)
 	}
 	for _, metricName := range metricNames {
 		v.Add("name", metricName)
