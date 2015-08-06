@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -95,4 +96,118 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 	}
 
 	return data.Monitors, err
+}
+
+// CreateMonitor creating monitor
+func (c *Client) CreateMonitor(param *Monitor) (*Monitor, error) {
+	requestJSON, err := json.Marshal(param)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(
+		"POST",
+		c.urlFor("/api/v0/monitors").String(),
+		bytes.NewReader(requestJSON),
+	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var data Monitor
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+// UpdateMonitor update monitor
+func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, error) {
+	requestJSON, err := json.Marshal(param)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(
+		"PUT",
+		c.urlFor(fmt.Sprintf("/api/v0/monitor/%s", monitorID)).String(),
+		bytes.NewReader(requestJSON),
+	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var data Monitor
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+// DeleteMonitor update monitor
+func (c *Client) DeleteMonitor(monitorID string, param *Monitor) (*Monitor, error) {
+	requestJSON, err := json.Marshal(param)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(
+		"PUT",
+		c.urlFor(fmt.Sprintf("/api/v0/monitor/%s", monitorID)).String(),
+		bytes.NewReader(requestJSON),
+	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var data Monitor
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }
