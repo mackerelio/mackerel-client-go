@@ -60,6 +60,10 @@ type Monitor struct {
 	ID            string   `json:"id,omitempty"`
 	Name          string   `json:"name,omitempty"`
 	Type          string   `json:"type,omitempty"`
+	Metric        string   `json:"metric,omitempty"`
+	Operator      string   `json:"operator,omitempty"`
+	Warning       float64  `json:"warning,omitempty"`
+	Critical      float64  `json:"critical,omitempty"`
 	Duration      uint64   `json:"duration,omitempty"`
 	Scopes        []string `json:"scopes,omitempty"`
 	ExcludeScopes []string `json:"excludeScopes,omitempty"`
