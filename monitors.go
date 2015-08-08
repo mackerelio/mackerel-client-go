@@ -65,6 +65,7 @@ type Monitor struct {
 	Warning       float64  `json:"warning,omitempty"`
 	Critical      float64  `json:"critical,omitempty"`
 	Duration      uint64   `json:"duration,omitempty"`
+	URL           string   `json:"url,omitempty"`
 	Scopes        []string `json:"scopes,omitempty"`
 	ExcludeScopes []string `json:"excludeScopes,omitempty"`
 }
@@ -179,16 +180,11 @@ func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, erro
 }
 
 // DeleteMonitor update monitor
-func (c *Client) DeleteMonitor(monitorID string, param *Monitor) (*Monitor, error) {
-	requestJSON, err := json.Marshal(param)
-	if err != nil {
-		return nil, err
-	}
-
+func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	req, err := http.NewRequest(
-		"PUT",
+		"DELETE",
 		c.urlFor(fmt.Sprintf("/api/v0/monitor/%s", monitorID)).String(),
-		bytes.NewReader(requestJSON),
+		nil,
 	)
 	if err != nil {
 		return nil, err
