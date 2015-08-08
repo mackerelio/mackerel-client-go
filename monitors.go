@@ -150,7 +150,7 @@ func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, erro
 
 	req, err := http.NewRequest(
 		"PUT",
-		c.urlFor(fmt.Sprintf("/api/v0/monitor/%s", monitorID)).String(),
+		c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(),
 		bytes.NewReader(requestJSON),
 	)
 	if err != nil {
@@ -183,7 +183,7 @@ func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, erro
 func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	req, err := http.NewRequest(
 		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/monitor/%s", monitorID)).String(),
+		c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(),
 		nil,
 	)
 	if err != nil {
