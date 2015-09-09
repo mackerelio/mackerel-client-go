@@ -17,10 +17,18 @@ func TestFindMonitors(t *testing.T) {
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
 			"monitors": []map[string]interface{}{
 				map[string]interface{}{
-					"id":       "2cSZzK3XfmG",
-					"type":     "passive",
-					"name":     "connectivity",
-					"duration": 5,
+					"id":            "2cSZzK3XfmG",
+					"type":          "connectivity",
+					"scopes":        []string{},
+					"excludeScopes": []string{},
+				},
+				map[string]interface{}{
+					"id":               "2c5bLca8d",
+					"type":             "external",
+					"name":             "testMonitorExternal",
+					"url":              "http://www.example.com/",
+					"maxCheckAttempts": 3,
+					"service":          "someService",
 				},
 			},
 		})
@@ -37,12 +45,15 @@ func TestFindMonitors(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 
-	if monitors[0].Type != "passive" {
+	if monitors[0].Type != "connectivity" {
 		t.Error("request sends json including type but: ", monitors[0])
 	}
 
-	if monitors[0].Name != "connectivity" {
+	if monitors[1].Type != "external" {
 		t.Error("request sends json including name but: ", monitors[0])
 	}
 
+	if monitors[1].Service != "someService" {
+		t.Error("request sends json including name but: ", monitors[0])
+	}
 }
