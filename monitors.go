@@ -57,19 +57,22 @@ import (
 
 // Monitor information
 type Monitor struct {
-	ID               string   `json:"id,omitempty"`
-	Name             string   `json:"name,omitempty"`
-	Type             string   `json:"type,omitempty"`
-	Metric           string   `json:"metric,omitempty"`
-	Operator         string   `json:"operator,omitempty"`
-	Warning          float64  `json:"warning,omitempty"`
-	Critical         float64  `json:"critical,omitempty"`
-	Duration         uint64   `json:"duration,omitempty"`
-	URL              string   `json:"url,omitempty"`
-	Scopes           []string `json:"scopes,omitempty"`
-	Service          string   `json:"service,omitempty"`
-	MaxCheckAttempts float64  `json:"maxCheckAttempts,omitempty"`
-	ExcludeScopes    []string `json:"excludeScopes,omitempty"`
+	ID                   string   `json:"id,omitempty"`
+	Name                 string   `json:"name,omitempty"`
+	Type                 string   `json:"type,omitempty"`
+	Metric               string   `json:"metric,omitempty"`
+	Operator             string   `json:"operator,omitempty"`
+	Warning              float64  `json:"warning,omitempty"`
+	Critical             float64  `json:"critical,omitempty"`
+	Duration             uint64   `json:"duration,omitempty"`
+	URL                  string   `json:"url,omitempty"`
+	Scopes               []string `json:"scopes,omitempty"`
+	Service              string   `json:"service,omitempty"`
+	MaxCheckAttempts     float64  `json:"maxCheckAttempts,omitempty"`
+	ExcludeScopes        []string `json:"excludeScopes,omitempty"`
+	ResponseTimeCritical float64  `json:"responseTimeCritical,omitempty"`
+	ResponseTimeWarning  float64  `json:"responseTimeWarning,omitempty"`
+	ResponseTimeDuration float64  `json:"responseTimeDuration,omitempty"`
 }
 
 // FindMonitors find monitors
