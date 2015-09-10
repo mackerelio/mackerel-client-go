@@ -335,9 +335,5 @@ func (c *Client) RetireHost(id string) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return errors.New("status code is not 200")
-	}
-
 	return nil
 }
