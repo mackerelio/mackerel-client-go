@@ -3,7 +3,6 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -135,10 +134,6 @@ func (c *Client) FindHost(id string) (*Host, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
-	}
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -185,10 +180,6 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
-	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

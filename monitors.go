@@ -3,7 +3,6 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -86,10 +85,6 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
-	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

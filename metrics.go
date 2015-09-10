@@ -48,10 +48,7 @@ func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	if err != nil {
 		return err
 	}
-
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("API result failed: %s", resp.Status)
-	}
+	defer resp.Body.Close()
 
 	return nil
 }
@@ -91,10 +88,7 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 	if err != nil {
 		return err
 	}
-
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("API result failed: %s", resp.Status)
-	}
+	defer resp.Body.Close()
 
 	return nil
 }
@@ -118,10 +112,6 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("status code is not 200")
-	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
