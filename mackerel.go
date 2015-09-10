@@ -1,7 +1,7 @@
 package mackerel
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -89,7 +89,7 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		}
 	}
 	if resp.StatusCode != 200 {
-		return nil, errors.New(resp.Status)
+		return nil, fmt.Errorf("API result failed: %s", resp.Status)
 	}
 	return resp, nil
 }
