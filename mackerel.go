@@ -93,3 +93,10 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	}
 	return resp, nil
 }
+
+// CloseReponse clos body stream if response exists.
+func (c *Client) CloseReponse(resp *http.Response) {
+	if resp != nil {
+		resp.Body.Close()
+	}
+}

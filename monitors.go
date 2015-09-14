@@ -81,10 +81,10 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -121,10 +121,10 @@ func (c *Client) CreateMonitor(param *Monitor) (*Monitor, error) {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -159,10 +159,10 @@ func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, erro
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -192,10 +192,10 @@ func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

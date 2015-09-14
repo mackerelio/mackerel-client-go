@@ -129,10 +129,10 @@ func (c *Client) FindHost(id string) (*Host, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -176,10 +176,10 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -216,10 +216,10 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -256,10 +256,10 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -298,10 +298,10 @@ func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	return nil
 }
@@ -321,10 +321,10 @@ func (c *Client) RetireHost(id string) error {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer c.CloseReponse(resp)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
 	return nil
 }
