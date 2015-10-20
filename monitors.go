@@ -3,7 +3,6 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -82,13 +81,9 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -126,10 +121,10 @@ func (c *Client) CreateMonitor(param *Monitor) (*Monitor, error) {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -164,10 +159,10 @@ func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, erro
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -197,10 +192,10 @@ func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
