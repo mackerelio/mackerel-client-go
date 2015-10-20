@@ -45,7 +45,7 @@ func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
-	defer c.CloseReponse(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
-	defer c.CloseReponse(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return err
 	}
@@ -108,7 +108,7 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 		return nil, err
 	}
 	resp, err := c.Request(req)
-	defer c.CloseReponse(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}

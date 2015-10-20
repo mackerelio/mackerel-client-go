@@ -81,7 +81,7 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
-	defer c.CloseReponse(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, erro
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
-	defer c.CloseReponse(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +192,7 @@ func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.Request(req)
-	defer c.CloseReponse(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
