@@ -60,9 +60,11 @@ func TestPostHostMetricValues(t *testing.T) {
 	err := client.PostHostMetricValues([]*HostMetricValue{
 		&HostMetricValue{
 			HostID: "9rxGOHfVF8F",
-			Name:   "custom.metric.mysql.connections",
-			Time:   123456789,
-			Value:  100,
+			MetricValue: &MetricValue{
+				Name:  "custom.metric.mysql.connections",
+				Time:  123456789,
+				Value: 100,
+			},
 		},
 	})
 

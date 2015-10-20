@@ -1,10 +1,8 @@
 package mackerel
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -18,10 +16,8 @@ type MetricValue struct {
 
 // HostMetricValue host metric value
 type HostMetricValue struct {
-	HostID string      `json:"hostId,omitempty"`
-	Name   string      `json:"name,omitempty"`
-	Time   int64       `json:"time,omitempty"`
-	Value  interface{} `json:"value,omitempty"`
+	HostID string `json:"hostID,omitempty"`
+	*MetricValue
 }
 
 // LatestMetricValues latest metric value
@@ -29,28 +25,9 @@ type LatestMetricValues map[string]map[string]*MetricValue
 
 // PostHostMetricValues post host metrics
 func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
-	requestJSON, err := json.Marshal(metricValues)
-	if err != nil {
-		return err
-	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor("/api/v0/tsdb").String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
+	resp, err := c.PostJSON("/api/v0/tsdb", metricValues)
 	defer closeResponse(resp)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // PostHostMetricValuesByHostID post host metrics
@@ -58,10 +35,8 @@ func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*Me
 	var hostMetricValues []*HostMetricValue
 	for _, metricValue := range metricValues {
 		hostMetricValues = append(hostMetricValues, &HostMetricValue{
-			HostID: hostID,
-			Name:   metricValue.Name,
-			Value:  metricValue.Value,
-			Time:   metricValue.Time,
+			HostID:      hostID,
+			MetricValue: metricValue,
 		})
 	}
 	return c.PostHostMetricValues(hostMetricValues)
@@ -69,28 +44,9 @@ func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*Me
 
 // PostServiceMetricValues post service metrics
 func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
-	requestJSON, err := json.Marshal(metricValues)
-	if err != nil {
-		return err
-	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName)).String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
+	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName), metricValues)
 	defer closeResponse(resp)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // FetchLatestMetricValues fetch latest metrics
@@ -113,16 +69,10 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var data struct {
 		LatestMetricValues *LatestMetricValues `json:"tsdbLatest"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}

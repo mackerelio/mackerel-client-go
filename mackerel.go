@@ -1,6 +1,8 @@
 package mackerel
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -92,6 +94,31 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		return resp, fmt.Errorf("API result failed: %s", resp.Status)
 	}
 	return resp, nil
+}
+
+// PostJSON shortcut method for posting json
+func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
+	return c.requestJSON("POST", path, payload)
+}
+
+// PutJSON shortcut method for putting json
+func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
+	return c.requestJSON("PUT", path, payload)
+}
+
+func (c *Client) requestJSON(method string, path string, payload interface{}) (*http.Response, error) {
+	var body bytes.Buffer
+	err := json.NewEncoder(&body).Encode(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(method, c.urlFor(path).String(), &body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	return c.Request(req)
 }
 
 func closeResponse(resp *http.Response) {
