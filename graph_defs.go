@@ -18,6 +18,6 @@ type GraphDefsMetric struct {
 // CreateGraphDefs create graph defs
 func (c *Client) CreateGraphDefs(payloads []*GraphDefsParam) error {
 	resp, err := c.PostJSON("/api/v0/graph-defs/create", payloads)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	return err
 }
