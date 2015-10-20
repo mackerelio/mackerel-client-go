@@ -2,7 +2,6 @@ package mackerel
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -128,13 +127,9 @@ func (c *Client) FindHost(id string) (*Host, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
 	}
 
 	var data struct {
@@ -172,13 +167,9 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		return nil, err
 	}
 	resp, err := c.Request(req)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("status code is not 200")
 	}
 
 	var data struct {
@@ -195,7 +186,7 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 // CreateHost creating host
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	resp, err := c.PostJSON("/api/v0/hosts", param)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return "", err
 	}
@@ -213,7 +204,7 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 // UpdateHost update host
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
 	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s", hostID), param)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return "", err
 	}
@@ -234,23 +225,16 @@ func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/status", hostID), map[string]string{
 		"status": status,
 	})
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 // RetireHost retuire the host
 func (c *Client) RetireHost(id string) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/retire", id), "{}")
-	defer closeResp(resp)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New("status code is not 200")
-	}
-	return nil
+	defer closeResponse(resp)
+	return err
 }

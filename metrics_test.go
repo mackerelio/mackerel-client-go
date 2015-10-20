@@ -23,7 +23,7 @@ func TestPostHostMetricValues(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var values []struct {
-			HostID string      `json:"hostID"`
+			HostID string      `json:"hostId"`
 			Name   string      `json:"name"`
 			Time   float64     `json:"time"`
 			Value  interface{} `json:"value"`
@@ -35,7 +35,7 @@ func TestPostHostMetricValues(t *testing.T) {
 		}
 
 		if values[0].HostID != "9rxGOHfVF8F" {
-			t.Error("request sends json including hostID but: ", values[0].HostID)
+			t.Error("request sends json including hostId but: ", values[0].HostID)
 		}
 		if values[0].Name != "custom.metric.mysql.connections" {
 			t.Error("request sends json including name but: ", values[0].Name)
@@ -140,11 +140,11 @@ func TestFetchLatestMetricValues(t *testing.T) {
 		}
 
 		query := req.URL.Query()
-		if !reflect.DeepEqual(query["hostID"], []string{"123456ABCD", "654321ABCD"}) {
-			t.Error("request query 'hostID' param should be ['123456ABCD', '654321ABCD'] but: ", query["hostID"])
+		if !reflect.DeepEqual(query["hostId"], []string{"123456ABCD", "654321ABCD"}) {
+			t.Error("request query 'hostId' param should be ['123456ABCD', '654321ABCD'] but: ", query["hostId"])
 		}
 		if !reflect.DeepEqual(query["name"], []string{"mysql.connections.Connections", "mysql.connections.Thread_created"}) {
-			t.Error("request query 'hostID' param should be ['mysql.connections.Connections', 'mysql.connections.Thread_created'] but: ", query["name"])
+			t.Error("request query 'name' param should be ['mysql.connections.Connections', 'mysql.connections.Thread_created'] but: ", query["name"])
 		}
 
 		respJSON, _ := json.Marshal(map[string]map[string]map[string]*MetricValue{

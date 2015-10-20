@@ -26,7 +26,7 @@ type LatestMetricValues map[string]map[string]*MetricValue
 // PostHostMetricValues post host metrics
 func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
 	resp, err := c.PostJSON("/api/v0/tsdb", metricValues)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	return err
 }
 
@@ -45,7 +45,7 @@ func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*Me
 // PostServiceMetricValues post service metrics
 func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName), metricValues)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	return err
 }
 
@@ -53,7 +53,7 @@ func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*Me
 func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string) (LatestMetricValues, error) {
 	v := url.Values{}
 	for _, hostID := range hostIDs {
-		v.Add("hostID", hostID)
+		v.Add("hostId", hostID)
 	}
 	for _, metricName := range metricNames {
 		v.Add("name", metricName)
@@ -64,13 +64,9 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 		return nil, err
 	}
 	resp, err := c.Request(req)
-	defer closeResp(resp)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("status code is not 200")
 	}
 
 	var data struct {
