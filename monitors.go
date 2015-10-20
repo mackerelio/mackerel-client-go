@@ -1,10 +1,8 @@
 package mackerel
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -86,96 +84,45 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var data struct {
 		Monitors []*(Monitor) `json:"monitors"`
 	}
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-
 	return data.Monitors, err
 }
 
 // CreateMonitor creating monitor
 func (c *Client) CreateMonitor(param *Monitor) (*Monitor, error) {
-	requestJSON, err := json.Marshal(param)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(
-		"POST",
-		c.urlFor("/api/v0/monitors").String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer resp.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Monitor
-
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return &data, nil
-}
-
-// UpdateMonitor update monitor
-func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, error) {
-	requestJSON, err := json.Marshal(param)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(
-		"PUT",
-		c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(),
-		bytes.NewReader(requestJSON),
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
+	resp, err := c.PostJSON("/api/v0/monitors", param)
 	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	var data Monitor
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+// UpdateMonitor update monitor
+func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, error) {
+	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/monitors", monitorID), param)
+	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
 
 	var data Monitor
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-
 	return &data, nil
 }
 
@@ -197,17 +144,10 @@ func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var data Monitor
-
-	err = json.Unmarshal(body, &data)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-
 	return &data, nil
 }
