@@ -74,7 +74,7 @@ type Monitor struct {
 
 // FindMonitors find monitors
 func (c *Client) FindMonitors() ([]*Monitor, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s", c.urlFor("/api/v0/monitors").String()), nil)
+	req, err := http.NewRequest("GET", c.urlFor("/api/v0/monitors").String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (c *Client) CreateMonitor(param *Monitor) (*Monitor, error) {
 
 // UpdateMonitor update monitor
 func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/monitors", monitorID), param)
+	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/monitors/%s", monitorID), param)
 	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
