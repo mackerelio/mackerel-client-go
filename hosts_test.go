@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -19,9 +20,10 @@ func TestGetRoleFullnames(t *testing.T) {
 	}
 
 	fullnames := host.GetRoleFullnames()
+	sort.Strings(fullnames)
 
-	if !reflect.DeepEqual(fullnames, []string{"My-Service:db-master", "My-Service:db-slave", "My-Service2:proxy"}) {
-		t.Error("RoleFullnames shoud be ['My-Service:db-master', 'My-Service:db-slave', 'My-Service2:proxy'] but: ", fullnames)
+	if !reflect.DeepEqual(fullnames, []string{"My-Service2:proxy", "My-Service:db-master", "My-Service:db-slave"}) {
+		t.Error("RoleFullnames shoud be ['My-Service2:proxy', My-Service:db-master', 'My-Service:db-slave'] but: ", fullnames)
 	}
 }
 

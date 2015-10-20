@@ -67,12 +67,6 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 	return req
 }
 
-func closeResp(resp *http.Response) {
-	if resp != nil {
-		resp.Body.Close()
-	}
-}
-
 // Request request to mackerel and receive response
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	req = c.buildReq(req)
@@ -95,6 +89,9 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		if err == nil {
 			log.Printf("%s", dump)
 		}
+	}
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return resp, fmt.Errorf("API result failed: %s", resp.Status)
 	}
 	return resp, nil
 }
@@ -120,15 +117,12 @@ func (c *Client) requestJSON(method string, path string, payload interface{}) (*
 	if err != nil {
 		return nil, err
 	}
-
 	req.Header.Add("Content-Type", "application/json")
-	resp, err := c.Request(req)
-	if err != nil {
-		return resp, err
-	}
+	return c.Request(req)
+}
 
-	if resp.StatusCode >= 400 {
-		return resp, fmt.Errorf("request failed: [%s]", resp.Status)
+func closeResponse(resp *http.Response) {
+	if resp != nil {
+		resp.Body.Close()
 	}
-	return resp, nil
 }
