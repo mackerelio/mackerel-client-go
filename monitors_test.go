@@ -23,12 +23,13 @@ func TestFindMonitors(t *testing.T) {
 					"excludeScopes": []string{},
 				},
 				map[string]interface{}{
-					"id":               "2c5bLca8d",
-					"type":             "external",
-					"name":             "testMonitorExternal",
-					"url":              "http://www.example.com/",
-					"maxCheckAttempts": 3,
-					"service":          "someService",
+					"id":                   "2c5bLca8d",
+					"type":                 "external",
+					"name":                 "testMonitorExternal",
+					"url":                  "http://www.example.com/",
+					"maxCheckAttempts":     3,
+					"service":              "someService",
+					"notificationInterval": 60,
 				},
 			},
 		})
@@ -50,10 +51,14 @@ func TestFindMonitors(t *testing.T) {
 	}
 
 	if monitors[1].Type != "external" {
-		t.Error("request sends json including name but: ", monitors[0])
+		t.Error("request sends json including type but: ", monitors[1])
 	}
 
 	if monitors[1].Service != "someService" {
-		t.Error("request sends json including name but: ", monitors[0])
+		t.Error("request sends json including service but: ", monitors[1])
+	}
+
+	if monitors[1].NotificationInterval != 60 {
+		t.Error("request sends json including notificationInterval but: ", monitors[1])
 	}
 }
