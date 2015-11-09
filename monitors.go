@@ -29,7 +29,8 @@ import (
       ],
       "excludeScopes": [
         "SomeService: db-slave-backup"
-      ]
+      ],
+      "notificationInterval": 60
     },
     {
       "id"  : "2cSZzK3XfmG",
@@ -66,6 +67,7 @@ type Monitor struct {
 	Scopes               []string `json:"scopes,omitempty"`
 	Service              string   `json:"service,omitempty"`
 	MaxCheckAttempts     float64  `json:"maxCheckAttempts,omitempty"`
+	NotificationInterval uint64   `json:"notificationInterval,omitempty"`
 	ExcludeScopes        []string `json:"excludeScopes,omitempty"`
 	ResponseTimeCritical float64  `json:"responseTimeCritical,omitempty"`
 	ResponseTimeWarning  float64  `json:"responseTimeWarning,omitempty"`
