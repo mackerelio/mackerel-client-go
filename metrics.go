@@ -16,7 +16,7 @@ type MetricValue struct {
 
 // HostMetricValue host metric value
 type HostMetricValue struct {
-	HostID string `json:"hostID,omitempty"`
+	HostID string `json:"hostId,omitempty"`
 	*MetricValue
 }
 
