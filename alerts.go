@@ -43,7 +43,7 @@ type Alert struct {
 	ClosedAt  int64   `json:"closedAt,omitempty"`
 }
 
-// FindAlerts find monitors
+// FindAlerts find alerts
 func (c *Client) FindAlerts() ([]*Alert, error) {
 	req, err := http.NewRequest("GET", c.urlFor("/api/v0/alerts").String(), nil)
 	if err != nil {
@@ -65,7 +65,7 @@ func (c *Client) FindAlerts() ([]*Alert, error) {
 	return data.Alerts, err
 }
 
-// CloseAlert update monitor
+// CloseAlert close alert
 func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 	var reqBody struct {
 		Reason string `json:"reason"`
@@ -77,10 +77,13 @@ func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 		return nil, err
 	}
 
-	var data Alert
+	var data struct {
+		Alert *Alert `json:"alert"`
+	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-	return &data, nil
+
+	return data.Alert, nil
 }
