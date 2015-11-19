@@ -31,16 +31,16 @@ import (
 
 // Alert information
 type Alert struct {
-	ID        string `json:"id,omitempty"`
-	Status    string `json:"status,omitempty"`
-	MonitorID string `json:"monitorId,omitempty"`
-	Type      string `json:"type,omitempty"`
-	HostID    string `json:"hostId,omitempty"`
-	Value     uint64 `json:"value,omitempty"`
-	Message   string `json:"message,omitempty"`
-	Reason    string `json:"reason,omitempty"`
-	OpenedAt  uint64 `json:"openedAt,omitempty"`
-	ClosedAt  uint64 `json:"closedAt,omitempty"`
+	ID        string  `json:"id,omitempty"`
+	Status    string  `json:"status,omitempty"`
+	MonitorID string  `json:"monitorId,omitempty"`
+	Type      string  `json:"type,omitempty"`
+	HostID    string  `json:"hostId,omitempty"`
+	Value     float64 `json:"value,omitempty"`
+	Message   string  `json:"message,omitempty"`
+	Reason    string  `json:"reason,omitempty"`
+	OpenedAt  int64   `json:"openedAt,omitempty"`
+	ClosedAt  int64   `json:"closedAt,omitempty"`
 }
 
 // FindAlerts find monitors
