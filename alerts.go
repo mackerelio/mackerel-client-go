@@ -77,13 +77,11 @@ func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 		return nil, err
 	}
 
-	var data struct {
-		Alert *Alert `json:"alert"`
-	}
+	var data *Alert
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
 
-	return data.Alert, nil
+	return data, nil
 }
