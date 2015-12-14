@@ -47,7 +47,13 @@ import (
       "id"  : "2cSZzK3XfmG",
       "type": "external",
       "name": "example.com",
-      "url": "http://www.example.com"
+      "url": "http://www.example.com",
+      "service": "SomeService",
+      "maxCheckAttempts": 1,
+      "responseTimeCritical": 10000,
+      "responseTimeWarning": 5000,
+      "responseTimeDuration": 5,
+      "containsString": "Example"
     }
   ]
 }
