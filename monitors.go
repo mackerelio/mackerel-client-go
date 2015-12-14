@@ -72,6 +72,7 @@ type Monitor struct {
 	ResponseTimeCritical float64  `json:"responseTimeCritical,omitempty"`
 	ResponseTimeWarning  float64  `json:"responseTimeWarning,omitempty"`
 	ResponseTimeDuration float64  `json:"responseTimeDuration,omitempty"`
+	ContainsString       string   `json:"containsString,omitempty"`
 }
 
 // FindMonitors find monitors
