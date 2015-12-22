@@ -2,9 +2,11 @@ package mackerel
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // MetricValue metric value
@@ -78,4 +80,48 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 	}
 
 	return *(data.LatestMetricValues), err
+}
+
+// FetchHostMetricValues retrieves the metric values for a Host
+func (c *Client) FetchHostMetricValues(hostID string, metricName string, from int64, to int64) ([]MetricValue, error) {
+	return c.fetchMetricValues(&hostID, nil, metricName, from, to)
+}
+
+// FetchServiceMetricValues retrieves the metric values for a Service
+func (c *Client) FetchServiceMetricValues(serviceName string, metricName string, from int64, to int64) ([]MetricValue, error) {
+	return c.fetchMetricValues(nil, &serviceName, metricName, from, to)
+}
+
+func (c *Client) fetchMetricValues(hostID *string, serviceName *string, metricName string, from int64, to int64) ([]MetricValue, error) {
+	v := url.Values{}
+	v.Add("name", metricName)
+	v.Add("from", strconv.FormatInt(from, 10))
+	v.Add("to", strconv.FormatInt(to, 10))
+
+	url := ""
+	if hostID != nil {
+		url = "/api/v0/hosts/" + *hostID + "/metrics"
+	} else if serviceName != nil {
+		url = "/api/v0/services/" + *serviceName + "/metrics"
+	} else {
+		return nil, errors.New("specify either host or service")
+	}
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor(url).String(), v.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		MetricValues *[]MetricValue `json:"metrics"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return *(data.MetricValues), err
 }
