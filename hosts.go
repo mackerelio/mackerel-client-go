@@ -63,19 +63,21 @@ type Interface struct {
 
 // FindHostsParam parameters for FindHosts
 type FindHostsParam struct {
-	Service  string
-	Roles    []string
-	Name     string
-	Statuses []string
+	Service          string
+	Roles            []string
+	Name             string
+	Statuses         []string
+	CustomIdentifier string
 }
 
 // CreateHostParam parameters for CreateHost
 type CreateHostParam struct {
-	Name          string      `json:"name,omitempty"`
-	DisplayName   string      `json:"displayName,omitempty"`
-	Meta          HostMeta    `json:"meta,omitempty"`
-	Interfaces    []Interface `json:"interfaces,omitempty"`
-	RoleFullnames []string    `json:"roleFullnames,omitempty"`
+	Name             string      `json:"name,omitempty"`
+	DisplayName      string      `json:"displayName,omitempty"`
+	Meta             HostMeta    `json:"meta,omitempty"`
+	Interfaces       []Interface `json:"interfaces,omitempty"`
+	RoleFullnames    []string    `json:"roleFullnames,omitempty"`
+	CustomIdentifier string      `json:"customIdentifier,omitempty"`
 }
 
 // UpdateHostParam parameters for UpdateHost
@@ -162,6 +164,9 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		for _, status := range param.Statuses {
 			v.Add("status", status)
 		}
+	}
+	if param.CustomIdentifier != "" {
+		v.Set("customIdentifier", param.CustomIdentifier)
 	}
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/hosts.json").String(), v.Encode()), nil)
