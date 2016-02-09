@@ -13,6 +13,8 @@ import (
 type Host struct {
 	ID            string      `json:"id,omitempty"`
 	Name          string      `json:"name,omitempty"`
+	Nickname      string      `json:"nickname,omitempty"`
+	DisplayName   string      `json:"displayName,omitempty"`
 	Type          string      `json:"type,omitempty"`
 	Status        string      `json:"status,omitempty"`
 	Memo          string      `json:"memo,omitempty"`
