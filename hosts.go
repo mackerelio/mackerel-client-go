@@ -13,7 +13,6 @@ import (
 type Host struct {
 	ID            string      `json:"id,omitempty"`
 	Name          string      `json:"name,omitempty"`
-	Nickname      string      `json:"nickname,omitempty"`
 	DisplayName   string      `json:"displayName,omitempty"`
 	Type          string      `json:"type,omitempty"`
 	Status        string      `json:"status,omitempty"`
@@ -73,6 +72,7 @@ type FindHostsParam struct {
 // CreateHostParam parameters for CreateHost
 type CreateHostParam struct {
 	Name          string      `json:"name,omitempty"`
+	DisplayName   string      `json:"displayName,omitempty"`
 	Meta          HostMeta    `json:"meta,omitempty"`
 	Interfaces    []Interface `json:"interfaces,omitempty"`
 	RoleFullnames []string    `json:"roleFullnames,omitempty"`
