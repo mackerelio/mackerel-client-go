@@ -37,6 +37,7 @@ type HostMeta struct {
 	Filesystem    FileSystem  `json:"filesystem,omitempty"`
 	Kernel        Kernel      `json:"kernel,omitempty"`
 	Memory        Memory      `json:"memory,omitempty"`
+	Cloud         Cloud       `json:"cloud,omitempty"`
 }
 
 // BlockDevice blockdevice
@@ -53,6 +54,12 @@ type Kernel map[string]string
 
 // Memory memory
 type Memory map[string]string
+
+// Cloud cloud
+type Cloud struct {
+	Provider string                 `json:"provider,omitempty"`
+	MetaData map[string]interface{} `json:"metadata,omitempty"`
+}
 
 // Interface network interface
 type Interface struct {
