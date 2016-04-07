@@ -57,8 +57,8 @@ type Memory map[string]string
 
 // Cloud cloud
 type Cloud struct {
-	Provider string                 `json:"provider,omitempty"`
-	MetaData map[string]interface{} `json:"metadata,omitempty"`
+	Provider string      `json:"provider,omitempty"`
+	MetaData interface{} `json:"metadata,omitempty"`
 }
 
 // Interface network interface
