@@ -12,12 +12,14 @@ import (
     {
       "id": "2cSZzK3XfmG",
       "type": "connectivity",
+      "isMute": false,
       "scopes": [],
       "excludeScopes": []
     },
     {
       "id"  : "2cSZzK3XfmG",
       "type": "host",
+      "isMute": false,
       "name": "disk.aa-00.writes.delta",
       "duration": 3,
       "metric": "disk.aa-00.writes.delta",
@@ -35,6 +37,7 @@ import (
     {
       "id"  : "2cSZzK3XfmG",
       "type": "service",
+      "isMute": false,
       "name": "SomeService - custom.access_num.4xx_count",
       "service": "SomeService",
       "duration": 1,
@@ -46,6 +49,7 @@ import (
     {
       "id"  : "2cSZzK3XfmG",
       "type": "external",
+      "isMute": false,
       "name": "example.com",
       "url": "http://www.example.com",
       "service": "SomeService",
@@ -66,6 +70,7 @@ type Monitor struct {
 	ID                              string   `json:"id,omitempty"`
 	Name                            string   `json:"name,omitempty"`
 	Type                            string   `json:"type,omitempty"`
+	IsMute                          bool     `json:"isMute,omitempty"`
 	Metric                          string   `json:"metric,omitempty"`
 	Operator                        string   `json:"operator,omitempty"`
 	Warning                         float64  `json:"warning,omitempty"`
