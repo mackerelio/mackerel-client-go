@@ -12,7 +12,7 @@ import (
 	{
 	  "id": 2c5bLca8d,
 	  "title": "My Dashboard",
-	  "body": "# A test dashboard",
+	  "bodyMarkdown": "# A test dashboard",
 	  "urlPath": "2u4PP3TJqbu",
 	  "createdAt": 1439346145003,
 	  "updatedAt": 1439346145003
