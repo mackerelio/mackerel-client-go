@@ -247,6 +247,7 @@ func TestUpdateDashboard(t *testing.T) {
 	dashboard, err := client.UpdateDashboard(testID, &Dashboard{
 		Title:          "My Dashboard",
 		BodyMarkDown:   "# A test dashboard",
+		URLPath:        "2u4PP3TJqbu",
 	})
 
 	if err != nil {
