@@ -10,7 +10,7 @@ import (
 {
   "dashboards": [
 	{
-	  "id": 2c5bLca8d,
+	  "id": "2c5bLca8d",
 	  "title": "My Dashboard",
 	  "bodyMarkdown": "# A test dashboard",
 	  "urlPath": "2u4PP3TJqbu",
