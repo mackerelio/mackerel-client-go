@@ -198,3 +198,121 @@ func TestFetchLatestMetricValues(t *testing.T) {
 		t.Error("654321ABCD host mysql.connections.Connections should be 300 but: ", latestMetricValues["654321ABCD"]["mysql.connections.Connections"].Value)
 	}
 }
+
+func TestFetchHostMetricValues(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/123456ABCD/metrics" {
+			t.Error("request URL should be /api/v0/hosts/123456ABCD/metrics but :", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		query := req.URL.Query()
+		if !reflect.DeepEqual(query["name"], []string{"mysql.connections.Connections"}) {
+			t.Error("request query 'name' param should be ['mysql.connections.Connections'] but: ", query["name"])
+		}
+
+		respJSON, _ := json.Marshal(map[string][]MetricValue{
+			"metrics": []MetricValue{
+				MetricValue{
+					Time:  1450000800,
+					Value: 200,
+				},
+				MetricValue{
+					Time:  1450000860,
+					Value: 220,
+				},
+				MetricValue{
+					Time:  1450000920,
+					Value: 240,
+				},
+			},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	hostID := "123456ABCD"
+	metricName := "mysql.connections.Connections"
+	metricValues, err := client.FetchHostMetricValues(hostID, metricName, 1450000700, 1450001000)
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if metricValues[0].Value.(float64) != 200 {
+		t.Error("123456ABCD host mysql.connections.Connections should be 200 but: ", metricValues[0].Value)
+	}
+
+	if metricValues[1].Value.(float64) != 220 {
+		t.Error("123456ABCD host mysql.connections.Connections should be 220 but: ", metricValues[1].Value)
+	}
+
+	if metricValues[2].Value.(float64) != 240 {
+		t.Error("123456ABCD host mysql.connections.Connections should be 240 but: ", metricValues[2].Value)
+	}
+}
+
+func TestFetchServiceMetricValues(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/services/123456ABCD/metrics" {
+			t.Error("request URL should be /api/v0/services/123456ABCD/metrics but :", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		query := req.URL.Query()
+		if !reflect.DeepEqual(query["name"], []string{"custom.access_latency.avg"}) {
+			t.Error("request query 'name' param should be ['custom.access_latency.avg'] but: ", query["name"])
+		}
+
+		respJSON, _ := json.Marshal(map[string][]MetricValue{
+			"metrics": []MetricValue{
+				MetricValue{
+					Time:  1450000800,
+					Value: 0.12,
+				},
+				MetricValue{
+					Time:  1450000860,
+					Value: 0.14,
+				},
+				MetricValue{
+					Time:  1450000920,
+					Value: 0.16,
+				},
+			},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	serviceName := "123456ABCD"
+	metricName := "custom.access_latency.avg"
+	metricValues, err := client.FetchServiceMetricValues(serviceName, metricName, 1450000700, 1450001000)
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if metricValues[0].Value.(float64) != 0.12 {
+		t.Error("123456ABCD host custom.access_latency.avg should be 0.12 but: ", metricValues[0].Value)
+	}
+
+	if metricValues[1].Value.(float64) != 0.14 {
+		t.Error("123456ABCD host custom.access_latency.avg should be 0.14 but: ", metricValues[1].Value)
+	}
+
+	if metricValues[2].Value.(float64) != 0.16 {
+		t.Error("123456ABCD host custom.access_latency.avg should be 0.16 but: ", metricValues[2].Value)
+	}
+}
