@@ -106,7 +106,7 @@ func (c *Client) UpdateDashboard(dashboardID string, param *Dashboard) (*Dashboa
 	return &data, nil
 }
 
-// DeleteDashboard update dashboard
+// DeleteDashboard delete dashboard
 func (c *Client) DeleteDashboard(dashboardID string) (*Dashboard, error) {
 	req, err := http.NewRequest(
 		"DELETE",
