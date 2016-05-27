@@ -284,6 +284,44 @@ func TestUpdateHostStatus(t *testing.T) {
 	}
 }
 
+func TestUpdateHostRoleFullnames(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/role-fullnames" {
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/role-fullnames but :", req.URL.Path)
+		}
+
+		if req.Method != "PUT" {
+			t.Error("request method should be PUT but: ", req.Method)
+		}
+
+		body, _ := ioutil.ReadAll(req.Body)
+
+		var data struct {
+			RoleFullnames []string `json:"roleFullnames"`
+		}
+
+		err := json.Unmarshal(body, &data)
+		if err != nil {
+			t.Fatal("request body should be decoded as json", string(body))
+		}
+
+		respJSON, _ := json.Marshal(map[string]bool{
+			"success": true,
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	err := client.UpdateHostRoleFullnames("9rxGOHfVF8F", []string{"testservice:testrole", "testservice:testrole2"})
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+}
+
 func TestRetireHost(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/123456ABCD/retire" {
