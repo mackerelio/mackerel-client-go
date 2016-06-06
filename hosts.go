@@ -215,7 +215,7 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	return data.ID, nil
 }
 
-// UpdateHost update host
+// UpdateHost updates host
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
 	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s", hostID), param)
 	defer closeResponse(resp)
@@ -234,10 +234,22 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 	return data.ID, nil
 }
 
-// UpdateHostStatus update host status
+// UpdateHostStatus updates host status
 func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/status", hostID), map[string]string{
 		"status": status,
+	})
+	defer closeResponse(resp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateHostRoleFullnames updates host roles
+func (c *Client) UpdateHostRoleFullnames(hostID string, roleFullnames []string) error {
+	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s/role-fullnames", hostID), map[string][]string{
+		"roleFullnames": roleFullnames,
 	})
 	defer closeResponse(resp)
 	if err != nil {
