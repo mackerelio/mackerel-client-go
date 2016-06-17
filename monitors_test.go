@@ -37,6 +37,15 @@ func TestFindMonitors(t *testing.T) {
 					"certificationExpirationWarning":  30,
 					"containsString":                  "Foo Bar Baz",
 				},
+				map[string]interface{}{
+					"id":         "2DujfcR2kA9",
+					"name":       "expression test",
+					"type":       "expression",
+					"expression": "avg(roleSlots('service:role','loadavg5'))",
+					"operator":   ">",
+					"warning":    20,
+					"critical":   30,
+				},
 			},
 		})
 
@@ -90,5 +99,9 @@ func TestFindMonitors(t *testing.T) {
 
 	if monitors[1].ContainsString != "Foo Bar Baz" {
 		t.Error("request sends json including containsString but: ", monitors[1])
+	}
+
+	if monitors[2].Expression != "avg(roleSlots('service:role','loadavg5'))" {
+		t.Error("request sends json including expression but: ", monitors[2])
 	}
 }

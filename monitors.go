@@ -88,6 +88,7 @@ type Monitor struct {
 	CertificationExpirationCritical uint64   `json:"certificationExpirationCritical,omitempty"`
 	CertificationExpirationWarning  uint64   `json:"certificationExpirationWarning,omitempty"`
 	ContainsString                  string   `json:"containsString,omitempty"`
+	Expression                      string   `json:"expression,omitempty"`
 }
 
 // FindMonitors find monitors
