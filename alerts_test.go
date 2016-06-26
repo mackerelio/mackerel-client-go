@@ -15,8 +15,8 @@ func TestFindAlerts(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
-			"alerts": []map[string]interface{}{
-				map[string]interface{}{
+			"alerts": {
+				{
 					"id":        "2wpLU5fBXbG",
 					"status":    "CRITICAL",
 					"monitorId": "2cYjfibBkaj",
@@ -24,7 +24,7 @@ func TestFindAlerts(t *testing.T) {
 					"openedAt":  1445399342,
 					"hostId":    "2vJ965ygiXf",
 				},
-				map[string]interface{}{
+				{
 					"id":        "2ust8jNxFH3",
 					"status":    "CRITICAL",
 					"monitorId": "2cYjfibBkaj",

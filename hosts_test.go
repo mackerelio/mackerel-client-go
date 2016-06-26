@@ -38,12 +38,12 @@ func TestFindHost(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
-			"host": map[string]interface{}{
+			"host": {
 				"id":     "9rxGOHfVF8F",
 				"name":   "mydb001",
 				"status": "working",
 				"memo":   "hello",
-				"roles":  map[string][]string{"My-Service": []string{"db-master", "db-slave"}},
+				"roles":  map[string][]string{"My-Service": {"db-master", "db-slave"}},
 			},
 		})
 
@@ -94,13 +94,13 @@ func TestFindHosts(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
-			"hosts": []map[string]interface{}{
-				map[string]interface{}{
+			"hosts": {
+				{
 					"id":     "9rxGOHfVF8F",
 					"name":   "mydb001",
 					"status": "working",
 					"memo":   "hello",
-					"roles":  map[string][]string{"My-Service": []string{"db-master", "db-slave"}},
+					"roles":  map[string][]string{"My-Service": {"db-master", "db-slave"}},
 				},
 			},
 		})

@@ -3,10 +3,10 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"io/ioutil"
 )
 
 func TestFindDashboards(t *testing.T) {
@@ -16,8 +16,8 @@ func TestFindDashboards(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
-			"dashboards": []map[string]interface{}{
-				map[string]interface{}{
+			"dashboards": {
+				{
 					"id":           "2c5bLca8d",
 					"title":        "My Dashboard",
 					"bodyMarkDown": "# A test dashboard",
@@ -165,9 +165,9 @@ func TestCreateDashboard(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
 	dashboard, err := client.CreateDashboard(&Dashboard{
-		Title:          "My Dashboard",
-		BodyMarkDown:   "# A test dashboard",
-		URLPath:        "2u4PP3TJqbu",
+		Title:        "My Dashboard",
+		BodyMarkDown: "# A test dashboard",
+		URLPath:      "2u4PP3TJqbu",
 	})
 
 	if err != nil {
@@ -245,9 +245,9 @@ func TestUpdateDashboard(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
 	dashboard, err := client.UpdateDashboard(testID, &Dashboard{
-		Title:          "My Dashboard",
-		BodyMarkDown:   "# A test dashboard",
-		URLPath:        "2u4PP3TJqbu",
+		Title:        "My Dashboard",
+		BodyMarkDown: "# A test dashboard",
+		URLPath:      "2u4PP3TJqbu",
 	})
 
 	if err != nil {

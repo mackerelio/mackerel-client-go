@@ -15,14 +15,14 @@ func TestFindMonitors(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
-			"monitors": []map[string]interface{}{
-				map[string]interface{}{
+			"monitors": {
+				{
 					"id":            "2cSZzK3XfmG",
 					"type":          "connectivity",
 					"scopes":        []string{},
 					"excludeScopes": []string{},
 				},
-				map[string]interface{}{
+				{
 					"id":                              "2c5bLca8d",
 					"type":                            "external",
 					"name":                            "testMonitorExternal",
@@ -37,7 +37,7 @@ func TestFindMonitors(t *testing.T) {
 					"certificationExpirationWarning":  30,
 					"containsString":                  "Foo Bar Baz",
 				},
-				map[string]interface{}{
+				{
 					"id":         "2DujfcR2kA9",
 					"name":       "expression test",
 					"type":       "expression",

@@ -58,7 +58,7 @@ func TestPostHostMetricValues(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.PostHostMetricValues([]*HostMetricValue{
-		&HostMetricValue{
+		{
 			HostID: "9rxGOHfVF8F",
 			MetricValue: &MetricValue{
 				Name:  "custom.metric.mysql.connections",
@@ -117,7 +117,7 @@ func TestPostServiceMetricValues(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.PostServiceMetricValues("My-Service", []*MetricValue{
-		&MetricValue{
+		{
 			Name:  "proxy.access_log.latency",
 			Time:  123456789,
 			Value: 500,
@@ -148,26 +148,26 @@ func TestFetchLatestMetricValues(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string]map[string]map[string]*MetricValue{
-			"tsdbLatest": map[string]map[string]*MetricValue{
-				"123456ABCD": map[string]*MetricValue{
-					"mysql.connections.Connections": &MetricValue{
+			"tsdbLatest": {
+				"123456ABCD": {
+					"mysql.connections.Connections": {
 						Name:  "mysql.connections.Connections",
 						Time:  123456789,
 						Value: 200,
 					},
-					"mysql.connections.Thread_created": &MetricValue{
+					"mysql.connections.Thread_created": {
 						Name:  "mysql.connections.Thread_created",
 						Time:  123456789,
 						Value: 220,
 					},
 				},
-				"654321ABCD": map[string]*MetricValue{
-					"mysql.connections.Connections": &MetricValue{
+				"654321ABCD": {
+					"mysql.connections.Connections": {
 						Name:  "mysql.connections.Connections",
 						Time:  123456789,
 						Value: 300,
 					},
-					"mysql.connections.Thread_created": &MetricValue{
+					"mysql.connections.Thread_created": {
 						Name:  "mysql.connections.Thread_created",
 						Time:  123456789,
 						Value: 310,
@@ -215,16 +215,16 @@ func TestFetchHostMetricValues(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string][]MetricValue{
-			"metrics": []MetricValue{
-				MetricValue{
+			"metrics": {
+				{
 					Time:  1450000800,
 					Value: 200,
 				},
-				MetricValue{
+				{
 					Time:  1450000860,
 					Value: 220,
 				},
-				MetricValue{
+				{
 					Time:  1450000920,
 					Value: 240,
 				},
@@ -274,16 +274,16 @@ func TestFetchServiceMetricValues(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string][]MetricValue{
-			"metrics": []MetricValue{
-				MetricValue{
+			"metrics": {
+				{
 					Time:  1450000800,
 					Value: 0.12,
 				},
-				MetricValue{
+				{
 					Time:  1450000860,
 					Value: 0.14,
 				},
-				MetricValue{
+				{
 					Time:  1450000920,
 					Value: 0.16,
 				},

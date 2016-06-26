@@ -60,17 +60,17 @@ func TestCreateGraphDefs(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.CreateGraphDefs([]*GraphDefsParam{
-		&GraphDefsParam{
+		{
 			Name:        "mackerel",
 			DisplayName: "HorseMackerel",
 			Unit:        "percentage",
 			Metrics: []*GraphDefsMetric{
-				&GraphDefsMetric{
+				{
 					Name:        "saba1",
 					DisplayName: "aji1",
 					IsStacked:   false,
 				},
-				&GraphDefsMetric{
+				{
 					Name:        "saba2",
 					DisplayName: "aji2",
 					IsStacked:   false,
