@@ -176,7 +176,7 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		v.Set("customIdentifier", param.CustomIdentifier)
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/hosts.json").String(), v.Encode()), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/hosts").String(), v.Encode()), nil)
 	if err != nil {
 		return nil, err
 	}

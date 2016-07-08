@@ -71,8 +71,8 @@ func TestFindHost(t *testing.T) {
 
 func TestFindHosts(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/api/v0/hosts.json" {
-			t.Error("request URL should be /api/v0/hosts.json but :", req.URL.Path)
+		if req.URL.Path != "/api/v0/hosts" {
+			t.Error("request URL should be /api/v0/hosts but :", req.URL.Path)
 		}
 
 		query := req.URL.Query()
