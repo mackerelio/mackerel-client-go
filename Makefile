@@ -1,4 +1,4 @@
-test: lint
+test: lint gofmt
 	go test -v ./...
 
 testdeps:
@@ -12,10 +12,16 @@ LINT_RET = .golint.txt
 lint: testdeps
 	go tool vet .
 	rm -f $(LINT_RET)
-	golint ./... | tee .golint.txt
+	golint ./... | tee $(LINT_RET)
 	test ! -s $(LINT_RET)
+
+GOFMT_RET = .gofmt.txt
+gofmt: testdeps
+	rm -f $(GOFMT_RET)
+	gofmt -s -d *.go | tee $(GOFMT_RET)
+	test ! -s $(GOFMT_RET)
 
 cover: testdeps
 	goveralls
 
-.PHONY: test testdeps lint cover
+.PHONY: test testdeps lint gofmt cover
