@@ -24,6 +24,14 @@ func TestRequest(t *testing.T) {
 	client.Request(req)
 }
 
+func TestUrlFor(t *testing.T) {
+	client, _ := NewClientWithOptions("dummy-key", "https://example.com/with/ignored/path", false)
+	xURL := "https://example.com/some/super/endpoint"
+	if url := client.urlFor("/some/super/endpoint").String(); url != xURL {
+		t.Errorf("urlFor should be '%s' but %s", xURL, url)
+	}
+}
+
 func TestBuildReq(t *testing.T) {
 	cl := NewClient("dummy-key")
 	xVer := "1.0.1"
