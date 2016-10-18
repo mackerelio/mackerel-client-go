@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	defaultBaseURL    = "https://mackerel.io/api/v0"
+	defaultBaseURL    = "https://mackerel.io/"
 	defaultUserAgent  = "mackerel-client-go"
 	apiRequestTimeout = 30 * time.Second
 )
