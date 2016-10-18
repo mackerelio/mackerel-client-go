@@ -25,8 +25,8 @@ func TestRequest(t *testing.T) {
 }
 
 func TestUrlFor(t *testing.T) {
-	client, _ := NewClientWithOptions("dummy-key", "https://mymackerel.io/with/ignored/path", false)
-	xURL := "https://mymackerel.io/some/super/endpoint"
+	client, _ := NewClientWithOptions("dummy-key", "https://example.com/with/ignored/path", false)
+	xURL := "https://example.com/some/super/endpoint"
 	if url := client.urlFor("/some/super/endpoint").String(); url != xURL {
 		t.Errorf("urlFor should be '%s' but %s", xURL, url)
 	}
