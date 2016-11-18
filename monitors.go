@@ -65,9 +65,9 @@ import (
 }
 */
 
-// MonitorI represents interface to which each monitor type must confirm to.
+// monitorI represents interface to which each monitor type must confirm to.
 // TODO(haya14busa): remove trailing `I` in the name after migrating interface.
-type MonitorI interface {
+type monitorI interface {
 	// MonitorType() must return monitor type.
 	MonitorType() string
 }
@@ -82,11 +82,11 @@ const (
 
 // Ensure each monitor type conforms to the Monitor interface.
 var (
-	_ MonitorI = (*MonitorConnectivity)(nil)
-	_ MonitorI = (*MonitorHostMetric)(nil)
-	_ MonitorI = (*MonitorServiceMetric)(nil)
-	_ MonitorI = (*MonitorExternalHTTP)(nil)
-	_ MonitorI = (*MonitorExpression)(nil)
+	_ monitorI = (*MonitorConnectivity)(nil)
+	_ monitorI = (*MonitorHostMetric)(nil)
+	_ monitorI = (*MonitorServiceMetric)(nil)
+	_ monitorI = (*MonitorExternalHTTP)(nil)
+	_ monitorI = (*MonitorExpression)(nil)
 )
 
 // MonitorConnectivity represents connectivity monitor.
