@@ -66,6 +66,7 @@ import (
 */
 
 // MonitorI represents interface to which each monitor type must confirm to.
+// TODO(haya14busa): remove trailing `I` in the name after migrating interface.
 type MonitorI interface {
 	// MonitorType() must return monitor type.
 	MonitorType() string
@@ -88,6 +89,7 @@ var (
 	_ MonitorI = (*MonitorExpression)(nil)
 )
 
+// MonitorConnectivity represents connectivity monitor.
 type MonitorConnectivity struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
@@ -103,6 +105,7 @@ func (m *MonitorConnectivity) MonitorType() string {
 	return monitorTypeConnectivity
 }
 
+// MonitorHostMetric represents host metric monitor.
 type MonitorHostMetric struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
@@ -124,6 +127,7 @@ func (m *MonitorHostMetric) MonitorType() string {
 	return monitorTypeHostMeric
 }
 
+// MonitorServiceMetric represents service metric monitor.
 type MonitorServiceMetric struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
@@ -143,6 +147,7 @@ func (m *MonitorServiceMetric) MonitorType() string {
 	return monitorTypeServiceMetric
 }
 
+// MonitorExternalHTTP represents external HTTP monitor.
 type MonitorExternalHTTP struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
@@ -165,6 +170,7 @@ func (m *MonitorExternalHTTP) MonitorType() string {
 	return monitorTypeExternalHTTP
 }
 
+// MonitorExpression represents expression monitor.
 type MonitorExpression struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
