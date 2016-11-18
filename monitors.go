@@ -3,6 +3,8 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -65,9 +67,8 @@ import (
 }
 */
 
-// monitorI represents interface to which each monitor type must confirm to.
-// TODO(haya14busa): remove trailing `I` in the name after migrating interface.
-type monitorI interface {
+// Monitor represents interface to which each monitor type must confirm to.
+type Monitor interface {
 	MonitorType() string
 	MonitorID() string
 	MonitorName() string
@@ -83,11 +84,11 @@ const (
 
 // Ensure each monitor type conforms to the Monitor interface.
 var (
-	_ monitorI = (*MonitorConnectivity)(nil)
-	_ monitorI = (*MonitorHostMetric)(nil)
-	_ monitorI = (*MonitorServiceMetric)(nil)
-	_ monitorI = (*MonitorExternalHTTP)(nil)
-	_ monitorI = (*MonitorExpression)(nil)
+	_ Monitor = (*MonitorConnectivity)(nil)
+	_ Monitor = (*MonitorHostMetric)(nil)
+	_ Monitor = (*MonitorServiceMetric)(nil)
+	_ Monitor = (*MonitorExternalHTTP)(nil)
+	_ Monitor = (*MonitorExpression)(nil)
 )
 
 // MonitorConnectivity represents connectivity monitor.
@@ -214,34 +215,8 @@ func (m *MonitorExpression) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExpression) MonitorID() string { return m.ID }
 
-// Monitor information
-type Monitor struct {
-	ID                              string   `json:"id,omitempty"`
-	Name                            string   `json:"name,omitempty"`
-	Type                            string   `json:"type,omitempty"`
-	IsMute                          bool     `json:"isMute,omitempty"`
-	Metric                          string   `json:"metric,omitempty"`
-	Operator                        string   `json:"operator,omitempty"`
-	Warning                         float64  `json:"warning,omitempty"`
-	Critical                        float64  `json:"critical,omitempty"`
-	Duration                        uint64   `json:"duration,omitempty"`
-	URL                             string   `json:"url,omitempty"`
-	Scopes                          []string `json:"scopes,omitempty"`
-	Service                         string   `json:"service,omitempty"`
-	MaxCheckAttempts                float64  `json:"maxCheckAttempts,omitempty"`
-	NotificationInterval            uint64   `json:"notificationInterval,omitempty"`
-	ExcludeScopes                   []string `json:"excludeScopes,omitempty"`
-	ResponseTimeCritical            float64  `json:"responseTimeCritical,omitempty"`
-	ResponseTimeWarning             float64  `json:"responseTimeWarning,omitempty"`
-	ResponseTimeDuration            float64  `json:"responseTimeDuration,omitempty"`
-	CertificationExpirationCritical uint64   `json:"certificationExpirationCritical,omitempty"`
-	CertificationExpirationWarning  uint64   `json:"certificationExpirationWarning,omitempty"`
-	ContainsString                  string   `json:"containsString,omitempty"`
-	Expression                      string   `json:"expression,omitempty"`
-}
-
 // FindMonitors find monitors
-func (c *Client) FindMonitors() ([]*Monitor, error) {
+func (c *Client) FindMonitors() ([]Monitor, error) {
 	req, err := http.NewRequest("GET", c.urlFor("/api/v0/monitors").String(), nil)
 	if err != nil {
 		return nil, err
@@ -253,49 +228,45 @@ func (c *Client) FindMonitors() ([]*Monitor, error) {
 	}
 
 	var data struct {
-		Monitors []*(Monitor) `json:"monitors"`
+		Monitors []json.RawMessage `json:"monitors"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-	return data.Monitors, err
+	ms := make([]Monitor, 0, len(data.Monitors))
+	for _, rawmes := range data.Monitors {
+		m, err := decodeMonitor(rawmes)
+		if err != nil {
+			return nil, err
+		}
+		ms = append(ms, m)
+	}
+	return ms, err
 }
 
 // CreateMonitor creating monitor
-func (c *Client) CreateMonitor(param *Monitor) (*Monitor, error) {
+func (c *Client) CreateMonitor(param Monitor) (Monitor, error) {
 	resp, err := c.PostJSON("/api/v0/monitors", param)
 	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
-
-	var data Monitor
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return decodeMonitorReader(resp.Body)
 }
 
 // UpdateMonitor update monitor
-func (c *Client) UpdateMonitor(monitorID string, param *Monitor) (*Monitor, error) {
+func (c *Client) UpdateMonitor(monitorID string, param Monitor) (Monitor, error) {
 	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/monitors/%s", monitorID), param)
 	defer closeResponse(resp)
 	if err != nil {
 		return nil, err
 	}
-
-	var data Monitor
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return decodeMonitorReader(resp.Body)
 }
 
 // DeleteMonitor update monitor
-func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
+func (c *Client) DeleteMonitor(monitorID string) (Monitor, error) {
 	req, err := http.NewRequest(
 		"DELETE",
 		c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(),
@@ -311,24 +282,18 @@ func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	var data Monitor
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return decodeMonitorReader(resp.Body)
 }
 
 // decodeMonitor decodes json.RawMessage and returns monitor.
-func decodeMonitor(mes json.RawMessage) (monitorI, error) {
+func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 	var typeData struct {
 		Type string `json:"type"`
 	}
 	if err := json.Unmarshal(mes, &typeData); err != nil {
 		return nil, err
 	}
-	var m monitorI
+	var m Monitor
 	switch typeData.Type {
 	case monitorTypeConnectivity:
 		m = &MonitorConnectivity{}
@@ -345,4 +310,12 @@ func decodeMonitor(mes json.RawMessage) (monitorI, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func decodeMonitorReader(r io.Reader) (Monitor, error) {
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	return decodeMonitor(b)
 }

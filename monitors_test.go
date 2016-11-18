@@ -65,48 +65,55 @@ func TestFindMonitors(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 
-	if monitors[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", monitors[0])
+	{
+		m, ok := monitors[0].(*MonitorConnectivity)
+		if !ok || m.Type != "connectivity" {
+			t.Error("request sends json including type but: ", m)
+		}
 	}
 
-	if monitors[1].Type != "external" {
-		t.Error("request sends json including type but: ", monitors[1])
+	{
+		m, ok := monitors[1].(*MonitorExternalHTTP)
+		if !ok || m.Type != "external" {
+			t.Error("request sends json including type but: ", m)
+		}
+		if m.Service != "someService" {
+			t.Error("request sends json including service but: ", m)
+		}
+		if m.NotificationInterval != 60 {
+			t.Error("request sends json including notificationInterval but: ", m)
+		}
+
+		if m.ResponseTimeCritical != 5000 {
+			t.Error("request sends json including responseTimeCritical but: ", m)
+		}
+
+		if m.ResponseTimeWarning != 10000 {
+			t.Error("request sends json including responseTimeWarning but: ", m)
+		}
+
+		if m.ResponseTimeDuration != 5 {
+			t.Error("request sends json including responseTimeDuration but: ", m)
+		}
+
+		if m.CertificationExpirationCritical != 15 {
+			t.Error("request sends json including certificationExpirationCritical but: ", m)
+		}
+
+		if m.CertificationExpirationWarning != 30 {
+			t.Error("request sends json including certificationExpirationWarning but: ", m)
+		}
+
+		if m.ContainsString != "Foo Bar Baz" {
+			t.Error("request sends json including containsString but: ", m)
+		}
 	}
 
-	if monitors[1].Service != "someService" {
-		t.Error("request sends json including service but: ", monitors[1])
-	}
-
-	if monitors[1].NotificationInterval != 60 {
-		t.Error("request sends json including notificationInterval but: ", monitors[1])
-	}
-
-	if monitors[1].ResponseTimeCritical != 5000 {
-		t.Error("request sends json including responseTimeCritical but: ", monitors[1])
-	}
-
-	if monitors[1].ResponseTimeWarning != 10000 {
-		t.Error("request sends json including responseTimeWarning but: ", monitors[1])
-	}
-
-	if monitors[1].ResponseTimeDuration != 5 {
-		t.Error("request sends json including responseTimeDuration but: ", monitors[1])
-	}
-
-	if monitors[1].CertificationExpirationCritical != 15 {
-		t.Error("request sends json including certificationExpirationCritical but: ", monitors[1])
-	}
-
-	if monitors[1].CertificationExpirationWarning != 30 {
-		t.Error("request sends json including certificationExpirationWarning but: ", monitors[1])
-	}
-
-	if monitors[1].ContainsString != "Foo Bar Baz" {
-		t.Error("request sends json including containsString but: ", monitors[1])
-	}
-
-	if monitors[2].Expression != "avg(roleSlots('service:role','loadavg5'))" {
-		t.Error("request sends json including expression but: ", monitors[2])
+	{
+		m, ok := monitors[2].(*MonitorExpression)
+		if !ok || m.Type != "expression" {
+			t.Error("request sends json including expression but: ", monitors[2])
+		}
 	}
 }
 
@@ -169,7 +176,7 @@ const monitorsjson = `
 }
 `
 
-var wantMonitors = []monitorI{
+var wantMonitors = []Monitor{
 	&MonitorConnectivity{
 		ID:                   "2cSZzK3XfmA",
 		Name:                 "",
@@ -251,14 +258,14 @@ func BenchmarkDecodeMonitor(b *testing.B) {
 	}
 }
 
-func decodeMonitorsJSON(t testing.TB) []monitorI {
+func decodeMonitorsJSON(t testing.TB) []Monitor {
 	var data struct {
 		Monitors []json.RawMessage `json:"monitors"`
 	}
 	if err := json.NewDecoder(strings.NewReader(monitorsjson)).Decode(&data); err != nil {
 		t.Error(err)
 	}
-	ms := make([]monitorI, 0, len(data.Monitors))
+	ms := make([]Monitor, 0, len(data.Monitors))
 	for _, rawmes := range data.Monitors {
 		m, err := decodeMonitor(rawmes)
 		if err != nil {
