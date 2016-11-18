@@ -101,6 +101,7 @@ type MonitorConnectivity struct {
 	ExcludeScopes []string `json:"excludeScopes,omitempty"`
 }
 
+// MonitorType returns monitor type.
 func (m *MonitorConnectivity) MonitorType() string {
 	return monitorTypeConnectivity
 }
@@ -123,6 +124,7 @@ type MonitorHostMetric struct {
 	ExcludeScopes []string `json:"excludeScopes,omitempty"`
 }
 
+// MonitorType returns monitor type.
 func (m *MonitorHostMetric) MonitorType() string {
 	return monitorTypeHostMeric
 }
@@ -143,6 +145,7 @@ type MonitorServiceMetric struct {
 	Duration uint64  `json:"duration,omitempty"`
 }
 
+// MonitorType returns monitor type.
 func (m *MonitorServiceMetric) MonitorType() string {
 	return monitorTypeServiceMetric
 }
@@ -166,6 +169,7 @@ type MonitorExternalHTTP struct {
 	CertificationExpirationWarning  uint64  `json:"certificationExpirationWarning,omitempty"`
 }
 
+// MonitorType returns monitor type.
 func (m *MonitorExternalHTTP) MonitorType() string {
 	return monitorTypeExternalHTTP
 }
@@ -184,6 +188,7 @@ type MonitorExpression struct {
 	Critical   float64 `json:"critical,omitempty"`
 }
 
+// MonitorType returns monitor type.
 func (m *MonitorExpression) MonitorType() string {
 	return monitorTypeExpression
 }
