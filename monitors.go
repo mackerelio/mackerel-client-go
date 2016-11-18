@@ -319,3 +319,30 @@ func (c *Client) DeleteMonitor(monitorID string) (*Monitor, error) {
 	}
 	return &data, nil
 }
+
+// decodeMonitor decodes json.RawMessage and returns monitor.
+func decodeMonitor(mes json.RawMessage) (monitorI, error) {
+	var typeData struct {
+		Type string `json:"type"`
+	}
+	if err := json.Unmarshal(mes, &typeData); err != nil {
+		return nil, err
+	}
+	var m monitorI
+	switch typeData.Type {
+	case monitorTypeConnectivity:
+		m = &MonitorConnectivity{}
+	case monitorTypeHostMeric:
+		m = &MonitorHostMetric{}
+	case monitorTypeServiceMetric:
+		m = &MonitorServiceMetric{}
+	case monitorTypeExternalHTTP:
+		m = &MonitorExternalHTTP{}
+	case monitorTypeExpression:
+		m = &MonitorExpression{}
+	}
+	if err := json.Unmarshal(mes, m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
