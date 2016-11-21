@@ -9,7 +9,7 @@ mackerel-client-go
 [coveralls]: https://coveralls.io/r/mackerelio/mackerel-client-go?branch=master
 [godoc]: https://godoc.org/github.com/mackerelio/mackerel-client-go
 
-mackerel-client-go is a Go client library for [mackerel.io API](http://help-ja.mackerel.io/entry/spec/api/v0).
+mackerel-client-go is a Go client library for [mackerel.io API](https://mackerel.io/api-docs/).
 
 # Usage
 
