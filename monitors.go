@@ -65,6 +65,134 @@ import (
 }
 */
 
+// monitorI represents interface to which each monitor type must confirm to.
+// TODO(haya14busa): remove trailing `I` in the name after migrating interface.
+type monitorI interface {
+	// MonitorType() must return monitor type.
+	MonitorType() string
+}
+
+const (
+	monitorTypeConnectivity  = "connectivity"
+	monitorTypeHostMeric     = "host"
+	monitorTypeServiceMetric = "service"
+	monitorTypeExternalHTTP  = "external"
+	monitorTypeExpression    = "expression"
+)
+
+// Ensure each monitor type conforms to the Monitor interface.
+var (
+	_ monitorI = (*MonitorConnectivity)(nil)
+	_ monitorI = (*MonitorHostMetric)(nil)
+	_ monitorI = (*MonitorServiceMetric)(nil)
+	_ monitorI = (*MonitorExternalHTTP)(nil)
+	_ monitorI = (*MonitorExpression)(nil)
+)
+
+// MonitorConnectivity represents connectivity monitor.
+type MonitorConnectivity struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	Scopes        []string `json:"scopes,omitempty"`
+	ExcludeScopes []string `json:"excludeScopes,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorConnectivity) MonitorType() string {
+	return monitorTypeConnectivity
+}
+
+// MonitorHostMetric represents host metric monitor.
+type MonitorHostMetric struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	Metric   string  `json:"metric,omitempty"`
+	Operator string  `json:"operator,omitempty"`
+	Warning  float64 `json:"warning,omitempty"`
+	Critical float64 `json:"critical,omitempty"`
+	Duration uint64  `json:"duration,omitempty"`
+
+	Scopes        []string `json:"scopes,omitempty"`
+	ExcludeScopes []string `json:"excludeScopes,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorHostMetric) MonitorType() string {
+	return monitorTypeHostMeric
+}
+
+// MonitorServiceMetric represents service metric monitor.
+type MonitorServiceMetric struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	Service  string  `json:"service,omitempty"`
+	Metric   string  `json:"metric,omitempty"`
+	Operator string  `json:"operator,omitempty"`
+	Warning  float64 `json:"warning,omitempty"`
+	Critical float64 `json:"critical,omitempty"`
+	Duration uint64  `json:"duration,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorServiceMetric) MonitorType() string {
+	return monitorTypeServiceMetric
+}
+
+// MonitorExternalHTTP represents external HTTP monitor.
+type MonitorExternalHTTP struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	URL                             string  `json:"url,omitempty"`
+	MaxCheckAttempts                float64 `json:"maxCheckAttempts,omitempty"`
+	Service                         string  `json:"service,omitempty"`
+	ResponseTimeCritical            float64 `json:"responseTimeCritical,omitempty"`
+	ResponseTimeWarning             float64 `json:"responseTimeWarning,omitempty"`
+	ResponseTimeDuration            float64 `json:"responseTimeDuration,omitempty"`
+	ContainsString                  string  `json:"containsString,omitempty"`
+	CertificationExpirationCritical uint64  `json:"certificationExpirationCritical,omitempty"`
+	CertificationExpirationWarning  uint64  `json:"certificationExpirationWarning,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorExternalHTTP) MonitorType() string {
+	return monitorTypeExternalHTTP
+}
+
+// MonitorExpression represents expression monitor.
+type MonitorExpression struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	Expression string  `json:"expression,omitempty"`
+	Operator   string  `json:"operator,omitempty"`
+	Warning    float64 `json:"warning,omitempty"`
+	Critical   float64 `json:"critical,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorExpression) MonitorType() string {
+	return monitorTypeExpression
+}
+
 // Monitor information
 type Monitor struct {
 	ID                              string   `json:"id,omitempty"`
