@@ -68,8 +68,9 @@ import (
 // monitorI represents interface to which each monitor type must confirm to.
 // TODO(haya14busa): remove trailing `I` in the name after migrating interface.
 type monitorI interface {
-	// MonitorType() must return monitor type.
 	MonitorType() string
+	MonitorID() string
+	MonitorName() string
 }
 
 const (
@@ -102,9 +103,9 @@ type MonitorConnectivity struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorConnectivity) MonitorType() string {
-	return monitorTypeConnectivity
-}
+func (m *MonitorConnectivity) MonitorType() string { return monitorTypeConnectivity }
+func (m *MonitorConnectivity) MonitorName() string { return m.Name }
+func (m *MonitorConnectivity) MonitorID() string   { return m.ID }
 
 // MonitorHostMetric represents host metric monitor.
 type MonitorHostMetric struct {
@@ -125,9 +126,9 @@ type MonitorHostMetric struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorHostMetric) MonitorType() string {
-	return monitorTypeHostMeric
-}
+func (m *MonitorHostMetric) MonitorType() string { return monitorTypeHostMeric }
+func (m *MonitorHostMetric) MonitorName() string { return m.Name }
+func (m *MonitorHostMetric) MonitorID() string   { return m.ID }
 
 // MonitorServiceMetric represents service metric monitor.
 type MonitorServiceMetric struct {
@@ -146,9 +147,9 @@ type MonitorServiceMetric struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorServiceMetric) MonitorType() string {
-	return monitorTypeServiceMetric
-}
+func (m *MonitorServiceMetric) MonitorType() string { return monitorTypeServiceMetric }
+func (m *MonitorServiceMetric) MonitorName() string { return m.Name }
+func (m *MonitorServiceMetric) MonitorID() string   { return m.ID }
 
 // MonitorExternalHTTP represents external HTTP monitor.
 type MonitorExternalHTTP struct {
@@ -170,9 +171,9 @@ type MonitorExternalHTTP struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorExternalHTTP) MonitorType() string {
-	return monitorTypeExternalHTTP
-}
+func (m *MonitorExternalHTTP) MonitorType() string { return monitorTypeExternalHTTP }
+func (m *MonitorExternalHTTP) MonitorName() string { return m.Name }
+func (m *MonitorExternalHTTP) MonitorID() string   { return m.ID }
 
 // MonitorExpression represents expression monitor.
 type MonitorExpression struct {
@@ -189,9 +190,9 @@ type MonitorExpression struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorExpression) MonitorType() string {
-	return monitorTypeExpression
-}
+func (m *MonitorExpression) MonitorType() string { return monitorTypeExpression }
+func (m *MonitorExpression) MonitorName() string { return m.Name }
+func (m *MonitorExpression) MonitorID() string   { return m.ID }
 
 // Monitor information
 type Monitor struct {
