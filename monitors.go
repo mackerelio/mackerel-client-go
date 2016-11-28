@@ -72,6 +72,8 @@ type Monitor interface {
 	MonitorType() string
 	MonitorID() string
 	MonitorName() string
+
+	isMonitor()
 }
 
 const (
@@ -90,6 +92,15 @@ var (
 	_ Monitor = (*MonitorExternalHTTP)(nil)
 	_ Monitor = (*MonitorExpression)(nil)
 )
+
+// Ensure only monitor types defined in this package can be assigned to the
+// Monitor interface.
+//
+func (m *MonitorConnectivity) isMonitor()  {}
+func (m *MonitorHostMetric) isMonitor()    {}
+func (m *MonitorServiceMetric) isMonitor() {}
+func (m *MonitorExternalHTTP) isMonitor()  {}
+func (m *MonitorExpression) isMonitor()    {}
 
 // MonitorConnectivity represents connectivity monitor.
 type MonitorConnectivity struct {
