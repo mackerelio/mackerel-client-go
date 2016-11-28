@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/kylelemons/godebug/pretty"
 )
 
 func TestFindMonitors(t *testing.T) {
@@ -61,47 +65,213 @@ func TestFindMonitors(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 
-	if monitors[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", monitors[0])
+	{
+		m, ok := monitors[0].(*MonitorConnectivity)
+		if !ok || m.Type != "connectivity" {
+			t.Error("request sends json including type but: ", m)
+		}
 	}
 
-	if monitors[1].Type != "external" {
-		t.Error("request sends json including type but: ", monitors[1])
+	{
+		m, ok := monitors[1].(*MonitorExternalHTTP)
+		if !ok || m.Type != "external" {
+			t.Error("request sends json including type but: ", m)
+		}
+		if m.Service != "someService" {
+			t.Error("request sends json including service but: ", m)
+		}
+		if m.NotificationInterval != 60 {
+			t.Error("request sends json including notificationInterval but: ", m)
+		}
+
+		if m.ResponseTimeCritical != 5000 {
+			t.Error("request sends json including responseTimeCritical but: ", m)
+		}
+
+		if m.ResponseTimeWarning != 10000 {
+			t.Error("request sends json including responseTimeWarning but: ", m)
+		}
+
+		if m.ResponseTimeDuration != 5 {
+			t.Error("request sends json including responseTimeDuration but: ", m)
+		}
+
+		if m.CertificationExpirationCritical != 15 {
+			t.Error("request sends json including certificationExpirationCritical but: ", m)
+		}
+
+		if m.CertificationExpirationWarning != 30 {
+			t.Error("request sends json including certificationExpirationWarning but: ", m)
+		}
+
+		if m.ContainsString != "Foo Bar Baz" {
+			t.Error("request sends json including containsString but: ", m)
+		}
 	}
 
-	if monitors[1].Service != "someService" {
-		t.Error("request sends json including service but: ", monitors[1])
+	{
+		m, ok := monitors[2].(*MonitorExpression)
+		if !ok || m.Type != "expression" {
+			t.Error("request sends json including expression but: ", monitors[2])
+		}
 	}
+}
 
-	if monitors[1].NotificationInterval != 60 {
-		t.Error("request sends json including notificationInterval but: ", monitors[1])
-	}
+const monitorsjson = `
+{
+  "monitors": [
+    {
+      "id": "2cSZzK3XfmA",
+      "type": "connectivity",
+      "scopes": [],
+      "excludeScopes": []
+    },
+    {
+      "id"  : "2cSZzK3XfmB",
+      "type": "host",
+      "name": "disk.aa-00.writes.delta",
+      "duration": 3,
+      "metric": "disk.aa-00.writes.delta",
+      "operator": ">",
+      "warning": 20000.0,
+      "critical": 400000.0,
+      "scopes": [
+        "Hatena-Blog"
+      ],
+      "excludeScopes": [
+        "Hatena-Bookmark: db-master"
+      ]
+    },
+    {
+      "id"  : "2cSZzK3XfmC",
+      "type": "service",
+      "name": "Hatena-Blog - access_num.4xx_count",
+      "service": "Hatena-Blog",
+      "duration": 1,
+      "metric": "access_num.4xx_count",
+      "operator": ">",
+      "warning": 50.0,
+      "critical": 100.0,
+      "notificationInterval": 60
+    },
+    {
+      "id"  : "2cSZzK3XfmD",
+      "type": "external",
+      "name": "example.com",
+      "url": "http://www.example.com",
+      "service": "Hatena-Blog",
+      "headers": [{"name":"Cache-Control", "value":"no-cache"}]
+    },
+    {
+      "id"  : "2cSZzK3XfmE",
+      "type": "expression",
+      "name": "role average",
+      "expression": "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+      "operator": ">",
+      "warning": 5.0,
+      "critical": 10.0,
+      "notificationInterval": 60
+    }
+  ]
+}
+`
 
-	if monitors[1].ResponseTimeCritical != 5000 {
-		t.Error("request sends json including responseTimeCritical but: ", monitors[1])
-	}
+var wantMonitors = []Monitor{
+	&MonitorConnectivity{
+		ID:                   "2cSZzK3XfmA",
+		Name:                 "",
+		Type:                 "connectivity",
+		IsMute:               false,
+		NotificationInterval: 0,
+		Scopes:               []string{},
+		ExcludeScopes:        []string{},
+	},
+	&MonitorHostMetric{
+		ID:                   "2cSZzK3XfmB",
+		Name:                 "disk.aa-00.writes.delta",
+		Type:                 "host",
+		IsMute:               false,
+		NotificationInterval: 0,
+		Metric:               "disk.aa-00.writes.delta",
+		Operator:             ">",
+		Warning:              20000.000000,
+		Critical:             400000.000000,
+		Duration:             3,
+		Scopes: []string{
+			"Hatena-Blog",
+		},
+		ExcludeScopes: []string{
+			"Hatena-Bookmark: db-master",
+		},
+	},
+	&MonitorServiceMetric{
+		ID:                   "2cSZzK3XfmC",
+		Name:                 "Hatena-Blog - access_num.4xx_count",
+		Type:                 "service",
+		IsMute:               false,
+		NotificationInterval: 60,
+		Service:              "Hatena-Blog",
+		Metric:               "access_num.4xx_count",
+		Operator:             ">",
+		Warning:              50.000000,
+		Critical:             100.000000,
+		Duration:             1,
+	},
+	&MonitorExternalHTTP{
+		ID:                              "2cSZzK3XfmD",
+		Name:                            "example.com",
+		Type:                            "external",
+		IsMute:                          false,
+		NotificationInterval:            0,
+		URL:                             "http://www.example.com",
+		MaxCheckAttempts:                0.000000,
+		Service:                         "Hatena-Blog",
+		ResponseTimeCritical:            0.000000,
+		ResponseTimeWarning:             0.000000,
+		ResponseTimeDuration:            0.000000,
+		ContainsString:                  "",
+		CertificationExpirationCritical: 0,
+		CertificationExpirationWarning:  0,
+	},
+	&MonitorExpression{
+		ID:                   "2cSZzK3XfmE",
+		Name:                 "role average",
+		Type:                 "expression",
+		IsMute:               false,
+		NotificationInterval: 60,
+		Expression:           "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+		Operator:             ">",
+		Warning:              5.000000,
+		Critical:             10.000000,
+	},
+}
 
-	if monitors[1].ResponseTimeWarning != 10000 {
-		t.Error("request sends json including responseTimeWarning but: ", monitors[1])
+func TestDecodeMonitor(t *testing.T) {
+	if got := decodeMonitorsJSON(t); !reflect.DeepEqual(got, wantMonitors) {
+		t.Errorf("fail to get correct data: diff: (-got +want)\n%v", pretty.Compare(got, wantMonitors))
 	}
+}
 
-	if monitors[1].ResponseTimeDuration != 5 {
-		t.Error("request sends json including responseTimeDuration but: ", monitors[1])
+func BenchmarkDecodeMonitor(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		decodeMonitorsJSON(b)
 	}
+}
 
-	if monitors[1].CertificationExpirationCritical != 15 {
-		t.Error("request sends json including certificationExpirationCritical but: ", monitors[1])
+func decodeMonitorsJSON(t testing.TB) []Monitor {
+	var data struct {
+		Monitors []json.RawMessage `json:"monitors"`
 	}
-
-	if monitors[1].CertificationExpirationWarning != 30 {
-		t.Error("request sends json including certificationExpirationWarning but: ", monitors[1])
+	if err := json.NewDecoder(strings.NewReader(monitorsjson)).Decode(&data); err != nil {
+		t.Error(err)
 	}
-
-	if monitors[1].ContainsString != "Foo Bar Baz" {
-		t.Error("request sends json including containsString but: ", monitors[1])
+	ms := make([]Monitor, 0, len(data.Monitors))
+	for _, rawmes := range data.Monitors {
+		m, err := decodeMonitor(rawmes)
+		if err != nil {
+			t.Error(err)
+		}
+		ms = append(ms, m)
 	}
-
-	if monitors[2].Expression != "avg(roleSlots('service:role','loadavg5'))" {
-		t.Error("request sends json including expression but: ", monitors[2])
-	}
+	return ms
 }
