@@ -41,6 +41,9 @@ func TestFindMonitors(t *testing.T) {
 					"certificationExpirationWarning":  30,
 					"containsString":                  "Foo Bar Baz",
 					"skipCertificateVerification":     true,
+					"headers": []map[string]interface{}{
+						{"name": "Cache-Control", "value": "no-cache"},
+					},
 				},
 				{
 					"id":         "2DujfcR2kA9",
@@ -111,6 +114,10 @@ func TestFindMonitors(t *testing.T) {
 
 		if m.SkipCertificateVerification != true {
 			t.Error("request sends json including skipCertificateVerification but: ", m)
+		}
+
+		if !reflect.DeepEqual(m.Headers, []HeaderField{{Name: "Cache-Control", Value: "no-cache"}}) {
+			t.Error("request sends json including headers but: ", m)
 		}
 	}
 

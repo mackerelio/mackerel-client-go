@@ -62,7 +62,10 @@ import (
       "certificationExpirationCritical": 15,
       "certificationExpirationWarning": 30,
       "containsString": "Example",
-      "skipCertificateVerification": true
+      "skipCertificateVerification": true,
+      "headers": [
+        { "name": "Cache-Control", "value": "no-cache"}
+      ]
     }
   ]
 }
@@ -194,6 +197,17 @@ type MonitorExternalHTTP struct {
 	CertificationExpirationCritical uint64  `json:"certificationExpirationCritical,omitempty"`
 	CertificationExpirationWarning  uint64  `json:"certificationExpirationWarning,omitempty"`
 	SkipCertificateVerification     bool    `json:"skipCertificateVerification,omitempty"`
+	// Empty list of headers and nil are different. You have to specify empty
+	// list as headers explicitly if you want to remove all headers instead of
+	// using nil.
+	Headers []HeaderField `json:"headers"`
+}
+
+// HeaderField represents key-value pairs in an HTTP header for external http
+// monitoring.
+type HeaderField struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 // MonitorType returns monitor type.
