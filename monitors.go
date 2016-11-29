@@ -61,7 +61,8 @@ import (
       "responseTimeDuration": 5,
       "certificationExpirationCritical": 15,
       "certificationExpirationWarning": 30,
-      "containsString": "Example"
+      "containsString": "Example",
+      "skipCertificateVerification": true
     }
   ]
 }
@@ -192,6 +193,7 @@ type MonitorExternalHTTP struct {
 	ContainsString                  string  `json:"containsString,omitempty"`
 	CertificationExpirationCritical uint64  `json:"certificationExpirationCritical,omitempty"`
 	CertificationExpirationWarning  uint64  `json:"certificationExpirationWarning,omitempty"`
+	SkipCertificateVerification     bool    `json:"skipCertificateVerification,omitempty"`
 }
 
 // MonitorType returns monitor type.
