@@ -129,6 +129,37 @@ func TestFindMonitors(t *testing.T) {
 	}
 }
 
+// ensure that it supports `"headers":[]` and headers must be nil by default.
+func TestMonitorExternalHTTP_headers(t *testing.T) {
+	tests := []struct {
+		name string
+		in   *MonitorExternalHTTP
+		want string
+	}{
+		{
+			name: "default",
+			in:   &MonitorExternalHTTP{},
+			want: `{"headers":null}`,
+		},
+		{
+			name: "empty list",
+			in:   &MonitorExternalHTTP{Headers: []HeaderField{}},
+			want: `{"headers":[]}`,
+		},
+	}
+
+	for _, tt := range tests {
+		b, err := json.Marshal(tt.in)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+		if got := string(b); got != tt.want {
+			t.Errorf("%s: got %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
 const monitorsjson = `
 {
   "monitors": [
