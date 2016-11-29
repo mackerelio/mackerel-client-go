@@ -40,6 +40,7 @@ func TestFindMonitors(t *testing.T) {
 					"certificationExpirationCritical": 15,
 					"certificationExpirationWarning":  30,
 					"containsString":                  "Foo Bar Baz",
+					"skipCertificateVerification":     true,
 				},
 				{
 					"id":         "2DujfcR2kA9",
@@ -106,6 +107,10 @@ func TestFindMonitors(t *testing.T) {
 
 		if m.ContainsString != "Foo Bar Baz" {
 			t.Error("request sends json including containsString but: ", m)
+		}
+
+		if m.SkipCertificateVerification != true {
+			t.Error("request sends json including skipCertificateVerification but: ", m)
 		}
 	}
 
@@ -232,6 +237,7 @@ var wantMonitors = []Monitor{
 		ContainsString:                  "",
 		CertificationExpirationCritical: 0,
 		CertificationExpirationWarning:  0,
+		SkipCertificateVerification:     false,
 	},
 	&MonitorExpression{
 		ID:                   "2cSZzK3XfmE",
