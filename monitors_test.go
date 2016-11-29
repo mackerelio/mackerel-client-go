@@ -276,6 +276,12 @@ var wantMonitors = []Monitor{
 		CertificationExpirationCritical: 0,
 		CertificationExpirationWarning:  0,
 		SkipCertificateVerification:     false,
+		Headers: []HeaderField{
+			{
+				Name:  "Cache-Control",
+				Value: "no-cache",
+			},
+		},
 	},
 	&MonitorExpression{
 		ID:                   "2cSZzK3XfmE",
