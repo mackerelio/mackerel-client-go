@@ -41,6 +41,9 @@ func TestFindMonitors(t *testing.T) {
 					"certificationExpirationWarning":  30,
 					"containsString":                  "Foo Bar Baz",
 					"skipCertificateVerification":     true,
+					"headers": []map[string]interface{}{
+						{"name": "Cache-Control", "value": "no-cache"},
+					},
 				},
 				{
 					"id":         "2DujfcR2kA9",
@@ -112,12 +115,47 @@ func TestFindMonitors(t *testing.T) {
 		if m.SkipCertificateVerification != true {
 			t.Error("request sends json including skipCertificateVerification but: ", m)
 		}
+
+		if !reflect.DeepEqual(m.Headers, []HeaderField{{Name: "Cache-Control", Value: "no-cache"}}) {
+			t.Error("request sends json including headers but: ", m)
+		}
 	}
 
 	{
 		m, ok := monitors[2].(*MonitorExpression)
 		if !ok || m.Type != "expression" {
 			t.Error("request sends json including expression but: ", monitors[2])
+		}
+	}
+}
+
+// ensure that it supports `"headers":[]` and headers must be nil by default.
+func TestMonitorExternalHTTP_headers(t *testing.T) {
+	tests := []struct {
+		name string
+		in   *MonitorExternalHTTP
+		want string
+	}{
+		{
+			name: "default",
+			in:   &MonitorExternalHTTP{},
+			want: `{"headers":null}`,
+		},
+		{
+			name: "empty list",
+			in:   &MonitorExternalHTTP{Headers: []HeaderField{}},
+			want: `{"headers":[]}`,
+		},
+	}
+
+	for _, tt := range tests {
+		b, err := json.Marshal(tt.in)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+		if got := string(b); got != tt.want {
+			t.Errorf("%s: got %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
@@ -238,6 +276,12 @@ var wantMonitors = []Monitor{
 		CertificationExpirationCritical: 0,
 		CertificationExpirationWarning:  0,
 		SkipCertificateVerification:     false,
+		Headers: []HeaderField{
+			{
+				Name:  "Cache-Control",
+				Value: "no-cache",
+			},
+		},
 	},
 	&MonitorExpression{
 		ID:                   "2cSZzK3XfmE",
