@@ -325,3 +325,49 @@ func decodeMonitorsJSON(t testing.TB) []Monitor {
 	}
 	return ms
 }
+
+var monitorsToBeEncoded = []Monitor{
+	&MonitorHostMetric{
+		ID:       "2cSZzK3XfmB",
+		Warning:  0.000000,
+		Critical: 400000.000000,
+	},
+	&MonitorServiceMetric{
+		ID:       "2cSZzK3XfmC",
+		Warning:  50.000000,
+		Critical: 0.000000,
+	},
+	&MonitorExpression{
+		ID:       "2cSZzK3XfmE",
+		Warning:  0.000000,
+		Critical: 0.000000,
+	},
+}
+
+func TestEncodeMonitor(t *testing.T) {
+	b, err := json.MarshalIndent(monitorsToBeEncoded, "", "    ")
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	want := `[
+    {
+        "id": "2cSZzK3XfmB",
+        "warning": 0,
+        "critical": 400000
+    },
+    {
+        "id": "2cSZzK3XfmC",
+        "warning": 50,
+        "critical": 0
+    },
+    {
+        "id": "2cSZzK3XfmE",
+        "warning": 0,
+        "critical": 0
+    }
+]`
+	if got := string(b); got != want {
+		t.Errorf("got %v, want %v", got, want)
+	}
+}

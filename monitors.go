@@ -137,8 +137,8 @@ type MonitorHostMetric struct {
 
 	Metric   string  `json:"metric,omitempty"`
 	Operator string  `json:"operator,omitempty"`
-	Warning  float64 `json:"warning,omitempty"`
-	Critical float64 `json:"critical,omitempty"`
+	Warning  float64 `json:"warning"`
+	Critical float64 `json:"critical"`
 	Duration uint64  `json:"duration,omitempty"`
 
 	Scopes        []string `json:"scopes,omitempty"`
@@ -165,8 +165,8 @@ type MonitorServiceMetric struct {
 	Service  string  `json:"service,omitempty"`
 	Metric   string  `json:"metric,omitempty"`
 	Operator string  `json:"operator,omitempty"`
-	Warning  float64 `json:"warning,omitempty"`
-	Critical float64 `json:"critical,omitempty"`
+	Warning  float64 `json:"warning"`
+	Critical float64 `json:"critical"`
 	Duration uint64  `json:"duration,omitempty"`
 }
 
@@ -229,8 +229,8 @@ type MonitorExpression struct {
 
 	Expression string  `json:"expression,omitempty"`
 	Operator   string  `json:"operator,omitempty"`
-	Warning    float64 `json:"warning,omitempty"`
-	Critical   float64 `json:"critical,omitempty"`
+	Warning    float64 `json:"warning"`
+	Critical   float64 `json:"critical"`
 }
 
 // MonitorType returns monitor type.
