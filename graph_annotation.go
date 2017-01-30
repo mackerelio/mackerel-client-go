@@ -11,8 +11,8 @@ type GraphAnnotation struct {
 }
 
 // CreateGraphAnnotation creates graph annotation.
-func (c *Client) CreateGraphAnnotation(payloads *GraphAnnotation) error {
-	resp, err := c.PostJSON("/api/v0/graph-annotations", payloads)
+func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) error {
+	resp, err := c.PostJSON("/api/v0/graph-annotations", annotation)
 	defer closeResponse(resp)
 	return err
 }
