@@ -1,6 +1,6 @@
 package mackerel
 
-// GraphAnnotation parameters to post graph annotation
+// GraphAnnotation represents parameters to post graph annotation.
 type GraphAnnotation struct {
 	Service     string   `json:"service,omitempty"`
 	Roles       []string `json:"roles,omitempty"`
@@ -10,7 +10,7 @@ type GraphAnnotation struct {
 	Description string   `json:"description,omitempty"`
 }
 
-// CreateGraphAnnotation create graph annotation
+// CreateGraphAnnotation creates graph annotation.
 func (c *Client) CreateGraphAnnotation(payloads *GraphAnnotation) error {
 	resp, err := c.PostJSON("/api/v0/graph-annotations", payloads)
 	defer closeResponse(resp)
