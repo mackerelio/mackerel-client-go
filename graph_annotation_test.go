@@ -124,8 +124,24 @@ func TestFindGraphAnnotations(t *testing.T) {
 		t.Error("request sends json including Service but: ", annotations[0].Service)
 	}
 
+	if !reflect.DeepEqual(annotations[0].Roles, []string{"Role1", "Role2"}) {
+		t.Error("request sends json including Roles but: ", annotations[0].Roles)
+	}
+
+	if annotations[0].From != 1485675275 {
+		t.Error("request sends json including From but: ", annotations[0].From)
+	}
+
+	if annotations[0].To != 1485675299 {
+		t.Error("request sends json including To but: ", annotations[0].To)
+	}
+
 	if annotations[0].Title != "Deployed" {
 		t.Error("request sends json including Title but: ", annotations[0].Title)
+	}
+
+	if annotations[0].Description != "Deployed my blog" {
+		t.Error("request sends json including Description but: ", annotations[0].Description)
 	}
 }
 
@@ -171,8 +187,24 @@ func TestUpdateGraphAnnotations(t *testing.T) {
 		t.Error("request sends json including Service but: ", annotation.Service)
 	}
 
+	if !reflect.DeepEqual(annotation.Roles, []string{"Role1", "Role2"}) {
+		t.Error("request sends json including Roles but: ", annotation.Roles)
+	}
+
+	if annotation.From != 1485675275 {
+		t.Error("request sends json including From but: ", annotation.From)
+	}
+
+	if annotation.To != 1485675299 {
+		t.Error("request sends json including To but: ", annotation.To)
+	}
+
 	if annotation.Title != "Deployed" {
 		t.Error("request sends json including Title but: ", annotation.Title)
+	}
+
+	if annotation.Description != "Deployed my blog" {
+		t.Error("request sends json including Description but: ", annotation.Description)
 	}
 }
 
@@ -205,10 +237,28 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 	if err != nil {
 		t.Error("err shoud be nil but: ", err)
 	}
+
 	if annotation.Service != "My-Blog" {
 		t.Error("request sends json including Service but: ", annotation.Service)
 	}
+
+	if !reflect.DeepEqual(annotation.Roles, []string{"Role1", "Role2"}) {
+		t.Error("request sends json including Roles but: ", annotation.Roles)
+	}
+
+	if annotation.From != 1485675275 {
+		t.Error("request sends json including From but: ", annotation.From)
+	}
+
+	if annotation.To != 1485675299 {
+		t.Error("request sends json including To but: ", annotation.To)
+	}
+
 	if annotation.Title != "Deployed" {
 		t.Error("request sends json including Title but: ", annotation.Title)
+	}
+
+	if annotation.Description != "Deployed my blog" {
+		t.Error("request sends json including Description but: ", annotation.Description)
 	}
 }
