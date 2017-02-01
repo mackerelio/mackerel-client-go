@@ -89,7 +89,7 @@ func (c *Client) DeleteGraphAnnotation(annotationID string) (*GraphAnnotation, e
 		return nil, err
 	}
 
-	var annotation = GraphAnnotation{}
+	var annotation GraphAnnotation
 	err = json.NewDecoder(resp.Body).Decode(&annotation)
 	if err != nil {
 		return nil, err
