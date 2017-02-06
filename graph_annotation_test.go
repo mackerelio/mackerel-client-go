@@ -52,8 +52,13 @@ func TestCreateGraphAnnotation(t *testing.T) {
 		if data.Description != "Deployed my blog" {
 			t.Errorf("request sends json including Description but: %s", data.Description)
 		}
-		respJSON, _ := json.Marshal(map[string]string{
-			"result": "OK",
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"service":     "My-Blog",
+			"roles":       []string{"Role1", "Role2"},
+			"from":        1485675275,
+			"to":          1485675299,
+			"title":       "Deployed",
+			"description": "Deployed my blog",
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
 		fmt.Fprint(res, string(respJSON))
@@ -61,7 +66,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	err := client.CreateGraphAnnotation(&GraphAnnotation{
+	annotation, err := client.CreateGraphAnnotation(&GraphAnnotation{
 		Service:     "My-Blog",
 		Roles:       []string{"Role1", "Role2"},
 		From:        1485675275,
@@ -72,6 +77,30 @@ func TestCreateGraphAnnotation(t *testing.T) {
 
 	if err != nil {
 		t.Error("err shoud be nil but: ", err)
+	}
+
+	if annotation.Service != "My-Blog" {
+		t.Error("request sends json including Service but: ", annotation.Service)
+	}
+
+	if !reflect.DeepEqual(annotation.Roles, []string{"Role1", "Role2"}) {
+		t.Error("request sends json including Roles but: ", annotation.Roles)
+	}
+
+	if annotation.From != 1485675275 {
+		t.Error("request sends json including From but: ", annotation.From)
+	}
+
+	if annotation.To != 1485675299 {
+		t.Error("request sends json including To but: ", annotation.To)
+	}
+
+	if annotation.Title != "Deployed" {
+		t.Error("request sends json including Title but: ", annotation.Title)
+	}
+
+	if annotation.Description != "Deployed my blog" {
+		t.Error("request sends json including Description but: ", annotation.Description)
 	}
 }
 

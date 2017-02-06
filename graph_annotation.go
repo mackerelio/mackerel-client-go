@@ -20,10 +20,23 @@ type GraphAnnotation struct {
 }
 
 // CreateGraphAnnotation creates graph annotation.
-func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) error {
+func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) (*GraphAnnotation, error) {
 	resp, err := c.PostJSON("/api/v0/graph-annotations", annotation)
 	defer closeResponse(resp)
-	return err
+
+	if err != nil {
+		return nil, err
+	}
+
+	var createdAnnotation GraphAnnotation
+
+	fmt.Println(resp)
+	fmt.Println(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(&createdAnnotation)
+	if err != nil {
+		return nil, err
+	}
+	return &createdAnnotation, err
 }
 
 // FindGraphAnnotations fetches graph annotation.
