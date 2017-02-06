@@ -30,8 +30,6 @@ func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) (*GraphAnnot
 
 	var createdAnnotation GraphAnnotation
 
-	fmt.Println(resp)
-	fmt.Println(resp.Body)
 	err = json.NewDecoder(resp.Body).Decode(&createdAnnotation)
 	if err != nil {
 		return nil, err
