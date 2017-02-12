@@ -28,13 +28,12 @@ func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) (*GraphAnnot
 		return nil, err
 	}
 
-	var createdAnnotation GraphAnnotation
-
-	err = json.NewDecoder(resp.Body).Decode(&createdAnnotation)
+	var anno GraphAnnotation
+	err = json.NewDecoder(resp.Body).Decode(&anno)
 	if err != nil {
 		return nil, err
 	}
-	return &createdAnnotation, err
+	return &anno, err
 }
 
 // FindGraphAnnotations fetches graph annotation.
