@@ -33,7 +33,7 @@ func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) (*GraphAnnot
 	if err != nil {
 		return nil, err
 	}
-	return &anno, err
+	return &anno, nil
 }
 
 // FindGraphAnnotations fetches graph annotation.
