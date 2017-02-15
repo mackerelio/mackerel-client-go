@@ -53,6 +53,7 @@ import (
       "type": "external",
       "isMute": false,
       "name": "example.com",
+      "method": "GET",
       "url": "http://www.example.com",
       "service": "SomeService",
       "maxCheckAttempts": 1,
@@ -61,6 +62,7 @@ import (
       "responseTimeDuration": 5,
       "certificationExpirationCritical": 15,
       "certificationExpirationWarning": 30,
+      "requestBody": "Request Body",
       "containsString": "Example",
       "skipCertificateVerification": true,
       "headers": [
@@ -187,12 +189,14 @@ type MonitorExternalHTTP struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
+	Method                          string  `json:"method,omitempty"`
 	URL                             string  `json:"url,omitempty"`
 	MaxCheckAttempts                float64 `json:"maxCheckAttempts,omitempty"`
 	Service                         string  `json:"service,omitempty"`
 	ResponseTimeCritical            float64 `json:"responseTimeCritical,omitempty"`
 	ResponseTimeWarning             float64 `json:"responseTimeWarning,omitempty"`
 	ResponseTimeDuration            float64 `json:"responseTimeDuration,omitempty"`
+	RequestBody                     string  `json:"requestBody,omitempty"`
 	ContainsString                  string  `json:"containsString,omitempty"`
 	CertificationExpirationCritical uint64  `json:"certificationExpirationCritical,omitempty"`
 	CertificationExpirationWarning  uint64  `json:"certificationExpirationWarning,omitempty"`
