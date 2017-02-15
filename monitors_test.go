@@ -209,7 +209,7 @@ const monitorsjson = `
       "url": "https://example.com",
       "service": "Hatena-Blog",
       "headers": [{"name":"Cache-Control", "value":"no-cache"}],
-			"requestBody": "Request Body"
+      "requestBody": "Request Body"
     },
     {
       "id"  : "2cSZzK3XfmE",
