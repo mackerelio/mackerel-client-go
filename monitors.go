@@ -112,6 +112,7 @@ func (m *MonitorExpression) isMonitor()    {}
 type MonitorConnectivity struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
 	Type                 string `json:"type,omitempty"`
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
@@ -133,6 +134,7 @@ func (m *MonitorConnectivity) MonitorID() string { return m.ID }
 type MonitorHostMetric struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
 	Type                 string `json:"type,omitempty"`
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
@@ -160,6 +162,7 @@ func (m *MonitorHostMetric) MonitorID() string { return m.ID }
 type MonitorServiceMetric struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
 	Type                 string `json:"type,omitempty"`
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
@@ -185,6 +188,7 @@ func (m *MonitorServiceMetric) MonitorID() string { return m.ID }
 type MonitorExternalHTTP struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
 	Type                 string `json:"type,omitempty"`
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
@@ -227,6 +231,7 @@ func (m *MonitorExternalHTTP) MonitorID() string { return m.ID }
 type MonitorExpression struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
 	Type                 string `json:"type,omitempty"`
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
