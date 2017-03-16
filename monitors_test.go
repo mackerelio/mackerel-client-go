@@ -23,6 +23,7 @@ func TestFindMonitors(t *testing.T) {
 				{
 					"id":            "2cSZzK3XfmG",
 					"type":          "connectivity",
+					"memo":          "connectivity monitor",
 					"scopes":        []string{},
 					"excludeScopes": []string{},
 				},
@@ -30,6 +31,7 @@ func TestFindMonitors(t *testing.T) {
 					"id":                              "2c5bLca8d",
 					"type":                            "external",
 					"name":                            "testMonitorExternal",
+					"memo":                            "this monitor checks example.com.",
 					"method":                          "GET",
 					"url":                             "https://www.example.com/",
 					"maxCheckAttempts":                3,
@@ -49,6 +51,7 @@ func TestFindMonitors(t *testing.T) {
 				{
 					"id":         "2DujfcR2kA9",
 					"name":       "expression test",
+					"memo":       "a monitor for expression",
 					"type":       "expression",
 					"expression": "avg(roleSlots('service:role','loadavg5'))",
 					"operator":   ">",
@@ -75,12 +78,18 @@ func TestFindMonitors(t *testing.T) {
 		if !ok || m.Type != "connectivity" {
 			t.Error("request sends json including type but: ", m)
 		}
+		if m.Memo != "connectivity monitor" {
+			t.Error("request sends json including memo but: ", m)
+		}
 	}
 
 	{
 		m, ok := monitors[1].(*MonitorExternalHTTP)
 		if !ok || m.Type != "external" {
 			t.Error("request sends json including type but: ", m)
+		}
+		if m.Memo != "this monitor checks example.com." {
+			t.Error("request sends json including memo but: ", m)
 		}
 		if m.Service != "someService" {
 			t.Error("request sends json including service but: ", m)
@@ -129,6 +138,9 @@ func TestFindMonitors(t *testing.T) {
 		m, ok := monitors[2].(*MonitorExpression)
 		if !ok || m.Type != "expression" {
 			t.Error("request sends json including expression but: ", monitors[2])
+		}
+		if m.Memo != "a monitor for expression" {
+			t.Error("request sends json including memo but: ", m)
 		}
 	}
 }
