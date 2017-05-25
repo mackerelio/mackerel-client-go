@@ -11,18 +11,19 @@ import (
 
 // Host host information
 type Host struct {
-	ID            string      `json:"id,omitempty"`
-	Name          string      `json:"name,omitempty"`
-	DisplayName   string      `json:"displayName,omitempty"`
-	Type          string      `json:"type,omitempty"`
-	Status        string      `json:"status,omitempty"`
-	Memo          string      `json:"memo,omitempty"`
-	Roles         Roles       `json:"roles,omitempty"`
-	RoleFullnames []string    `json:"roleFullnames,omitempty"`
-	IsRetired     bool        `json:"isRetired,omitempty"`
-	CreatedAt     int32       `json:"createdAt,omitempty"`
-	Meta          HostMeta    `json:"meta,omitempty"`
-	Interfaces    []Interface `json:"interfaces,omitempty"`
+	ID               string      `json:"id,omitempty"`
+	Name             string      `json:"name,omitempty"`
+	DisplayName      string      `json:"displayName,omitempty"`
+	CustomIdentifier string      `json:"customIdentifier,omitempty"`
+	Type             string      `json:"type,omitempty"`
+	Status           string      `json:"status,omitempty"`
+	Memo             string      `json:"memo,omitempty"`
+	Roles            Roles       `json:"roles,omitempty"`
+	RoleFullnames    []string    `json:"roleFullnames,omitempty"`
+	IsRetired        bool        `json:"isRetired,omitempty"`
+	CreatedAt        int32       `json:"createdAt,omitempty"`
+	Meta             HostMeta    `json:"meta,omitempty"`
+	Interfaces       []Interface `json:"interfaces,omitempty"`
 }
 
 // Roles host role maps
