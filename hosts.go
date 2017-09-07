@@ -64,9 +64,11 @@ type Cloud struct {
 
 // Interface network interface
 type Interface struct {
-	Name       string `json:"name,omitempty"`
-	IPAddress  string `json:"ipAddress,omitempty"`
-	MacAddress string `json:"macAddress,omitempty"`
+	Name          string   `json:"name,omitempty"`
+	IPAddress     string   `json:"ipAddress,omitempty"`
+	IPv4Addresses []string `json:"ipv4Addresses,omitempty"`
+	IPv6Addresses []string `json:"ipv6Addresses,omitempty"`
+	MacAddress    string   `json:"macAddress,omitempty"`
 }
 
 // FindHostsParam parameters for FindHosts
