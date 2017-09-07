@@ -44,6 +44,15 @@ func TestFindHost(t *testing.T) {
 				"status": "working",
 				"memo":   "hello",
 				"roles":  map[string][]string{"My-Service": {"db-master", "db-slave"}},
+				"interfaces": []map[string]interface{}{
+					{
+						"name":          "lo0",
+						"ipAddress":     "127.0.0.1",
+						"ipv4Addresses": []string{"127.0.0.1"},
+						"ipv6Addresses": []string{"fe80::1"},
+						"macAddress":    "02:02:02:02:02:02",
+					},
+				},
 			},
 		})
 
@@ -67,6 +76,15 @@ func TestFindHost(t *testing.T) {
 		t.Errorf("Wrong data for roles: %v", host.Roles)
 	}
 
+	if len(host.Interfaces) == 1 && reflect.DeepEqual(host.Interfaces[0], Interface{
+		Name:          "lo0",
+		IPAddress:     "127.0.0.1",
+		IPv4Addresses: []string{"127.0.0.1"},
+		IPv6Addresses: []string{"fe80::1"},
+		MacAddress:    "02:02:02:02:02:02",
+	}) != true {
+		t.Errorf("Wrong data for interfaces: %v", host.Interfaces)
+	}
 }
 
 func TestFindHosts(t *testing.T) {
