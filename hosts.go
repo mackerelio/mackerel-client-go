@@ -122,6 +122,8 @@ func (h *Host) DateStringFromCreatedAt() string {
 }
 
 // IPAddresses returns ipaddresses
+//
+// Deprecated: use Host#IPAddressesAll instead.
 func (h *Host) IPAddresses() map[string]string {
 	if len(h.Interfaces) < 1 {
 		return nil
@@ -132,6 +134,26 @@ func (h *Host) IPAddresses() map[string]string {
 		ipAddresses[iface.Name] = iface.IPAddress
 	}
 	return ipAddresses
+}
+
+// IPAddressesAll returns all ipaddresses
+//
+// Its result is a map of a slice of string. This key means interface name
+// and this value means ipaddresses bound to this interface.
+func (h *Host) IPAddressesAll() map[string][]string {
+	if len(h.Interfaces) < 1 {
+		return nil
+	}
+
+	ipAddressesAll := make(map[string][]string, 0)
+	for _, iface := range h.Interfaces {
+		ipAddresses := make([]string, 0, len(iface.IPv4Addresses)+len(iface.IPv6Addresses))
+		ipAddresses = append(ipAddresses, iface.IPv4Addresses...)
+		ipAddresses = append(ipAddresses, iface.IPv6Addresses...)
+		ipAddressesAll[iface.Name] = ipAddresses
+	}
+
+	return ipAddressesAll
 }
 
 // FindHost find the host
