@@ -139,11 +139,12 @@ type MonitorHostMetric struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Metric   string  `json:"metric,omitempty"`
-	Operator string  `json:"operator,omitempty"`
-	Warning  float64 `json:"warning"`
-	Critical float64 `json:"critical"`
-	Duration uint64  `json:"duration,omitempty"`
+	Metric           string  `json:"metric,omitempty"`
+	Operator         string  `json:"operator,omitempty"`
+	Warning          float64 `json:"warning"`
+	Critical         float64 `json:"critical"`
+	Duration         uint64  `json:"duration,omitempty"`
+	MaxCheckAttempts uint64  `json:"maxCheckAttempts,omitempty"`
 
 	Scopes        []string `json:"scopes,omitempty"`
 	ExcludeScopes []string `json:"excludeScopes,omitempty"`
@@ -167,12 +168,13 @@ type MonitorServiceMetric struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Service  string  `json:"service,omitempty"`
-	Metric   string  `json:"metric,omitempty"`
-	Operator string  `json:"operator,omitempty"`
-	Warning  float64 `json:"warning"`
-	Critical float64 `json:"critical"`
-	Duration uint64  `json:"duration,omitempty"`
+	Service          string  `json:"service,omitempty"`
+	Metric           string  `json:"metric,omitempty"`
+	Operator         string  `json:"operator,omitempty"`
+	Warning          float64 `json:"warning"`
+	Critical         float64 `json:"critical"`
+	Duration         uint64  `json:"duration,omitempty"`
+	MaxCheckAttempts uint64  `json:"maxCheckAttempts,omitempty"`
 }
 
 // MonitorType returns monitor type.
@@ -195,7 +197,7 @@ type MonitorExternalHTTP struct {
 
 	Method                          string  `json:"method,omitempty"`
 	URL                             string  `json:"url,omitempty"`
-	MaxCheckAttempts                float64 `json:"maxCheckAttempts,omitempty"`
+	MaxCheckAttempts                uint64  `json:"maxCheckAttempts,omitempty"`
 	Service                         string  `json:"service,omitempty"`
 	ResponseTimeCritical            float64 `json:"responseTimeCritical,omitempty"`
 	ResponseTimeWarning             float64 `json:"responseTimeWarning,omitempty"`
