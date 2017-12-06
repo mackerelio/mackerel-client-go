@@ -101,6 +101,9 @@ func TestFindMonitors(t *testing.T) {
 		if m.URL != "https://www.example.com/" {
 			t.Error("request sends json including url but: ", m)
 		}
+		if m.MaxCheckAttempts != 3 {
+			t.Error("request sends json including maxCheckAttempts but: ", m)
+		}
 		if m.ResponseTimeCritical != 5000 {
 			t.Error("request sends json including responseTimeCritical but: ", m)
 		}
@@ -194,6 +197,7 @@ const monitorsjson = `
       "operator": ">",
       "warning": 20000.0,
       "critical": 400000.0,
+      "maxCheckAttempts": 3,
       "scopes": [
         "Hatena-Blog"
       ],
@@ -211,6 +215,7 @@ const monitorsjson = `
       "operator": ">",
       "warning": 50.0,
       "critical": 100.0,
+      "maxCheckAttempts": 5,
       "notificationInterval": 60
     },
     {
@@ -221,7 +226,8 @@ const monitorsjson = `
       "url": "https://example.com",
       "service": "Hatena-Blog",
       "headers": [{"name":"Cache-Control", "value":"no-cache"}],
-      "requestBody": "Request Body"
+      "requestBody": "Request Body",
+      "maxCheckAttempts": 7
     },
     {
       "id"  : "2cSZzK3XfmE",
@@ -258,6 +264,7 @@ var wantMonitors = []Monitor{
 		Warning:              20000.000000,
 		Critical:             400000.000000,
 		Duration:             3,
+		MaxCheckAttempts:     3,
 		Scopes: []string{
 			"Hatena-Blog",
 		},
@@ -277,6 +284,7 @@ var wantMonitors = []Monitor{
 		Warning:              50.000000,
 		Critical:             100.000000,
 		Duration:             1,
+		MaxCheckAttempts:     5,
 	},
 	&MonitorExternalHTTP{
 		ID:                              "2cSZzK3XfmD",
@@ -286,7 +294,7 @@ var wantMonitors = []Monitor{
 		NotificationInterval:            0,
 		Method:                          "POST",
 		URL:                             "https://example.com",
-		MaxCheckAttempts:                0.000000,
+		MaxCheckAttempts:                7,
 		Service:                         "Hatena-Blog",
 		ResponseTimeCritical:            0.000000,
 		ResponseTimeWarning:             0.000000,
