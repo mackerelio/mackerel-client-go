@@ -34,6 +34,7 @@ import (
       "excludeScopes": [
         "SomeService: db-slave-backup"
       ],
+      "maxCheckAttempts": 1,
       "notificationInterval": 60
     },
     {
@@ -46,7 +47,8 @@ import (
       "metric": "custom.access_num.4xx_count",
       "operator": ">",
       "warning": 50.0,
-      "critical": 100.0
+      "critical": 100.0,
+      "maxCheckAttempts": 1
     },
     {
       "id"  : "2cSZzK3XfmG",
