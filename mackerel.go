@@ -24,6 +24,7 @@ type Client struct {
 	Verbose           bool
 	UserAgent         string
 	AdditionalHeaders http.Header
+	HTTPClient        *http.Client
 }
 
 func init() {
@@ -33,7 +34,7 @@ func init() {
 // NewClient returns new mackerel.Client
 func NewClient(apikey string) *Client {
 	u, _ := url.Parse(defaultBaseURL)
-	return &Client{u, apikey, false, defaultUserAgent, http.Header{}}
+	return &Client{u, apikey, false, defaultUserAgent, http.Header{}, &http.Client{}}
 }
 
 // NewClientWithOptions returns new mackerel.Client
@@ -42,7 +43,7 @@ func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, 
 	if err != nil {
 		return nil, err
 	}
-	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}}, nil
+	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}, &http.Client{}}, nil
 }
 
 func (c *Client) urlFor(path string) *url.URL {
@@ -78,7 +79,7 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		}
 	}
 
-	client := &http.Client{} // same as http.DefaultClient
+	client := c.HTTPClient
 	client.Timeout = apiRequestTimeout
 	resp, err = client.Do(req)
 	if err != nil {
