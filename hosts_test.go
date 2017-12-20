@@ -27,6 +27,32 @@ func TestGetRoleFullnames(t *testing.T) {
 	}
 }
 
+func TestIPAddressesAll(t *testing.T) {
+	host := &Host{
+		Interfaces: []Interface{
+			{
+				Name:          "lo0",
+				IPv4Addresses: []string{"127.0.0.1"},
+				IPv6Addresses: []string{"::1", "fe80::1"},
+			},
+			{
+				Name:          "en0",
+				IPv4Addresses: []string{"192.168.42.42"},
+				IPv6Addresses: []string{},
+			},
+		},
+	}
+
+	ipAddressesAll := host.IPAddressesAll()
+
+	if !reflect.DeepEqual(ipAddressesAll, map[string][]string{
+		"lo0": {"127.0.0.1", "::1", "fe80::1"},
+		"en0": {"192.168.42.42"},
+	}) {
+		t.Errorf("unexpected IPAddressesAll result: %#v", ipAddressesAll)
+	}
+}
+
 func TestFindHost(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F" {
