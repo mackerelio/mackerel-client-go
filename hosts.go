@@ -122,14 +122,16 @@ func (h *Host) DateStringFromCreatedAt() string {
 }
 
 // IPAddresses returns ipaddresses
-func (h *Host) IPAddresses() map[string]string {
+func (h *Host) IPAddresses() map[string][]string {
 	if len(h.Interfaces) < 1 {
 		return nil
 	}
 
-	ipAddresses := make(map[string]string, 0)
+	ipAddresses := make(map[string][]string, 0)
 	for _, iface := range h.Interfaces {
-		ipAddresses[iface.Name] = iface.IPAddress
+		ipAddresses[iface.Name] = make([]string, 0, len(iface.IPv4Addresses) + len(iface.IPv6Addresses))
+		ipAddresses[iface.Name] = append(ipAddresses[iface.Name], iface.IPv4Addresses...)
+		ipAddresses[iface.Name] = append(ipAddresses[iface.Name], iface.IPv6Addresses...)
 	}
 	return ipAddresses
 }
