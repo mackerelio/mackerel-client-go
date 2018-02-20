@@ -12,6 +12,14 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
+func pfloat64(x float64) *float64 {
+	return &x
+}
+
+func puint64(x uint64) *uint64 {
+	return &x
+}
+
 func TestFindMonitors(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/monitors" {
@@ -104,23 +112,23 @@ func TestFindMonitors(t *testing.T) {
 		if m.MaxCheckAttempts != 3 {
 			t.Error("request sends json including maxCheckAttempts but: ", m)
 		}
-		if m.ResponseTimeCritical != 5000 {
+		if *m.ResponseTimeCritical != 5000 {
 			t.Error("request sends json including responseTimeCritical but: ", m)
 		}
 
-		if m.ResponseTimeWarning != 10000 {
+		if *m.ResponseTimeWarning != 10000 {
 			t.Error("request sends json including responseTimeWarning but: ", m)
 		}
 
-		if m.ResponseTimeDuration != 5 {
+		if *m.ResponseTimeDuration != 5 {
 			t.Error("request sends json including responseTimeDuration but: ", m)
 		}
 
-		if m.CertificationExpirationCritical != 15 {
+		if *m.CertificationExpirationCritical != 15 {
 			t.Error("request sends json including certificationExpirationCritical but: ", m)
 		}
 
-		if m.CertificationExpirationWarning != 30 {
+		if *m.CertificationExpirationWarning != 30 {
 			t.Error("request sends json including certificationExpirationWarning but: ", m)
 		}
 
@@ -206,6 +214,16 @@ const monitorsjson = `
       ]
     },
     {
+      "id"  : "2cSZzK3XfmF",
+      "type": "host",
+      "name": "Foo Bar",
+      "duration": 3,
+      "metric": "custom.foo.bar",
+      "operator": ">",
+      "warning": 200.0,
+      "maxCheckAttempts": 5
+    },
+    {
       "id"  : "2cSZzK3XfmC",
       "type": "service",
       "name": "Hatena-Blog - access_num.4xx_count",
@@ -219,6 +237,18 @@ const monitorsjson = `
       "notificationInterval": 60
     },
     {
+      "id"  : "2cSZzK3XfmG",
+      "type": "service",
+      "name": "Hatena-Blog - access_num.5xx_count",
+      "service": "Hatena-Blog",
+      "duration": 3,
+      "metric": "access_num.5xx_count",
+      "operator": ">",
+      "critical": 100.0,
+      "maxCheckAttempts": 3,
+      "notificationInterval": 60
+    },
+    {
       "id"  : "2cSZzK3XfmD",
       "type": "external",
       "name": "example.com",
@@ -227,7 +257,26 @@ const monitorsjson = `
       "service": "Hatena-Blog",
       "headers": [{"name":"Cache-Control", "value":"no-cache"}],
       "requestBody": "Request Body",
-      "maxCheckAttempts": 7
+      "maxCheckAttempts": 7,
+      "responseTimeCritical": 3000,
+      "responseTimeWarning": 2000,
+      "responseTimeDuration": 7,
+      "certificationExpirationCritical": 60,
+      "certificationExpirationWarning": 90
+    },
+    {
+      "id"  : "2cSZzK3XfmH",
+      "type": "external",
+      "name": "example.com",
+      "method": "GET",
+      "url": "https://example.com",
+      "service": "Hatena-Blog",
+      "headers": [{"name":"Cache-Control", "value":"no-cache"}],
+      "requestBody": "Request Body",
+      "maxCheckAttempts": 5,
+      "responseTimeWarning": 3000,
+      "responseTimeDuration": 7,
+      "certificationExpirationCritical": 30
     },
     {
       "id"  : "2cSZzK3XfmE",
@@ -261,8 +310,8 @@ var wantMonitors = []Monitor{
 		NotificationInterval: 0,
 		Metric:               "disk.aa-00.writes.delta",
 		Operator:             ">",
-		Warning:              20000.000000,
-		Critical:             400000.000000,
+		Warning:              pfloat64(20000.000000),
+		Critical:             pfloat64(400000.000000),
 		Duration:             3,
 		MaxCheckAttempts:     3,
 		Scopes: []string{
@@ -271,6 +320,21 @@ var wantMonitors = []Monitor{
 		ExcludeScopes: []string{
 			"Hatena-Bookmark: db-master",
 		},
+	},
+	&MonitorHostMetric{
+		ID:                   "2cSZzK3XfmF",
+		Name:                 "Foo Bar",
+		Type:                 "host",
+		IsMute:               false,
+		NotificationInterval: 0,
+		Metric:               "custom.foo.bar",
+		Operator:             ">",
+		Warning:              pfloat64(200.0),
+		Critical:             nil,
+		Duration:             3,
+		MaxCheckAttempts:     5,
+		Scopes:               nil,
+		ExcludeScopes:        nil,
 	},
 	&MonitorServiceMetric{
 		ID:                   "2cSZzK3XfmC",
@@ -281,10 +345,24 @@ var wantMonitors = []Monitor{
 		Service:              "Hatena-Blog",
 		Metric:               "access_num.4xx_count",
 		Operator:             ">",
-		Warning:              50.000000,
-		Critical:             100.000000,
+		Warning:              pfloat64(50.000000),
+		Critical:             pfloat64(100.000000),
 		Duration:             1,
 		MaxCheckAttempts:     5,
+	},
+	&MonitorServiceMetric{
+		ID:                   "2cSZzK3XfmG",
+		Name:                 "Hatena-Blog - access_num.5xx_count",
+		Type:                 "service",
+		IsMute:               false,
+		NotificationInterval: 60,
+		Service:              "Hatena-Blog",
+		Metric:               "access_num.5xx_count",
+		Operator:             ">",
+		Warning:              nil,
+		Critical:             pfloat64(100.000000),
+		Duration:             3,
+		MaxCheckAttempts:     3,
 	},
 	&MonitorExternalHTTP{
 		ID:                              "2cSZzK3XfmD",
@@ -296,13 +374,38 @@ var wantMonitors = []Monitor{
 		URL:                             "https://example.com",
 		MaxCheckAttempts:                7,
 		Service:                         "Hatena-Blog",
-		ResponseTimeCritical:            0.000000,
-		ResponseTimeWarning:             0.000000,
-		ResponseTimeDuration:            0.000000,
+		ResponseTimeCritical:            pfloat64(3000.0),
+		ResponseTimeWarning:             pfloat64(2000.0),
+		ResponseTimeDuration:            puint64(7),
 		RequestBody:                     "Request Body",
 		ContainsString:                  "",
-		CertificationExpirationCritical: 0,
-		CertificationExpirationWarning:  0,
+		CertificationExpirationCritical: puint64(60),
+		CertificationExpirationWarning:  puint64(90),
+		SkipCertificateVerification:     false,
+		Headers: []HeaderField{
+			{
+				Name:  "Cache-Control",
+				Value: "no-cache",
+			},
+		},
+	},
+	&MonitorExternalHTTP{
+		ID:                              "2cSZzK3XfmH",
+		Name:                            "example.com",
+		Type:                            "external",
+		IsMute:                          false,
+		NotificationInterval:            0,
+		Method:                          "GET",
+		URL:                             "https://example.com",
+		MaxCheckAttempts:                5,
+		Service:                         "Hatena-Blog",
+		ResponseTimeCritical:            nil,
+		ResponseTimeWarning:             pfloat64(3000.0),
+		ResponseTimeDuration:            puint64(7),
+		RequestBody:                     "Request Body",
+		ContainsString:                  "",
+		CertificationExpirationCritical: puint64(30),
+		CertificationExpirationWarning:  nil,
 		SkipCertificateVerification:     false,
 		Headers: []HeaderField{
 			{
@@ -319,8 +422,8 @@ var wantMonitors = []Monitor{
 		NotificationInterval: 60,
 		Expression:           "avg(roleSlots(\"server:role\",\"loadavg5\"))",
 		Operator:             ">",
-		Warning:              5.000000,
-		Critical:             10.000000,
+		Warning:              pfloat64(5.000000),
+		Critical:             pfloat64(10.000000),
 	},
 }
 
@@ -356,19 +459,43 @@ func decodeMonitorsJSON(t testing.TB) []Monitor {
 
 var monitorsToBeEncoded = []Monitor{
 	&MonitorHostMetric{
+		ID:       "2cSZzK3XfmA",
+		Warning:  pfloat64(0.000000),
+		Critical: pfloat64(400000.000000),
+	},
+	&MonitorHostMetric{
+		ID:      "2cSZzK3XfmB",
+		Warning: pfloat64(600000.000000),
+	},
+	&MonitorHostMetric{
 		ID:       "2cSZzK3XfmB",
-		Warning:  0.000000,
-		Critical: 400000.000000,
+		Critical: pfloat64(500000.000000),
 	},
 	&MonitorServiceMetric{
 		ID:       "2cSZzK3XfmC",
-		Warning:  50.000000,
-		Critical: 0.000000,
+		Warning:  pfloat64(50.000000),
+		Critical: pfloat64(0.000000),
+	},
+	&MonitorServiceMetric{
+		ID:      "2cSZzK3XfmC",
+		Warning: pfloat64(50.000000),
+	},
+	&MonitorServiceMetric{
+		ID:       "2cSZzK3XfmC",
+		Critical: pfloat64(0.000000),
 	},
 	&MonitorExpression{
 		ID:       "2cSZzK3XfmE",
-		Warning:  0.000000,
-		Critical: 0.000000,
+		Warning:  pfloat64(0.000000),
+		Critical: pfloat64(0.000000),
+	},
+	&MonitorExpression{
+		ID:      "2cSZzK3XfmE",
+		Warning: pfloat64(0.000000),
+	},
+	&MonitorExpression{
+		ID:       "2cSZzK3XfmE",
+		Critical: pfloat64(0.000000),
 	},
 }
 
@@ -380,9 +507,19 @@ func TestEncodeMonitor(t *testing.T) {
 
 	want := `[
     {
-        "id": "2cSZzK3XfmB",
+        "id": "2cSZzK3XfmA",
         "warning": 0,
         "critical": 400000
+    },
+    {
+        "id": "2cSZzK3XfmB",
+        "warning": 600000,
+        "critical": null
+    },
+    {
+        "id": "2cSZzK3XfmB",
+        "warning": null,
+        "critical": 500000
     },
     {
         "id": "2cSZzK3XfmC",
@@ -390,8 +527,28 @@ func TestEncodeMonitor(t *testing.T) {
         "critical": 0
     },
     {
+        "id": "2cSZzK3XfmC",
+        "warning": 50,
+        "critical": null
+    },
+    {
+        "id": "2cSZzK3XfmC",
+        "warning": null,
+        "critical": 0
+    },
+    {
         "id": "2cSZzK3XfmE",
         "warning": 0,
+        "critical": 0
+    },
+    {
+        "id": "2cSZzK3XfmE",
+        "warning": 0,
+        "critical": null
+    },
+    {
+        "id": "2cSZzK3XfmE",
+        "warning": null,
         "critical": 0
     }
 ]`
