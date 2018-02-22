@@ -141,12 +141,12 @@ type MonitorHostMetric struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Metric           string  `json:"metric,omitempty"`
-	Operator         string  `json:"operator,omitempty"`
-	Warning          float64 `json:"warning"`
-	Critical         float64 `json:"critical"`
-	Duration         uint64  `json:"duration,omitempty"`
-	MaxCheckAttempts uint64  `json:"maxCheckAttempts,omitempty"`
+	Metric           string   `json:"metric,omitempty"`
+	Operator         string   `json:"operator,omitempty"`
+	Warning          *float64 `json:"warning"`
+	Critical         *float64 `json:"critical"`
+	Duration         uint64   `json:"duration,omitempty"`
+	MaxCheckAttempts uint64   `json:"maxCheckAttempts,omitempty"`
 
 	Scopes        []string `json:"scopes,omitempty"`
 	ExcludeScopes []string `json:"excludeScopes,omitempty"`
@@ -170,13 +170,13 @@ type MonitorServiceMetric struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Service          string  `json:"service,omitempty"`
-	Metric           string  `json:"metric,omitempty"`
-	Operator         string  `json:"operator,omitempty"`
-	Warning          float64 `json:"warning"`
-	Critical         float64 `json:"critical"`
-	Duration         uint64  `json:"duration,omitempty"`
-	MaxCheckAttempts uint64  `json:"maxCheckAttempts,omitempty"`
+	Service          string   `json:"service,omitempty"`
+	Metric           string   `json:"metric,omitempty"`
+	Operator         string   `json:"operator,omitempty"`
+	Warning          *float64 `json:"warning"`
+	Critical         *float64 `json:"critical"`
+	Duration         uint64   `json:"duration,omitempty"`
+	MaxCheckAttempts uint64   `json:"maxCheckAttempts,omitempty"`
 }
 
 // MonitorType returns monitor type.
@@ -197,18 +197,18 @@ type MonitorExternalHTTP struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Method                          string  `json:"method,omitempty"`
-	URL                             string  `json:"url,omitempty"`
-	MaxCheckAttempts                uint64  `json:"maxCheckAttempts,omitempty"`
-	Service                         string  `json:"service,omitempty"`
-	ResponseTimeCritical            float64 `json:"responseTimeCritical,omitempty"`
-	ResponseTimeWarning             float64 `json:"responseTimeWarning,omitempty"`
-	ResponseTimeDuration            float64 `json:"responseTimeDuration,omitempty"`
-	RequestBody                     string  `json:"requestBody,omitempty"`
-	ContainsString                  string  `json:"containsString,omitempty"`
-	CertificationExpirationCritical uint64  `json:"certificationExpirationCritical,omitempty"`
-	CertificationExpirationWarning  uint64  `json:"certificationExpirationWarning,omitempty"`
-	SkipCertificateVerification     bool    `json:"skipCertificateVerification,omitempty"`
+	Method                          string   `json:"method,omitempty"`
+	URL                             string   `json:"url,omitempty"`
+	MaxCheckAttempts                uint64   `json:"maxCheckAttempts,omitempty"`
+	Service                         string   `json:"service,omitempty"`
+	ResponseTimeCritical            *float64 `json:"responseTimeCritical,omitempty"`
+	ResponseTimeWarning             *float64 `json:"responseTimeWarning,omitempty"`
+	ResponseTimeDuration            *uint64  `json:"responseTimeDuration,omitempty"`
+	RequestBody                     string   `json:"requestBody,omitempty"`
+	ContainsString                  string   `json:"containsString,omitempty"`
+	CertificationExpirationCritical *uint64  `json:"certificationExpirationCritical,omitempty"`
+	CertificationExpirationWarning  *uint64  `json:"certificationExpirationWarning,omitempty"`
+	SkipCertificateVerification     bool     `json:"skipCertificateVerification,omitempty"`
 	// Empty list of headers and nil are different. You have to specify empty
 	// list as headers explicitly if you want to remove all headers instead of
 	// using nil.
@@ -240,10 +240,10 @@ type MonitorExpression struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Expression string  `json:"expression,omitempty"`
-	Operator   string  `json:"operator,omitempty"`
-	Warning    float64 `json:"warning"`
-	Critical   float64 `json:"critical"`
+	Expression string   `json:"expression,omitempty"`
+	Operator   string   `json:"operator,omitempty"`
+	Warning    *float64 `json:"warning"`
+	Critical   *float64 `json:"critical"`
 }
 
 // MonitorType returns monitor type.
