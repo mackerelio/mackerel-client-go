@@ -539,8 +539,8 @@ func TestDecodeEncodeMonitor(t *testing.T) {
 		if err != nil {
 			t.Errorf("%s: err shoud be nil but: %v", testCase.title, err)
 		}
-		if gotJson := string(b); !equalJSON(gotJson, testCase.json) {
-			t.Errorf("%s: got %v, want %v", testCase.title, gotJson, testCase.json)
+		if gotJSON := string(b); !equalJSON(gotJSON, testCase.json) {
+			t.Errorf("%s: got %v, want %v", testCase.title, gotJSON, testCase.json)
 		}
 	}
 }
