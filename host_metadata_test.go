@@ -99,3 +99,30 @@ func TestCreateHostMetaData(t *testing.T) {
 		t.Error("err shoud be nil but: ", err)
 	}
 }
+
+func TestDeleteHostMetaData(t *testing.T) {
+	var (
+		hostID    = "9rxGOHfVF8F"
+		namespace = "testing"
+	)
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		u := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
+		if req.URL.Path != u {
+			t.Errorf("request URL should be %v but %v:", u, req.URL.Path)
+		}
+
+		if req.Method != "DELETE" {
+			t.Error("request method should be DELETE but :", req.Method)
+		}
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, `{"success":true}`)
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	err := client.DeleteHostMetaData(hostID, namespace)
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+}

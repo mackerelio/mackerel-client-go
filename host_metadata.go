@@ -54,3 +54,20 @@ func (c *Client) CreateHostMetaData(hostID, namespace string, metadata *HostMeta
 func (c *Client) UpdateHostMetaData(hostID, namespace string, metadata *HostMetaData) error {
 	return c.CreateHostMetaData(hostID, namespace, metadata)
 }
+
+// DeleteHostMetaData delete host metadata.
+func (c *Client) DeleteHostMetaData(hostID, namespace string) error {
+	req, err := http.NewRequest(
+		"DELETE",
+		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)).String(),
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	return err
+}
