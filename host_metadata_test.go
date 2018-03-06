@@ -68,7 +68,7 @@ func TestCreateHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "PUT" {
-			t.Error("request method should be POST but :", req.Method)
+			t.Error("request method should be PUT but :", req.Method)
 		}
 
 		body, _ := ioutil.ReadAll(req.Body)
