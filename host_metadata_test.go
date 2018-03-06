@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -53,6 +54,37 @@ func TestGetHostMetaData(t *testing.T) {
 	}
 	if !metadataResp.LastModified.Equal(lastModified) {
 		t.Errorf("got: %v, want: %v", metadataResp.LastModified, lastModified)
+	}
+}
+
+func TestGetHostMetaDataNameSpaces(t *testing.T) {
+	var (
+		hostID = "9rxGOHfVF8F"
+	)
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		u := fmt.Sprintf("/api/v0/hosts/%s/metadata", hostID)
+		if req.URL.Path != u {
+			t.Errorf("request URL should be %v but %v:", u, req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but :", req.Method)
+		}
+
+		respJSON := `{"metadata":[{"namespace":"testing1"}, {"namespace":"testing2"}]}`
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, respJSON)
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	namespaces, err := client.GetHostMetaDataNameSpaces(hostID)
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if !reflect.DeepEqual(namespaces, []string{"testing1", "testing2"}) {
+		t.Errorf("got: %v, want: %v", namespaces, []string{"testing1", "testing2"})
 	}
 }
 

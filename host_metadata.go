@@ -41,6 +41,33 @@ func (c *Client) GetHostMetaData(hostID, namespace string) (*HostMetaDataResp, e
 	return &data, nil
 }
 
+// GetHostMetaDataNameSpaces fetches namespaces of host metadata.
+func (c *Client) GetHostMetaDataNameSpaces(hostID string) ([]string, error) {
+	url := c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metadata", hostID))
+	req, err := http.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	var data struct {
+		MetaDatas []struct {
+			NameSpace string `json:"namespace"`
+		} `json:"metadata"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+	namespaces := make([]string, 0, len(data.MetaDatas))
+	for _, metadata := range data.MetaDatas {
+		namespaces = append(namespaces, metadata.NameSpace)
+	}
+	return namespaces, nil
+}
+
 // CreateHostMetaData create host metadata.
 func (c *Client) CreateHostMetaData(hostID, namespace string, metadata *HostMetaData) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
