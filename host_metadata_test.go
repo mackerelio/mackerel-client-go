@@ -40,17 +40,17 @@ func TestGetHostMetaData(t *testing.T) {
 	}
 
 	metadata := metadataResp.HostMetaData
-	if metadata["type"].(float64) != 12345 {
-		t.Errorf("got: %v, want: %v", metadata["type"], 12345)
+	if metadata.(map[string]interface{})["type"].(float64) != 12345 {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["type"], 12345)
 	}
-	if metadata["region"] != "jp" {
-		t.Errorf("got: %v, want: %v", metadata["region"], "jp")
+	if metadata.(map[string]interface{})["region"] != "jp" {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["region"], "jp")
 	}
-	if metadata["env"] != "staging" {
-		t.Errorf("got: %v, want: %v", metadata["env"], "staging")
+	if metadata.(map[string]interface{})["env"] != "staging" {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["env"], "staging")
 	}
-	if metadata["instance_type"] != "c4.xlarge" {
-		t.Errorf("got: %v, want: %v", metadata["instance_type"], "c4.xlarge")
+	if metadata.(map[string]interface{})["instance_type"] != "c4.xlarge" {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["instance_type"], "c4.xlarge")
 	}
 	if !metadataResp.LastModified.Equal(lastModified) {
 		t.Errorf("got: %v, want: %v", metadataResp.LastModified, lastModified)
@@ -115,7 +115,7 @@ func TestCreateHostMetaData(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	metadata := HostMetaData{
+	metadata := map[string]interface{}{
 		"type":          12345,
 		"region":        "jp",
 		"env":           "staging",

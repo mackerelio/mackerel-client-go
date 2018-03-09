@@ -16,7 +16,7 @@ type HostMetaDataResp struct {
 }
 
 // HostMetaData represents host metadata body.
-type HostMetaData map[string]interface{}
+type HostMetaData interface{}
 
 // GetHostMetaData find host metadata.
 func (c *Client) GetHostMetaData(hostID, namespace string) (*HostMetaDataResp, error) {
@@ -69,7 +69,7 @@ func (c *Client) GetHostMetaDataNameSpaces(hostID string) ([]string, error) {
 }
 
 // CreateHostMetaData create host metadata.
-func (c *Client) CreateHostMetaData(hostID, namespace string, metadata *HostMetaData) error {
+func (c *Client) CreateHostMetaData(hostID, namespace string, metadata HostMetaData) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
 	resp, err := c.PutJSON(path, metadata)
 	defer closeResponse(resp)
@@ -78,7 +78,7 @@ func (c *Client) CreateHostMetaData(hostID, namespace string, metadata *HostMeta
 
 // UpdateHostMetaData update host metadata.
 // UpdateHostMetaData is an alias of CreateHostMetaData.
-func (c *Client) UpdateHostMetaData(hostID, namespace string, metadata *HostMetaData) error {
+func (c *Client) UpdateHostMetaData(hostID, namespace string, metadata HostMetaData) error {
 	return c.CreateHostMetaData(hostID, namespace, metadata)
 }
 
