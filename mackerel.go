@@ -27,10 +27,6 @@ type Client struct {
 	HTTPClient        *http.Client
 }
 
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-}
-
 // NewClient returns new mackerel.Client
 func NewClient(apikey string) *Client {
 	u, _ := url.Parse(defaultBaseURL)
