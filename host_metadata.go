@@ -68,18 +68,12 @@ func (c *Client) GetHostMetaDataNameSpaces(hostID string) ([]string, error) {
 	return namespaces, nil
 }
 
-// CreateHostMetaData create host metadata.
-func (c *Client) CreateHostMetaData(hostID, namespace string, metadata HostMetaData) error {
+// PutHostMetaData put host metadata.
+func (c *Client) PutHostMetaData(hostID, namespace string, metadata HostMetaData) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
 	resp, err := c.PutJSON(path, metadata)
 	defer closeResponse(resp)
 	return err
-}
-
-// UpdateHostMetaData update host metadata.
-// UpdateHostMetaData is an alias of CreateHostMetaData.
-func (c *Client) UpdateHostMetaData(hostID, namespace string, metadata HostMetaData) error {
-	return c.CreateHostMetaData(hostID, namespace, metadata)
 }
 
 // DeleteHostMetaData delete host metadata.

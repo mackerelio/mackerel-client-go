@@ -88,7 +88,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 	}
 }
 
-func TestCreateHostMetaData(t *testing.T) {
+func TestPutHostMetaData(t *testing.T) {
 	var (
 		hostID    = "9rxGOHfVF8F"
 		namespace = "testing"
@@ -121,12 +121,7 @@ func TestCreateHostMetaData(t *testing.T) {
 		"env":           "staging",
 		"instance_type": "c4.xlarge",
 	}
-	err := client.CreateHostMetaData(hostID, namespace, &metadata)
-	if err != nil {
-		t.Error("err shoud be nil but: ", err)
-	}
-
-	err = client.UpdateHostMetaData(hostID, namespace, &metadata)
+	err := client.PutHostMetaData(hostID, namespace, &metadata)
 	if err != nil {
 		t.Error("err shoud be nil but: ", err)
 	}
