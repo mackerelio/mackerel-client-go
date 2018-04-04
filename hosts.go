@@ -115,12 +115,6 @@ func (h *Host) DateFromCreatedAt() time.Time {
 	return time.Unix(int64(h.CreatedAt), 0)
 }
 
-// DateStringFromCreatedAt returns date string
-func (h *Host) DateStringFromCreatedAt() string {
-	const layout = "Jan 2, 2006 at 3:04pm (MST)"
-	return h.DateFromCreatedAt().Format(layout)
-}
-
 // IPAddresses returns ipaddresses
 func (h *Host) IPAddresses() map[string]string {
 	if len(h.Interfaces) < 1 {
