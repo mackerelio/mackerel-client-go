@@ -58,10 +58,10 @@ func (c *Client) CreateService(param *CreateServiceParam) (*Service, error) {
 }
 
 // DeleteService deletes service
-func (c *Client) DeleteService(serviceID string) (*Service, error) {
+func (c *Client) DeleteService(serviceName string) (*Service, error) {
 	req, err := http.NewRequest(
 		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/services/%s", serviceID)).String(),
+		c.urlFor(fmt.Sprintf("/api/v0/services/%s", serviceName)).String(),
 		nil,
 	)
 	if err != nil {

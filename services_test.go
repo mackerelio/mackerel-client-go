@@ -98,10 +98,10 @@ func TestCreateService(t *testing.T) {
 
 func TestDeleteService(t *testing.T) {
 
-	testID := "2c5bLca8d"
+	testName := "My-Service"
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s", testID) {
+		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s", testName) {
 			t.Error("request URL should be /api/v0/services/<ID> but :", req.URL.Path)
 		}
 
@@ -122,7 +122,7 @@ func TestDeleteService(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
-	service, err := client.DeleteService(testID)
+	service, err := client.DeleteService(testName)
 
 	if err != nil {
 		t.Error("err shoud be nil but: ", err)
