@@ -50,3 +50,48 @@ func TestFindServices(t *testing.T) {
 	}
 
 }
+
+func TestCreateService(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/services" {
+			t.Error("request URL should be /api/v0/services but :", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"name":  "My-Service",
+			"memo":  "hello",
+			"roles": []string{},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	service, err := client.CreateService(&CreateServiceParam{
+		Name: "My-Service",
+		Memo: "hello",
+	})
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if service.Name != "My-Service" {
+		t.Error("request sends json including name but: ", service.Name)
+	}
+
+	if service.Memo != "hello" {
+		t.Error("request sends json including name but: ", service.Memo)
+	}
+
+	if len(service.Roles) != 0 {
+		t.Error("request sends json including name but: ", service.Roles)
+	}
+}
