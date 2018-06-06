@@ -56,3 +56,29 @@ func (c *Client) CreateService(param *CreateServiceParam) (*Service, error) {
 	}
 	return service, nil
 }
+
+// DeleteService deletes service
+func (c *Client) DeleteService(serviceID string) (*Service, error) {
+	req, err := http.NewRequest(
+		"DELETE",
+		c.urlFor(fmt.Sprintf("/api/v0/services/%s", serviceID)).String(),
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	service := &Service{}
+	err = json.NewDecoder(resp.Body).Decode(service)
+	if err != nil {
+		return nil, err
+	}
+	return service, nil
+}

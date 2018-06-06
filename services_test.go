@@ -95,3 +95,48 @@ func TestCreateService(t *testing.T) {
 		t.Error("request sends json including name but: ", service.Roles)
 	}
 }
+
+func TestDeleteService(t *testing.T) {
+
+	testID := "2c5bLca8d"
+
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s", testID) {
+			t.Error("request URL should be /api/v0/services/<ID> but :", req.URL.Path)
+		}
+
+		if req.Method != "DELETE" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"name":  "My-Service",
+			"memo":  "hello",
+			"roles": []string{"ancient-role"},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	service, err := client.DeleteService(testID)
+
+	if err != nil {
+		t.Error("err shoud be nil but: ", err)
+	}
+
+	if service.Name != "My-Service" {
+		t.Error("request sends json including name but: ", service.Name)
+	}
+
+	if service.Memo != "hello" {
+		t.Error("request sends json including name but: ", service.Memo)
+	}
+
+	if len(service.Roles) != 1 || service.Roles[0] != "ancient-role" {
+		t.Error("request sends json including name but: ", service.Roles)
+	}
+}
