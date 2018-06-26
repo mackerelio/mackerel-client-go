@@ -28,7 +28,7 @@ func extractErrorMessage(r io.Reader) (errorMessage string) {
 		errorMessage = data.Error.Message
 	} else {
 		var data struct{ Error string }
-		err = json.Unmarshal(bs, &data)
+		json.Unmarshal(bs, &data)
 		errorMessage = data.Error
 	}
 	return
