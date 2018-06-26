@@ -91,9 +91,9 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		message := extractErrorMessage(resp.Body)
 		defer resp.Body.Close()
 		if message != "" {
-			return nil, fmt.Errorf("API result failed: %s", message)
+			return nil, &APIError{StatusCode: resp.StatusCode, Message: message}
 		}
-		return nil, fmt.Errorf("API result failed: %s", resp.Status)
+		return nil, fmt.Errorf("API request failed: %s", resp.Status)
 	}
 	return resp, nil
 }
