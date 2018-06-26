@@ -27,7 +27,7 @@ func TestGetOrg(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	org, err := client.GetOrg()
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if org.Name != "hoge" {

@@ -23,7 +23,7 @@ func TestGetRoleFullnames(t *testing.T) {
 	sort.Strings(fullnames)
 
 	if !reflect.DeepEqual(fullnames, []string{"My-Service2:proxy", "My-Service:db-master", "My-Service:db-slave"}) {
-		t.Error("RoleFullnames shoud be ['My-Service2:proxy', My-Service:db-master', 'My-Service:db-slave'] but: ", fullnames)
+		t.Error("RoleFullnames should be ['My-Service2:proxy', My-Service:db-master', 'My-Service:db-slave'] but: ", fullnames)
 	}
 }
 
@@ -65,7 +65,7 @@ func TestFindHost(t *testing.T) {
 	host, err := client.FindHost("9rxGOHfVF8F")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if host.Memo != "hello" {
@@ -137,7 +137,7 @@ func TestFindHosts(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if hosts[0].Memo != "hello" {
@@ -197,11 +197,11 @@ func TestCreateHost(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if hostID != "123456ABCD" {
-		t.Error("hostID shoud be empty but: ", hostID)
+		t.Error("hostID should be empty but: ", hostID)
 	}
 }
 
@@ -252,11 +252,11 @@ func TestUpdateHost(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if hostID != "123456ABCD" {
-		t.Error("hostID shoud be empty but: ", hostID)
+		t.Error("hostID should be empty but: ", hostID)
 	}
 }
 
@@ -298,7 +298,7 @@ func TestUpdateHostStatus(t *testing.T) {
 	err := client.UpdateHostStatus("9rxGOHfVF8F", "maintenance")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -336,7 +336,7 @@ func TestUpdateHostRoleFullnames(t *testing.T) {
 	err := client.UpdateHostRoleFullnames("9rxGOHfVF8F", []string{"testservice:testrole", "testservice:testrole2"})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -371,6 +371,6 @@ func TestRetireHost(t *testing.T) {
 	err := client.RetireHost("123456ABCD")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }

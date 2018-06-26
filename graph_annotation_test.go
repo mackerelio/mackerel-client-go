@@ -76,7 +76,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotation.Service != "My-Blog" {
@@ -146,7 +146,7 @@ func TestFindGraphAnnotations(t *testing.T) {
 	annotations, err := client.FindGraphAnnotations("My-Blog", 1485675275, 1485675299)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotations[0].Service != "My-Blog" {
@@ -209,7 +209,7 @@ func TestUpdateGraphAnnotations(t *testing.T) {
 		})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotation.Service != "My-Blog" {
@@ -264,7 +264,7 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 	annotation, err := client.DeleteGraphAnnotation("123456789")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotation.Service != "My-Blog" {

@@ -80,6 +80,6 @@ func TestCreateGraphDefs(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }

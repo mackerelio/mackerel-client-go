@@ -78,7 +78,7 @@ func TestFindMonitors(t *testing.T) {
 	monitors, err := client.FindMonitors()
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	{
@@ -529,7 +529,7 @@ func TestDecodeEncodeMonitor(t *testing.T) {
 	for _, testCase := range testCases {
 		gotMonitor, err := decodeMonitorReader(strings.NewReader(testCase.json))
 		if err != nil {
-			t.Errorf("%s: err shoud be nil but: %v", testCase.title, err)
+			t.Errorf("%s: err should be nil but: %v", testCase.title, err)
 		}
 		if !reflect.DeepEqual(gotMonitor, testCase.monitor) {
 			t.Errorf("%s: fail to get correct data: diff: (-got +want)\n%v", testCase.title, pretty.Compare(gotMonitor, testCase.monitor))
@@ -537,7 +537,7 @@ func TestDecodeEncodeMonitor(t *testing.T) {
 
 		b, err := json.MarshalIndent(testCase.monitor, "", "    ")
 		if err != nil {
-			t.Errorf("%s: err shoud be nil but: %v", testCase.title, err)
+			t.Errorf("%s: err should be nil but: %v", testCase.title, err)
 		}
 		if gotJSON := string(b); !equalJSON(gotJSON, testCase.json) {
 			t.Errorf("%s: got %v, want %v", testCase.title, gotJSON, testCase.json)

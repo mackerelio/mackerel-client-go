@@ -69,7 +69,7 @@ func TestPostHostMetricValues(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -125,7 +125,7 @@ func TestPostServiceMetricValues(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -187,7 +187,7 @@ func TestFetchLatestMetricValues(t *testing.T) {
 	latestMetricValues, err := client.FetchLatestMetricValues(hostIDs, metricNames)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if latestMetricValues["123456ABCD"]["mysql.connections.Connections"].Value.(float64) != 200 {
@@ -242,7 +242,7 @@ func TestFetchHostMetricValues(t *testing.T) {
 	metricValues, err := client.FetchHostMetricValues(hostID, metricName, 1450000700, 1450001000)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if metricValues[0].Value.(float64) != 200 {
@@ -301,7 +301,7 @@ func TestFetchServiceMetricValues(t *testing.T) {
 	metricValues, err := client.FetchServiceMetricValues(serviceName, metricName, 1450000700, 1450001000)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if metricValues[0].Value.(float64) != 0.12 {

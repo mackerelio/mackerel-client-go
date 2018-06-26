@@ -36,7 +36,7 @@ func TestGetHostMetaData(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	metadataResp, err := client.GetHostMetaData(hostID, namespace)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	metadata := metadataResp.HostMetaData
@@ -80,7 +80,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	namespaces, err := client.GetHostMetaDataNameSpaces(hostID)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if !reflect.DeepEqual(namespaces, []string{"testing1", "testing2"}) {
@@ -123,7 +123,7 @@ func TestPutHostMetaData(t *testing.T) {
 	}
 	err := client.PutHostMetaData(hostID, namespace, &metadata)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -150,6 +150,6 @@ func TestDeleteHostMetaData(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.DeleteHostMetaData(hostID, namespace)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }

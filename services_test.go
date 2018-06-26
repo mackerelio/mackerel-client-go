@@ -38,7 +38,7 @@ func TestFindServices(t *testing.T) {
 	services, err := client.FindServices()
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if services[0].Memo != "hello" {
@@ -80,7 +80,7 @@ func TestCreateService(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if service.Name != "My-Service" {
@@ -125,7 +125,7 @@ func TestDeleteService(t *testing.T) {
 	service, err := client.DeleteService(testName)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if service.Name != "My-Service" {

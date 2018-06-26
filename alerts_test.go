@@ -44,7 +44,7 @@ func TestFindAlerts(t *testing.T) {
 	alerts, err := client.FindAlerts()
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if alerts[0].Type != "connectivity" {
