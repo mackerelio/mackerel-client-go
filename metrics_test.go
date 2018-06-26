@@ -13,7 +13,7 @@ import (
 func TestPostHostMetricValues(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/tsdb" {
-			t.Error("request URL should be /api/v0/tsdb but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/tsdb but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
@@ -76,7 +76,7 @@ func TestPostHostMetricValues(t *testing.T) {
 func TestPostServiceMetricValues(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/services/My-Service/tsdb" {
-			t.Error("request URL should be /api/v0/services/My-Service/tsdb but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services/My-Service/tsdb but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
@@ -132,7 +132,7 @@ func TestPostServiceMetricValues(t *testing.T) {
 func TestFetchLatestMetricValues(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/tsdb/latest" {
-			t.Error("request URL should be /api/v0/tsdb/latest but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/tsdb/latest but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
@@ -202,7 +202,7 @@ func TestFetchLatestMetricValues(t *testing.T) {
 func TestFetchHostMetricValues(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/123456ABCD/metrics" {
-			t.Error("request URL should be /api/v0/hosts/123456ABCD/metrics but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/123456ABCD/metrics but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
@@ -261,7 +261,7 @@ func TestFetchHostMetricValues(t *testing.T) {
 func TestFetchServiceMetricValues(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/services/123456ABCD/metrics" {
-			t.Error("request URL should be /api/v0/services/123456ABCD/metrics but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services/123456ABCD/metrics but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {

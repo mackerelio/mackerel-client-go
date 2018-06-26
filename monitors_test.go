@@ -23,7 +23,7 @@ func puint64(x uint64) *uint64 {
 func TestFindMonitors(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/monitors" {
-			t.Error("request URL should be /api/v0/monitors but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/monitors but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{

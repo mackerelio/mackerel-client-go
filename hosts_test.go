@@ -30,11 +30,11 @@ func TestGetRoleFullnames(t *testing.T) {
 func TestFindHost(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F" {
-			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
@@ -90,25 +90,25 @@ func TestFindHost(t *testing.T) {
 func TestFindHosts(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts" {
-			t.Error("request URL should be /api/v0/hosts but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts but: ", req.URL.Path)
 		}
 
 		query := req.URL.Query()
 		if query.Get("service") != "My-Service" {
-			t.Error("request query 'service' param should be My-Service but :", query.Get("service"))
+			t.Error("request query 'service' param should be My-Service but: ", query.Get("service"))
 		}
 		if !reflect.DeepEqual(query["role"], []string{"db-master"}) {
-			t.Error("request query 'role' param should be db-master but :", query.Get("role"))
+			t.Error("request query 'role' param should be db-master but: ", query.Get("role"))
 		}
 		if query.Get("name") != "mydb001" {
-			t.Error("request query 'name' param should be mydb001 but :", query.Get("name"))
+			t.Error("request query 'name' param should be mydb001 but: ", query.Get("name"))
 		}
 		if !reflect.DeepEqual(query["status"], []string{"working", "standby"}) {
-			t.Error("request query 'statuses' param should be ['working','standby'] but :", query["status"])
+			t.Error("request query 'statuses' param should be ['working','standby'] but: ", query["status"])
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -263,7 +263,7 @@ func TestUpdateHost(t *testing.T) {
 func TestUpdateHostStatus(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/status" {
-			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/status but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/status but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
@@ -305,7 +305,7 @@ func TestUpdateHostStatus(t *testing.T) {
 func TestUpdateHostRoleFullnames(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/role-fullnames" {
-			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/role-fullnames but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/role-fullnames but: ", req.URL.Path)
 		}
 
 		if req.Method != "PUT" {

@@ -13,11 +13,11 @@ import (
 func TestCreateGraphDefs(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/graph-defs/create" {
-			t.Error("request URL should be /api/v0/graph-defs/create but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/graph-defs/create but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 		body, _ := ioutil.ReadAll(req.Body)
 

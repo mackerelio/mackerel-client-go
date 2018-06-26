@@ -23,7 +23,7 @@ func TestGetHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON := `{"type":12345,"region":"jp","env":"staging","instance_type":"c4.xlarge"}`
@@ -68,7 +68,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON := `{"metadata":[{"namespace":"testing1"}, {"namespace":"testing2"}]}`
@@ -100,7 +100,7 @@ func TestPutHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "PUT" {
-			t.Error("request method should be PUT but :", req.Method)
+			t.Error("request method should be PUT but: ", req.Method)
 		}
 
 		body, _ := ioutil.ReadAll(req.Body)
@@ -139,7 +139,7 @@ func TestDeleteHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "DELETE" {
-			t.Error("request method should be DELETE but :", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		res.Header()["Content-Type"] = []string{"application/json"}

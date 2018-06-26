@@ -12,11 +12,11 @@ import (
 func TestFindServices(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/services" {
-			t.Error("request URL should be /api/v0/services but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -54,7 +54,7 @@ func TestFindServices(t *testing.T) {
 func TestCreateService(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/services" {
-			t.Error("request URL should be /api/v0/services but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
@@ -102,7 +102,7 @@ func TestDeleteService(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s", testName) {
-			t.Error("request URL should be /api/v0/services/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services/<ID> but: ", req.URL.Path)
 		}
 
 		if req.Method != "DELETE" {

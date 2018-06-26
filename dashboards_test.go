@@ -12,7 +12,7 @@ import (
 func TestFindDashboards(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/dashboards" {
-			t.Error("request URL should be /api/v0/dashboards but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -71,7 +71,7 @@ func TestFindDashboard(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(
@@ -205,7 +205,7 @@ func TestUpdateDashboard(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
 		}
 
 		if req.Method != "PUT" {
@@ -285,7 +285,7 @@ func TestDeleteDashboard(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
 		}
 
 		if req.Method != "DELETE" {

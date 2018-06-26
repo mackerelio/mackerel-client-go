@@ -11,11 +11,11 @@ import (
 func TestGetOrg(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/org" {
-			t.Error("request URL should be /api/v0/org but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/org but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 		respJSON, _ := json.Marshal(&Org{Name: "hoge"})
 
