@@ -295,7 +295,7 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 func TestDeleteGraphAnnotations_NotFound(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/graph-annotations/123456789" {
-			t.Error("request URL should be /api/v0/graph-annotations/123456789 but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/graph-annotations/123456789 but: ", req.URL.Path)
 		}
 		if req.Method != "DELETE" {
 			t.Error("request method should be DELETE but: ", req.Method)
