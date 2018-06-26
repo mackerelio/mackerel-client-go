@@ -88,7 +88,12 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return resp, fmt.Errorf("API result failed: %s", resp.Status)
+		message := extractErrorMessage(resp.Body)
+		defer resp.Body.Close()
+		if message != "" {
+			return nil, fmt.Errorf("API result failed: %s", message)
+		}
+		return nil, fmt.Errorf("API result failed: %s", resp.Status)
 	}
 	return resp, nil
 }
