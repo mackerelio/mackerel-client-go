@@ -298,7 +298,7 @@ func TestDeleteGraphAnnotations_NotFound(t *testing.T) {
 			t.Error("request URL should be /api/v0/graph-annotations/123456789 but :", req.URL.Path)
 		}
 		if req.Method != "DELETE" {
-			t.Error("request method should be PUT but :", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]map[string]string{
