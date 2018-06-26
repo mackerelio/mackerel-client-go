@@ -347,7 +347,7 @@ func TestRetireHost(t *testing.T) {
 		}
 
 		if req.Method != "POST" {
-			t.Error("request method should be PUT but: ", req.Method)
+			t.Error("request method should be POST but: ", req.Method)
 		}
 
 		body, _ := ioutil.ReadAll(req.Body)

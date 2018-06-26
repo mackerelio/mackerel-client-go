@@ -106,7 +106,7 @@ func TestDeleteService(t *testing.T) {
 		}
 
 		if req.Method != "DELETE" {
-			t.Error("request method should be POST but: ", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{

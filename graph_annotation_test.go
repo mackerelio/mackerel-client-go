@@ -17,7 +17,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 		}
 
 		if req.Method != "POST" {
-			t.Error("request method should be GET but: ", req.Method)
+			t.Error("request method should be POST but: ", req.Method)
 		}
 		body, _ := ioutil.ReadAll(req.Body)
 
@@ -243,7 +243,7 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 			t.Error("request URL should be /api/v0/graph-annotations/123456789 but: ", req.URL.Path)
 		}
 		if req.Method != "DELETE" {
-			t.Error("request method should be PUT but: ", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
