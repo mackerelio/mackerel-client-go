@@ -291,3 +291,38 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 		t.Error("request sends json including Description but: ", annotation.Description)
 	}
 }
+
+func TestDeleteGraphAnnotations_NotFound(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/graph-annotations/123456789" {
+			t.Error("request URL should be /api/v0/graph-annotations/123456789 but: ", req.URL.Path)
+		}
+		if req.Method != "DELETE" {
+			t.Error("request method should be DELETE but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]map[string]string{
+			"error": {"message": "Graph annotation not found"},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		res.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	_, err := client.DeleteGraphAnnotation("123456789")
+
+	if err == nil {
+		t.Error("err should not be nil but: ", err)
+	}
+
+	apiErr := err.(*APIError)
+	if expected := 404; apiErr.StatusCode != expected {
+		t.Errorf("api error StatusCode should be %d but got: %d", expected, apiErr.StatusCode)
+	}
+	if expected := "API request failed: Graph annotation not found"; apiErr.Error() != expected {
+		t.Errorf("api error string should be %s but got: %s", expected, apiErr.Error())
+	}
+}

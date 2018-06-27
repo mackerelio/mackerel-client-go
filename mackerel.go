@@ -3,7 +3,6 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -88,7 +87,12 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return resp, fmt.Errorf("API result failed: %s", resp.Status)
+		message := extractErrorMessage(resp.Body)
+		defer resp.Body.Close()
+		if message != "" {
+			return nil, &APIError{StatusCode: resp.StatusCode, Message: message}
+		}
+		return nil, &APIError{StatusCode: resp.StatusCode, Message: resp.Status}
 	}
 	return resp, nil
 }

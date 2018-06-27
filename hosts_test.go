@@ -374,3 +374,39 @@ func TestRetireHost(t *testing.T) {
 		t.Error("err should be nil but: ", err)
 	}
 }
+
+func TestRetireHost_NotFound(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/123456ABCD/retire" {
+			t.Error("request URL should be /api/v0/hosts/123456ABCD/retire but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]string{
+			"error": "Host Not Found.",
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		res.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	err := client.RetireHost("123456ABCD")
+
+	if err == nil {
+		t.Error("err should not be nil but: ", err)
+	}
+
+	apiErr := err.(*APIError)
+	if expected := 404; apiErr.StatusCode != expected {
+		t.Errorf("api error StatusCode should be %d but got: %d", expected, apiErr.StatusCode)
+	}
+	if expected := "API request failed: Host Not Found."; apiErr.Error() != expected {
+		t.Errorf("api error string should be %s but got: %s", expected, apiErr.Error())
+	}
+}
