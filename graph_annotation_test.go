@@ -13,11 +13,11 @@ import (
 func TestCreateGraphAnnotation(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/graph-annotations" {
-			t.Error("request URL should be /api/v0/graph-annotations but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/graph-annotations but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be POST but: ", req.Method)
 		}
 		body, _ := ioutil.ReadAll(req.Body)
 
@@ -76,7 +76,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotation.Service != "My-Blog" {
@@ -107,21 +107,21 @@ func TestCreateGraphAnnotation(t *testing.T) {
 func TestFindGraphAnnotations(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/graph-annotations" {
-			t.Error("request URL should be /api/v0/graph-annotations but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/graph-annotations but: ", req.URL.Path)
 		}
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		query := req.URL.Query()
 		if query.Get("service") != "My-Blog" {
-			t.Error("request query 'service' param should be My-Blog but :", query.Get("service"))
+			t.Error("request query 'service' param should be My-Blog but: ", query.Get("service"))
 		}
 		if query.Get("from") != "1485675275" {
-			t.Error("request query 'from' param should be 1485675275 but :", query.Get("from"))
+			t.Error("request query 'from' param should be 1485675275 but: ", query.Get("from"))
 		}
 		if query.Get("to") != "1485675299" {
-			t.Error("request query 'from' param should be 1485675299 but :", query.Get("from"))
+			t.Error("request query 'from' param should be 1485675299 but: ", query.Get("from"))
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -146,7 +146,7 @@ func TestFindGraphAnnotations(t *testing.T) {
 	annotations, err := client.FindGraphAnnotations("My-Blog", 1485675275, 1485675299)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotations[0].Service != "My-Blog" {
@@ -177,10 +177,10 @@ func TestFindGraphAnnotations(t *testing.T) {
 func TestUpdateGraphAnnotations(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/graph-annotations/123456789" {
-			t.Error("request URL should be /api/v0/graph-annotations/123456789 but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/graph-annotations/123456789 but: ", req.URL.Path)
 		}
 		if req.Method != "PUT" {
-			t.Error("request method should be PUT but :", req.Method)
+			t.Error("request method should be PUT but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
@@ -209,7 +209,7 @@ func TestUpdateGraphAnnotations(t *testing.T) {
 		})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotation.Service != "My-Blog" {
@@ -240,10 +240,10 @@ func TestUpdateGraphAnnotations(t *testing.T) {
 func TestDeleteGraphAnnotations(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/graph-annotations/123456789" {
-			t.Error("request URL should be /api/v0/graph-annotations/123456789 but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/graph-annotations/123456789 but: ", req.URL.Path)
 		}
 		if req.Method != "DELETE" {
-			t.Error("request method should be PUT but :", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
@@ -264,7 +264,7 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 	annotation, err := client.DeleteGraphAnnotation("123456789")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if annotation.Service != "My-Blog" {

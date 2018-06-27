@@ -23,7 +23,7 @@ func TestGetHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON := `{"type":12345,"region":"jp","env":"staging","instance_type":"c4.xlarge"}`
@@ -36,7 +36,7 @@ func TestGetHostMetaData(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	metadataResp, err := client.GetHostMetaData(hostID, namespace)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	metadata := metadataResp.HostMetaData
@@ -68,7 +68,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON := `{"metadata":[{"namespace":"testing1"}, {"namespace":"testing2"}]}`
@@ -80,7 +80,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	namespaces, err := client.GetHostMetaDataNameSpaces(hostID)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if !reflect.DeepEqual(namespaces, []string{"testing1", "testing2"}) {
@@ -100,7 +100,7 @@ func TestPutHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "PUT" {
-			t.Error("request method should be PUT but :", req.Method)
+			t.Error("request method should be PUT but: ", req.Method)
 		}
 
 		body, _ := ioutil.ReadAll(req.Body)
@@ -123,7 +123,7 @@ func TestPutHostMetaData(t *testing.T) {
 	}
 	err := client.PutHostMetaData(hostID, namespace, &metadata)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -139,7 +139,7 @@ func TestDeleteHostMetaData(t *testing.T) {
 		}
 
 		if req.Method != "DELETE" {
-			t.Error("request method should be DELETE but :", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -150,6 +150,6 @@ func TestDeleteHostMetaData(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.DeleteHostMetaData(hostID, namespace)
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }

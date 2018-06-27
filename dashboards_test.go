@@ -12,7 +12,7 @@ import (
 func TestFindDashboards(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/dashboards" {
-			t.Error("request URL should be /api/v0/dashboards but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -37,7 +37,7 @@ func TestFindDashboards(t *testing.T) {
 	dashboards, err := client.FindDashboards()
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if dashboards[0].ID != "2c5bLca8d" {
@@ -71,7 +71,7 @@ func TestFindDashboard(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(
@@ -94,7 +94,7 @@ func TestFindDashboard(t *testing.T) {
 	dashboard, err := client.FindDashboard(testID)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if dashboard.ID != "2c5bLca8d" {
@@ -171,7 +171,7 @@ func TestCreateDashboard(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if dashboard.ID != "2c5bLca8d" {
@@ -205,7 +205,7 @@ func TestUpdateDashboard(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
 		}
 
 		if req.Method != "PUT" {
@@ -251,7 +251,7 @@ func TestUpdateDashboard(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if dashboard.ID != "2c5bLca8d" {
@@ -285,7 +285,7 @@ func TestDeleteDashboard(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
 		}
 
 		if req.Method != "DELETE" {
@@ -311,7 +311,7 @@ func TestDeleteDashboard(t *testing.T) {
 	dashboard, err := client.DeleteDashboard(testID)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if dashboard.ID != "2c5bLca8d" {

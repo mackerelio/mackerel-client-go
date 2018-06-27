@@ -13,7 +13,7 @@ func TestRequest(t *testing.T) {
 		}
 
 		if h := req.Header.Get("User-Agent"); h != defaultUserAgent {
-			t.Errorf("User-Agent shoud be '%s' but %s", defaultUserAgent, h)
+			t.Errorf("User-Agent should be '%s' but %s", defaultUserAgent, h)
 		}
 	}))
 	defer ts.Close()
@@ -48,12 +48,12 @@ func TestBuildReq(t *testing.T) {
 		t.Error("X-Api-Key header should contains passed key")
 	}
 	if h := req.Header.Get("User-Agent"); h != cl.UserAgent {
-		t.Errorf("User-Agent shoud be '%s' but %s", cl.UserAgent, h)
+		t.Errorf("User-Agent should be '%s' but %s", cl.UserAgent, h)
 	}
 	if h := req.Header.Get("X-Agent-Version"); h != xVer {
-		t.Errorf("X-Agent-Version shoud be '%s' but %s", xVer, h)
+		t.Errorf("X-Agent-Version should be '%s' but %s", xVer, h)
 	}
 	if h := req.Header.Get("X-Revision"); h != xRev {
-		t.Errorf("X-Revision shoud be '%s' but %s", xRev, h)
+		t.Errorf("X-Revision should be '%s' but %s", xRev, h)
 	}
 }

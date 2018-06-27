@@ -23,18 +23,18 @@ func TestGetRoleFullnames(t *testing.T) {
 	sort.Strings(fullnames)
 
 	if !reflect.DeepEqual(fullnames, []string{"My-Service2:proxy", "My-Service:db-master", "My-Service:db-slave"}) {
-		t.Error("RoleFullnames shoud be ['My-Service2:proxy', My-Service:db-master', 'My-Service:db-slave'] but: ", fullnames)
+		t.Error("RoleFullnames should be ['My-Service2:proxy', My-Service:db-master', 'My-Service:db-slave'] but: ", fullnames)
 	}
 }
 
 func TestFindHost(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F" {
-			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
@@ -65,7 +65,7 @@ func TestFindHost(t *testing.T) {
 	host, err := client.FindHost("9rxGOHfVF8F")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if host.Memo != "hello" {
@@ -90,25 +90,25 @@ func TestFindHost(t *testing.T) {
 func TestFindHosts(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts" {
-			t.Error("request URL should be /api/v0/hosts but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts but: ", req.URL.Path)
 		}
 
 		query := req.URL.Query()
 		if query.Get("service") != "My-Service" {
-			t.Error("request query 'service' param should be My-Service but :", query.Get("service"))
+			t.Error("request query 'service' param should be My-Service but: ", query.Get("service"))
 		}
 		if !reflect.DeepEqual(query["role"], []string{"db-master"}) {
-			t.Error("request query 'role' param should be db-master but :", query.Get("role"))
+			t.Error("request query 'role' param should be db-master but: ", query.Get("role"))
 		}
 		if query.Get("name") != "mydb001" {
-			t.Error("request query 'name' param should be mydb001 but :", query.Get("name"))
+			t.Error("request query 'name' param should be mydb001 but: ", query.Get("name"))
 		}
 		if !reflect.DeepEqual(query["status"], []string{"working", "standby"}) {
-			t.Error("request query 'statuses' param should be ['working','standby'] but :", query["status"])
+			t.Error("request query 'statuses' param should be ['working','standby'] but: ", query["status"])
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -137,7 +137,7 @@ func TestFindHosts(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if hosts[0].Memo != "hello" {
@@ -197,11 +197,11 @@ func TestCreateHost(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if hostID != "123456ABCD" {
-		t.Error("hostID shoud be empty but: ", hostID)
+		t.Error("hostID should be empty but: ", hostID)
 	}
 }
 
@@ -252,18 +252,18 @@ func TestUpdateHost(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if hostID != "123456ABCD" {
-		t.Error("hostID shoud be empty but: ", hostID)
+		t.Error("hostID should be empty but: ", hostID)
 	}
 }
 
 func TestUpdateHostStatus(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/status" {
-			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/status but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/status but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
@@ -298,14 +298,14 @@ func TestUpdateHostStatus(t *testing.T) {
 	err := client.UpdateHostStatus("9rxGOHfVF8F", "maintenance")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
 func TestUpdateHostRoleFullnames(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/role-fullnames" {
-			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/role-fullnames but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/hosts/9rxGOHfVF8F/role-fullnames but: ", req.URL.Path)
 		}
 
 		if req.Method != "PUT" {
@@ -336,7 +336,7 @@ func TestUpdateHostRoleFullnames(t *testing.T) {
 	err := client.UpdateHostRoleFullnames("9rxGOHfVF8F", []string{"testservice:testrole", "testservice:testrole2"})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }
 
@@ -347,7 +347,7 @@ func TestRetireHost(t *testing.T) {
 		}
 
 		if req.Method != "POST" {
-			t.Error("request method should be PUT but: ", req.Method)
+			t.Error("request method should be POST but: ", req.Method)
 		}
 
 		body, _ := ioutil.ReadAll(req.Body)
@@ -371,6 +371,6 @@ func TestRetireHost(t *testing.T) {
 	err := client.RetireHost("123456ABCD")
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 }

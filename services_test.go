@@ -12,11 +12,11 @@ import (
 func TestFindServices(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/services" {
-			t.Error("request URL should be /api/v0/services but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services but: ", req.URL.Path)
 		}
 
 		if req.Method != "GET" {
-			t.Error("request method should be GET but :", req.Method)
+			t.Error("request method should be GET but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -38,7 +38,7 @@ func TestFindServices(t *testing.T) {
 	services, err := client.FindServices()
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if services[0].Memo != "hello" {
@@ -54,7 +54,7 @@ func TestFindServices(t *testing.T) {
 func TestCreateService(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/services" {
-			t.Error("request URL should be /api/v0/services but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services but: ", req.URL.Path)
 		}
 
 		if req.Method != "POST" {
@@ -80,7 +80,7 @@ func TestCreateService(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if service.Name != "My-Service" {
@@ -102,11 +102,11 @@ func TestDeleteService(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s", testName) {
-			t.Error("request URL should be /api/v0/services/<ID> but :", req.URL.Path)
+			t.Error("request URL should be /api/v0/services/<ID> but: ", req.URL.Path)
 		}
 
 		if req.Method != "DELETE" {
-			t.Error("request method should be POST but: ", req.Method)
+			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
@@ -125,7 +125,7 @@ func TestDeleteService(t *testing.T) {
 	service, err := client.DeleteService(testName)
 
 	if err != nil {
-		t.Error("err shoud be nil but: ", err)
+		t.Error("err should be nil but: ", err)
 	}
 
 	if service.Name != "My-Service" {
