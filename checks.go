@@ -1,10 +1,5 @@
 package mackerel
 
-import (
-	"encoding/json"
-	"time"
-)
-
 const (
 	CheckStatusOK       = "OK"
 	CheckStatusWarning  = "WARNING"
@@ -17,9 +12,9 @@ type CheckReport struct {
 	Name                 string      `json:"name"`
 	Status               string      `json:"status"`
 	Message              string      `json:"message"`
-	OccurredAt           Time        `json:"occurredAt"`
-	NotificationInterval int32       `json:"notificationInterval,omitempty"`
-	MaxCheckAttempts     int32       `json:"maxCheckAttempts,omitempty"`
+	OccurredAt           int64       `json:"occurredAt"`
+	NotificationInterval uint        `json:"notificationInterval,omitempty"`
+	MaxCheckAttempts     uint        `json:"maxCheckAttempts,omitempty"`
 }
 
 type CheckSource interface {
@@ -55,12 +50,6 @@ func NewCheckSourceHost(hostID string) CheckSource {
 
 type CheckReports struct {
 	Reports []*CheckReport `json:"reports"`
-}
-
-type Time time.Time
-
-func (t Time) MarshalJSON() ([]byte, error) {
-	return json.Marshal(time.Time(t).Unix())
 }
 
 func (c *Client) ReportCheckMonitors(crs *CheckReports) error {
