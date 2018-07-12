@@ -1,5 +1,6 @@
 package mackerel
 
+// CheckStatuses
 const (
 	CheckStatusOK       = "OK"
 	CheckStatusWarning  = "WARNING"
@@ -7,6 +8,7 @@ const (
 	CheckStatusUnknown  = "UNKNOWN"
 )
 
+// CheckReport represents a report of check monitoring
 type CheckReport struct {
 	Source               CheckSource `json:"source"`
 	Name                 string      `json:"name"`
@@ -17,6 +19,7 @@ type CheckReport struct {
 	MaxCheckAttempts     uint        `json:"maxCheckAttempts,omitempty"`
 }
 
+// CheckSource represents interface to which each check source type must confirm to
 type CheckSource interface {
 	CheckType() string
 
@@ -30,17 +33,19 @@ var _ CheckSource = (*checkSourceHost)(nil)
 
 // Ensure only checkSource types defined in this package can be assigned to the
 // CheckSource interface.
-func (m *checkSourceHost) isCheck() {}
+func (cs *checkSourceHost) isCheck() {}
 
 type checkSourceHost struct {
 	Type   string `json:"type"`
 	HostID string `json:"hostId"`
 }
 
+// CheckType is for satisfying CheckSource interface
 func (cs *checkSourceHost) CheckType() string {
 	return checkTypeHost
 }
 
+// NewCheckSourceHost returns new CheckSource which check type is "host"
 func NewCheckSourceHost(hostID string) CheckSource {
 	return &checkSourceHost{
 		Type:   checkTypeHost,
@@ -48,10 +53,12 @@ func NewCheckSourceHost(hostID string) CheckSource {
 	}
 }
 
+// CheckReports represents check reports for API
 type CheckReports struct {
 	Reports []*CheckReport `json:"reports"`
 }
 
+// ReportCheckMonitors reports check monitoring results
 func (c *Client) ReportCheckMonitors(crs *CheckReports) error {
 	resp, err := c.PostJSON("/api/v0/monitoring/checks/report", crs)
 	defer closeResponse(resp)
