@@ -26,7 +26,7 @@ type CheckReport struct {
 type CheckSource interface {
 	CheckType() string
 
-	isCheck()
+	isCheckSource()
 }
 
 const checkTypeHost = "host"
@@ -36,7 +36,7 @@ var _ CheckSource = (*checkSourceHost)(nil)
 
 // Ensure only checkSource types defined in this package can be assigned to the
 // CheckSource interface.
-func (cs *checkSourceHost) isCheck() {}
+func (cs *checkSourceHost) isCheckSource() {}
 
 type checkSourceHost struct {
 	Type   string `json:"type"`
