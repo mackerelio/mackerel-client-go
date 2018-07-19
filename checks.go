@@ -1,18 +1,21 @@
 package mackerel
 
+// CheckStatus represents check monitoring status
+type CheckStatus string
+
 // CheckStatuses
 const (
-	CheckStatusOK       = "OK"
-	CheckStatusWarning  = "WARNING"
-	CheckStatusCritical = "CRITICAL"
-	CheckStatusUnknown  = "UNKNOWN"
+	CheckStatusOK       CheckStatus = "OK"
+	CheckStatusWarning  CheckStatus = "WARNING"
+	CheckStatusCritical CheckStatus = "CRITICAL"
+	CheckStatusUnknown  CheckStatus = "UNKNOWN"
 )
 
 // CheckReport represents a report of check monitoring
 type CheckReport struct {
 	Source               CheckSource `json:"source"`
 	Name                 string      `json:"name"`
-	Status               string      `json:"status"`
+	Status               CheckStatus `json:"status"`
 	Message              string      `json:"message"`
 	OccurredAt           int64       `json:"occurredAt"`
 	NotificationInterval uint        `json:"notificationInterval,omitempty"`

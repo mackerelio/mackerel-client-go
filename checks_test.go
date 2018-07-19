@@ -59,7 +59,7 @@ func TestClient_ReportCheckMonitors(t *testing.T) {
 			Reports []struct {
 				Source     interface{} `json:"source"`
 				Name       string      `json:"name"`
-				Status     string      `json:"status"`
+				Status     CheckStatus `json:"status"`
 				Message    string      `json:"message"`
 				OccurredAt int64       `json:"occurredAt"`
 			} `json:"reports"`
