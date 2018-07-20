@@ -30,7 +30,7 @@ func TestCheckReports_MarshalJSON(t *testing.T) {
 	}
 }
 
-func TestClient_PostCheckMonitors(t *testing.T) {
+func TestClient_PostCheckReports(t *testing.T) {
 	crs := &CheckReports{
 		Reports: []*CheckReport{
 			{
@@ -93,7 +93,7 @@ func TestClient_PostCheckMonitors(t *testing.T) {
 	defer ts.Close()
 
 	cli, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	err := cli.PostCheckMonitors(crs)
+	err := cli.PostCheckReports(crs)
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
