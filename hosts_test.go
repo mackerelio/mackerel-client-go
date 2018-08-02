@@ -163,10 +163,11 @@ func TestCreateHost(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var data struct {
-			Name          string      `json:"name"`
-			Meta          HostMeta    `json:"meta"`
-			Interfaces    []Interface `json:"interfaces"`
-			RoleFullnames []string    `json:"roleFullnames"`
+			Name          string        `json:"name"`
+			Meta          HostMeta      `json:"meta"`
+			Interfaces    []Interface   `json:"interfaces"`
+			RoleFullnames []string      `json:"roleFullnames"`
+			Checks        []CheckConfig `json:"checks"`
 		}
 
 		err := json.Unmarshal(body, &data)
@@ -179,6 +180,12 @@ func TestCreateHost(t *testing.T) {
 		}
 		if !reflect.DeepEqual(data.RoleFullnames, []string{"My-Service:db-master", "My-Service:db-slave"}) {
 			t.Error("request sends json including roleFullnames but: ", data.RoleFullnames)
+		}
+		if !reflect.DeepEqual(data.Checks, []CheckConfig{
+			{Name: "mysql", Memo: "check mysql memo"},
+			{Name: "nginx", Memo: "check nginx memo"},
+		}) {
+			t.Error("request sends json including checks but: ", data.Checks)
 		}
 
 		respJSON, _ := json.Marshal(map[string]string{
@@ -194,6 +201,10 @@ func TestCreateHost(t *testing.T) {
 	hostID, err := client.CreateHost(&CreateHostParam{
 		Name:          "mydb002",
 		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
+		Checks: []CheckConfig{
+			{Name: "mysql", Memo: "check mysql memo"},
+			{Name: "nginx", Memo: "check nginx memo"},
+		},
 	})
 
 	if err != nil {
@@ -218,10 +229,11 @@ func TestUpdateHost(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var data struct {
-			Name          string      `json:"name"`
-			Meta          HostMeta    `json:"meta"`
-			Interfaces    []Interface `json:"interfaces"`
-			RoleFullnames []string    `json:"roleFullnames"`
+			Name          string        `json:"name"`
+			Meta          HostMeta      `json:"meta"`
+			Interfaces    []Interface   `json:"interfaces"`
+			RoleFullnames []string      `json:"roleFullnames"`
+			Checks        []CheckConfig `json:"checks"`
 		}
 
 		err := json.Unmarshal(body, &data)
@@ -234,6 +246,12 @@ func TestUpdateHost(t *testing.T) {
 		}
 		if !reflect.DeepEqual(data.RoleFullnames, []string{"My-Service:db-master", "My-Service:db-slave"}) {
 			t.Error("request sends json including roleFullnames but: ", data.RoleFullnames)
+		}
+		if !reflect.DeepEqual(data.Checks, []CheckConfig{
+			{Name: "mysql", Memo: "check mysql memo"},
+			{Name: "nginx", Memo: "check nginx memo"},
+		}) {
+			t.Error("request sends json including checks but: ", data.Checks)
 		}
 
 		respJSON, _ := json.Marshal(map[string]string{
@@ -249,6 +267,10 @@ func TestUpdateHost(t *testing.T) {
 	hostID, err := client.UpdateHost("123456ABCD", &UpdateHostParam{
 		Name:          "mydb002",
 		RoleFullnames: []string{"My-Service:db-master", "My-Service:db-slave"},
+		Checks: []CheckConfig{
+			{Name: "mysql", Memo: "check mysql memo"},
+			{Name: "nginx", Memo: "check nginx memo"},
+		},
 	})
 
 	if err != nil {
