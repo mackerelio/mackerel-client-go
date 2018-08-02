@@ -82,12 +82,19 @@ type FindHostsParam struct {
 
 // CreateHostParam parameters for CreateHost
 type CreateHostParam struct {
-	Name             string      `json:"name,omitempty"`
-	DisplayName      string      `json:"displayName,omitempty"`
-	Meta             HostMeta    `json:"meta,omitempty"`
-	Interfaces       []Interface `json:"interfaces,omitempty"`
-	RoleFullnames    []string    `json:"roleFullnames,omitempty"`
-	CustomIdentifier string      `json:"customIdentifier,omitempty"`
+	Name             string        `json:"name,omitempty"`
+	DisplayName      string        `json:"displayName,omitempty"`
+	Meta             HostMeta      `json:"meta,omitempty"`
+	Interfaces       []Interface   `json:"interfaces,omitempty"`
+	RoleFullnames    []string      `json:"roleFullnames,omitempty"`
+	Checks           []CheckConfig `json:"checks,omitempty"`
+	CustomIdentifier string        `json:"customIdentifier,omitempty"`
+}
+
+// CheckConfig is check plugin name and memo
+type CheckConfig struct {
+	Name string `json:"name,omitempty"`
+	Memo string `json:"memo,omitempty"`
 }
 
 // UpdateHostParam parameters for UpdateHost
