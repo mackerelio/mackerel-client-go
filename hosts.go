@@ -33,6 +33,7 @@ type Roles map[string][]string
 type HostMeta struct {
 	AgentRevision string      `json:"agent-revision,omitempty"`
 	AgentVersion  string      `json:"agent-version,omitempty"`
+	AgentName     string      `json:"agent-name,omitempty"`
 	BlockDevice   BlockDevice `json:"block_device,omitempty"`
 	CPU           CPU         `json:"cpu,omitempty"`
 	Filesystem    FileSystem  `json:"filesystem,omitempty"`
