@@ -39,7 +39,7 @@ type HostMeta struct {
 	Filesystem    FileSystem  `json:"filesystem,omitempty"`
 	Kernel        Kernel      `json:"kernel,omitempty"`
 	Memory        Memory      `json:"memory,omitempty"`
-	Cloud         Cloud       `json:"cloud,omitempty"`
+	Cloud         *Cloud      `json:"cloud,omitempty"`
 }
 
 // BlockDevice blockdevice
