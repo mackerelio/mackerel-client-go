@@ -3,6 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,6 +21,25 @@ func TestCreateRole(t *testing.T) {
 
 		if req.Method != "POST" {
 			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			t.Error(err.Error())
+		}
+
+		var reqBody CreateRoleParam
+		err = json.Unmarshal(body, &reqBody)
+		if err != nil {
+			t.Error(err.Error())
+		}
+
+		if reqBody.Name != testRoleName {
+			t.Error("name (in request json parameter) should be ", testRoleName, "but: ", reqBody.Name)
+		}
+
+		if reqBody.Memo != testRoleMemo {
+			t.Error("memo (in request json parameter) should be ", testRoleMemo, "but: ", reqBody.Memo)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
