@@ -23,7 +23,7 @@ client = mkr.NewClient("<Put your API key>")
 hosts, err := client.FindHosts(&mkr.FindHostsParam{
         Service: "My-Service",
         Roles: []string{"proxy"},
-        Statuses: []string{"working"},
+        Statuses: []string{mkr.HostStatusWorking},
 })
 
 err := client.PostServiceMetricValues("My-Service", []*mkr.MetricValue{

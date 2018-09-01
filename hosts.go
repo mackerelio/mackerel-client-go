@@ -101,6 +101,13 @@ type CheckConfig struct {
 // UpdateHostParam parameters for UpdateHost
 type UpdateHostParam CreateHostParam
 
+const (
+	HostStatusWorking     = "working"
+	HostStatusStandby     = "standby"
+	HostStatusMaintenance = "maintenance"
+	HostStatusPoweroff    = "poweroff"
+)
+
 // GetRoleFullnames getrolefullnames
 func (h *Host) GetRoleFullnames() []string {
 	if len(h.Roles) < 1 {
