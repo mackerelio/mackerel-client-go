@@ -102,10 +102,14 @@ type CheckConfig struct {
 type UpdateHostParam CreateHostParam
 
 const (
-	HostStatusWorking     = "working"
-	HostStatusStandby     = "standby"
+	// HostStatusWorking represents "working" status
+	HostStatusWorking = "working"
+	// HostStatusStandby represents "standby" status
+	HostStatusStandby = "standby"
+	// HostStatusMaintenance represents "maintenance" status
 	HostStatusMaintenance = "maintenance"
-	HostStatusPoweroff    = "poweroff"
+	// HostStatusPoweroff represents "poeroff" status
+	HostStatusPoweroff = "poweroff"
 )
 
 // GetRoleFullnames getrolefullnames
