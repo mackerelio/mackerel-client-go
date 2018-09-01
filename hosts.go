@@ -269,3 +269,25 @@ func (c *Client) RetireHost(id string) error {
 	defer closeResponse(resp)
 	return err
 }
+
+// ListHostMetricNames lists metric names of a host
+func (c *Client) ListHostMetricNames(id string) ([]string, error) {
+	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metric-names", id)).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Names []string `json:"names"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data.Names, err
+}
