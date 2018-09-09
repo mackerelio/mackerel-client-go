@@ -156,6 +156,50 @@ func TestFindMonitors(t *testing.T) {
 	}
 }
 
+func TestGetMonitor(t *testing.T) {
+	var (
+		monitorID = "2cSZzK3XfmG"
+	)
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		u := fmt.Sprintf("/api/v0/monitors/%s", monitorID)
+		if req.URL.Path != u {
+			t.Errorf("request URL should be %v but %v:", u, req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
+			"monitor": {
+				"id":            monitorID,
+				"type":          "connectivity",
+				"memo":          "connectivity monitor",
+				"scopes":        []string{},
+				"excludeScopes": []string{},
+			},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	monitor, err := client.GetMonitor(monitorID)
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	m, ok := monitor.(*MonitorConnectivity)
+	if !ok || m.Type != "connectivity" {
+		t.Error("request sends json including type but: ", m)
+	}
+	if m.Memo != "connectivity monitor" {
+		t.Error("request sends json including memo but: ", m)
+	}
+}
+
 // ensure that it supports `"headers":[]` and headers must be nil by default.
 func TestMonitorExternalHTTP_headers(t *testing.T) {
 	tests := []struct {
