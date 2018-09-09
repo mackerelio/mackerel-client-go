@@ -285,6 +285,31 @@ func (c *Client) FindMonitors() ([]Monitor, error) {
 	return ms, err
 }
 
+// GetMonitor get monitor.
+func (c *Client) GetMonitor(monitorID string) (Monitor, error) {
+	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	var data struct {
+		Monitor json.RawMessage `json:"monitor"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	m, err := decodeMonitor(data.Monitor)
+	if err != nil {
+		return nil, err
+	}
+	return m, err
+}
+
 // CreateMonitor creating monitor
 func (c *Client) CreateMonitor(param Monitor) (Monitor, error) {
 	resp, err := c.PostJSON("/api/v0/monitors", param)
