@@ -140,3 +140,35 @@ func TestDeleteService(t *testing.T) {
 		t.Error("request sends json including name but: ", service.Roles)
 	}
 }
+
+func TestListServiceMetricNames(t *testing.T) {
+	serviceName := "my-service"
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s/metric-names", serviceName) {
+			t.Error("request URL should be /api/v0/services/<ServiceName>/metric-names but: ", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string][]string{
+			"names": {"access.api", "access.web"},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	names, err := client.ListServiceMetricNames(serviceName)
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if reflect.DeepEqual(names, []string{"access.api", "access.web"}) != true {
+		t.Errorf("Wrong data for metric names: %v", names)
+	}
+}
