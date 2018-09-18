@@ -11,19 +11,19 @@ import (
 
 // Host host information
 type Host struct {
-	ID               string      `json:"id,omitempty"`
-	Name             string      `json:"name,omitempty"`
+	ID               string      `json:"id"`
+	Name             string      `json:"name"`
 	DisplayName      string      `json:"displayName,omitempty"`
 	CustomIdentifier string      `json:"customIdentifier,omitempty"`
-	Type             string      `json:"type,omitempty"`
-	Status           string      `json:"status,omitempty"`
-	Memo             string      `json:"memo,omitempty"`
-	Roles            Roles       `json:"roles,omitempty"`
+	Type             string      `json:"type"`
+	Status           string      `json:"status"`
+	Memo             string      `json:"memo"`
+	Roles            Roles       `json:"roles"`
 	RoleFullnames    []string    `json:"roleFullnames,omitempty"`
-	IsRetired        bool        `json:"isRetired,omitempty"`
-	CreatedAt        int32       `json:"createdAt,omitempty"`
-	Meta             HostMeta    `json:"meta,omitempty"`
-	Interfaces       []Interface `json:"interfaces,omitempty"`
+	IsRetired        bool        `json:"isRetired"`
+	CreatedAt        int32       `json:"createdAt"`
+	Meta             HostMeta    `json:"meta"`
+	Interfaces       []Interface `json:"interfaces"`
 }
 
 // Roles host role maps
@@ -83,9 +83,9 @@ type FindHostsParam struct {
 
 // CreateHostParam parameters for CreateHost
 type CreateHostParam struct {
-	Name             string        `json:"name,omitempty"`
+	Name             string        `json:"name"`
 	DisplayName      string        `json:"displayName,omitempty"`
-	Meta             HostMeta      `json:"meta,omitempty"`
+	Meta             HostMeta      `json:"meta"`
 	Interfaces       []Interface   `json:"interfaces,omitempty"`
 	RoleFullnames    []string      `json:"roleFullnames,omitempty"`
 	Checks           []CheckConfig `json:"checks,omitempty"`
