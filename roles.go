@@ -8,15 +8,12 @@ import (
 
 // Role represents Mackerel "role".
 type Role struct {
-	Name string
-	Memo string
-}
-
-// CreateRoleParam parameters for CreateRole
-type CreateRoleParam struct {
 	Name string `json:"name"`
 	Memo string `json:"memo"`
 }
+
+// CreateRoleParam parameters for CreateRole
+type CreateRoleParam Role
 
 // CreateRole creates role.
 func (c *Client) CreateRole(serviceName string, param *CreateRoleParam) (*Role, error) {

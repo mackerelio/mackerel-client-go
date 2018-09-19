@@ -8,9 +8,9 @@ import (
 
 // Service represents Mackerel "service".
 type Service struct {
-	Name  string   `json:"name,omitempty"`
-	Memo  string   `json:"memo,omitempty"`
-	Roles []string `json:"roles,omitempty"`
+	Name  string   `json:"name"`
+	Memo  string   `json:"memo"`
+	Roles []string `json:"roles"`
 }
 
 // CreateServiceParam parameters for CreateService
