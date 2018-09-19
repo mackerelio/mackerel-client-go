@@ -14,20 +14,20 @@ mackerel-client-go is a Go client library for [mackerel.io API](https://mackerel
 # Usage
 
 ```go
-import mkr "github.com/mackerelio/mackerel-client-go"
+import "github.com/mackerelio/mackerel-client-go"
 ```
 
 ```go
-client = mkr.NewClient("<Put your API key>")
+client = mackerel.NewClient("<Put your API key>")
 
-hosts, err := client.FindHosts(&mkr.FindHostsParam{
+hosts, err := client.FindHosts(&mackerel.FindHostsParam{
         Service: "My-Service",
         Roles: []string{"proxy"},
-        Statuses: []string{mkr.HostStatusWorking},
+        Statuses: []string{mackerel.HostStatusWorking},
 })
 
-err := client.PostServiceMetricValues("My-Service", []*mkr.MetricValue{
-        &mkr.MetricValue{
+err := client.PostServiceMetricValues("My-Service", []*mackerel.MetricValue{
+        &mackerel.MetricValue{
               Name:  "proxy.access_log.latency",
               Time:  123456789,
               Value: 500,
