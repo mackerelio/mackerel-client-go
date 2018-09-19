@@ -18,7 +18,7 @@ import "github.com/mackerelio/mackerel-client-go"
 ```
 
 ```go
-client = mackerel.NewClient("<Put your API key>")
+client := mackerel.NewClient("<Put your API key>")
 
 hosts, err := client.FindHosts(&mackerel.FindHostsParam{
         Service: "My-Service",
