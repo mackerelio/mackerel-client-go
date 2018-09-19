@@ -2,7 +2,7 @@ mackerel-client-go
 ==================
 
 [![Build Status](https://travis-ci.org/mackerelio/mackerel-client-go.svg?branch=master)][travis]
-[![Coverage Status](https://coveralls.io/repos/mackerelio/mackerel-client-go/badge.png?branch=master)][coveralls]
+[![Coverage Status](https://coveralls.io/repos/mackerelio/mackerel-client-go/badge.svg?branch=master)][coveralls]
 [![GoDoc](https://godoc.org/github.com/mackerelio/mackerel-client-go?status.svg)][godoc]
 
 [travis]: https://travis-ci.org/mackerelio/mackerel-client-go
