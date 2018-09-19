@@ -82,3 +82,25 @@ func (c *Client) DeleteService(serviceName string) (*Service, error) {
 	}
 	return service, nil
 }
+
+// ListServiceMetricNames lists metric names of a service
+func (c *Client) ListServiceMetricNames(serviceName string) ([]string, error) {
+	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/services/%s/metric-names", serviceName)).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Names []string `json:"names"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data.Names, err
+}
