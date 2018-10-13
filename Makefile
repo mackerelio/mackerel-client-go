@@ -3,10 +3,10 @@ test: lint gofmt
 
 testdeps:
 	go get -d -v -t ./...
-	go get github.com/golang/lint/golint
-	go get golang.org/x/tools/cmd/cover
-	go get github.com/axw/gocov/gocov
-	go get github.com/mattn/goveralls
+	go get golang.org/x/lint/golint \
+		golang.org/x/tools/cmd/cover \
+		github.com/axw/gocov/gocov \
+		github.com/mattn/goveralls
 
 LINT_RET = .golint.txt
 lint: testdeps
