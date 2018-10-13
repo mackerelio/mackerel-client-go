@@ -72,14 +72,14 @@ func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string)
 	}
 
 	var data struct {
-		LatestMetricValues *LatestMetricValues `json:"tsdbLatest"`
+		LatestMetricValues LatestMetricValues `json:"tsdbLatest"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
 
-	return *(data.LatestMetricValues), err
+	return data.LatestMetricValues, err
 }
 
 // FetchHostMetricValues retrieves the metric values for a Host
@@ -117,11 +117,11 @@ func (c *Client) fetchMetricValues(hostID *string, serviceName *string, metricNa
 	}
 
 	var data struct {
-		MetricValues *[]MetricValue `json:"metrics"`
+		MetricValues []MetricValue `json:"metrics"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-	return *(data.MetricValues), err
+	return data.MetricValues, err
 }
