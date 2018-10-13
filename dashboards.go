@@ -44,7 +44,7 @@ func (c *Client) FindDashboards() ([]*Dashboard, error) {
 	}
 
 	var data struct {
-		Dashboards []*(Dashboard) `json:"dashboards"`
+		Dashboards []*Dashboard `json:"dashboards"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {

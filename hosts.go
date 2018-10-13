@@ -203,7 +203,7 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	}
 
 	var data struct {
-		Hosts []*(Host) `json:"hosts"`
+		Hosts []*Host `json:"hosts"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
