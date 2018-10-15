@@ -56,7 +56,7 @@ func (c *Client) FindAlerts() ([]*Alert, error) {
 	}
 
 	var data struct {
-		Alerts []*(Alert) `json:"alerts"`
+		Alerts []*Alert `json:"alerts"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
