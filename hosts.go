@@ -19,7 +19,6 @@ type Host struct {
 	Status           string      `json:"status"`
 	Memo             string      `json:"memo"`
 	Roles            Roles       `json:"roles"`
-	RoleFullnames    []string    `json:"roleFullnames,omitempty"`
 	IsRetired        bool        `json:"isRetired"`
 	CreatedAt        int32       `json:"createdAt"`
 	Meta             HostMeta    `json:"meta"`
