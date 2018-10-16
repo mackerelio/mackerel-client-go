@@ -3,6 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -227,6 +228,59 @@ func TestMonitorExternalHTTP_headers(t *testing.T) {
 		}
 		if got := string(b); got != tt.want {
 			t.Errorf("%s: got %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+var updateMonitorMuteTestCases = []struct {
+	title string
+	param MonitorMuteParam
+	json  string
+}{
+	{
+		"simple mute",
+		MonitorMuteParam{IsMute: true},
+		`{"isMute": true}`,
+	},
+	{
+		"unMute",
+		MonitorMuteParam{IsMute: false},
+		`{"isMute": false}`,
+	},
+	{
+		"mute with unmutesAt",
+		MonitorMuteParam{IsMute: true, UnmutesAt: 1539679185},
+		`{"isMute": true, "unmutesAt": 1539679185}`,
+	},
+}
+
+func TestUpdateMonitorMute(t *testing.T) {
+	for _, tt := range updateMonitorMuteTestCases {
+		ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			if req.URL.Path != "/api/v0/monitors/9rxGOHfVF8F/mute" {
+				t.Error("request URL should be /api/v0/monitors/9rxGOHfVF8F/mute but: ", req.URL.Path)
+			}
+
+			if req.Method != "POST" {
+				t.Error("request method should be POST but: ", req.Method)
+			}
+
+			body, _ := ioutil.ReadAll(req.Body)
+
+			if !equalJSON(string(body), tt.json) {
+				t.Errorf("%s: request body is different from expected: %s", tt.title, string(body))
+			}
+
+			res.Header()["Content-Type"] = []string{"application/json"}
+			fmt.Fprint(res, body)
+		}))
+		defer ts.Close()
+
+		client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+		err := client.UpdateMonitorMute("9rxGOHfVF8F", tt.param)
+
+		if err != nil {
+			t.Errorf("%s: err should be nil but: %s", tt.title, err)
 		}
 	}
 }

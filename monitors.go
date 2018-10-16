@@ -330,6 +330,19 @@ func (c *Client) UpdateMonitor(monitorID string, param Monitor) (Monitor, error)
 	return decodeMonitorReader(resp.Body)
 }
 
+// MonitorMuteParam is used for UpdateMonitorMute
+type MonitorMuteParam struct {
+	IsMute    bool  `json:"isMute"`
+	UnmutesAt int64 `json:"unmutesAt,omitempty"`
+}
+
+// UpdateMonitorMute mutes/unmutes monitor
+func (c *Client) UpdateMonitorMute(monitorID string, param MonitorMuteParam) error {
+	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/monitors/%s/mute", monitorID), param)
+	defer closeResponse(resp)
+	return err
+}
+
 // DeleteMonitor update monitor
 func (c *Client) DeleteMonitor(monitorID string) (Monitor, error) {
 	req, err := http.NewRequest(
