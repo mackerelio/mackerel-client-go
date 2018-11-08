@@ -160,7 +160,7 @@ func TestFindAlertsByNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, nextID, err := client.FindAlertsByNextId("2fsf8jRxFG1")
+	alerts, nextID, err := client.FindAlertsByNextID("2fsf8jRxFG1")
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
@@ -297,7 +297,7 @@ func TestFindWithClosedAlertsByNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, nextID, err := client.FindWithClosedAlertsByNextId("2wpLU5fBXbG")
+	alerts, nextID, err := client.FindWithClosedAlertsByNextID("2wpLU5fBXbG")
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)

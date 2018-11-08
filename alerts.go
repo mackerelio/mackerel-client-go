@@ -69,8 +69,8 @@ func (c *Client) FindAlerts() ([]*Alert, NextID, error) {
 	return data.Alerts, data.ID, err
 }
 
-// FindAlertsByNextId find next open alerts by next id
-func (c *Client) FindAlertsByNextId(nextID string) ([]*Alert, NextID, error) {
+// FindAlertsByNextID find next open alerts by next id
+func (c *Client) FindAlertsByNextID(nextID string) ([]*Alert, NextID, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/alerts?nextId=%s", nextID)).String(), nil)
 	if err != nil {
 		return nil, "", err
@@ -115,8 +115,8 @@ func (c *Client) FindWithClosedAlerts() ([]*Alert, NextID, error) {
 	return data.Alerts, data.ID, err
 }
 
-// FindWithClosedAlertsByNextId find open and close alerts by next id
-func (c *Client) FindWithClosedAlertsByNextId(nextID string) ([]*Alert, NextID, error) {
+// FindWithClosedAlertsByNextID find open and close alerts by next id
+func (c *Client) FindWithClosedAlertsByNextID(nextID string) ([]*Alert, NextID, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/alerts?withClosed=true&nextId=%s", nextID)).String(), nil)
 	if err != nil {
 		return nil, "", err
