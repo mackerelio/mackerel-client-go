@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -128,7 +129,9 @@ func TestFindAlertsWithNextId(t *testing.T) {
 func TestFindAlertsByNextId(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		var nextID = "2fsf8jRxFG1"
-		if req.URL.Path != fmt.Sprintf("/api/v0/alerts?nextId=%s", nextID) {
+		v := url.Values{}
+		v.Set("nextId", nextID)
+		if req.URL.Path != fmt.Sprintf("%s?%s", "/api/v0/alerts", v.Encode()) {
 			t.Error("request URL should be /api/v0/alerts?nextId but: ", req.URL.Path)
 		}
 
