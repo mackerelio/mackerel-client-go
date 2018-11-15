@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 )
 
@@ -128,11 +127,8 @@ func TestFindAlertsWithNextId(t *testing.T) {
 
 func TestFindAlertsByNextId(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		var nextID = "2fsf8jRxFG1"
-		v := url.Values{}
-		v.Set("nextId", nextID)
-		if req.URL.Path != fmt.Sprintf("%s?%s", "/api/v0/alerts", v.Encode()) {
-			t.Error("request URL should be /api/v0/alerts?nextId but: ", req.URL.Path)
+		if req.URL.Path != "/api/v0/alerts" {
+			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
@@ -191,8 +187,8 @@ func TestFindAlertsByNextId(t *testing.T) {
 }
 func TestFindWithClosedAlerts(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/api/v0/alerts?withClosed=true" {
-			t.Error("request URL should be /api/v0/alerts?withClosed=true but: ", req.URL.Path)
+		if req.URL.Path != "/api/v0/alerts" {
+			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
@@ -257,9 +253,8 @@ func TestFindWithClosedAlerts(t *testing.T) {
 
 func TestFindWithClosedAlertsByNextId(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		var nextID = "2wpLU5fBXbG"
-		if req.URL.Path != fmt.Sprintf("/api/v0/alerts?withClosed=true&nextId=%s", nextID) {
-			t.Error("request URL should be /api/v0/alerts?withClosed=true&nextId but: ", req.URL.Path)
+		if req.URL.Path != "/api/v0/alerts" {
+			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
