@@ -82,9 +82,9 @@ func (c *Client) FindAlerts() (Data, error) {
 }
 
 // FindAlertsByNextID find next open alerts by next id
-func (c *Client) FindAlertsByNextID(nextID string) (Data, error) {
+func (c *Client) FindAlertsByNextID(nextID NextID) (Data, error) {
 	v := url.Values{}
-	v.Set("nextId", nextID)
+	v.Set("nextId", string(nextID))
 	d, err := c.findAlertsWithParam(v)
 	return d, err
 }
@@ -98,10 +98,10 @@ func (c *Client) FindWithClosedAlerts() (Data, error) {
 }
 
 // FindWithClosedAlertsByNextID find open and close alerts by next id
-func (c *Client) FindWithClosedAlertsByNextID(nextID string) (Data, error) {
+func (c *Client) FindWithClosedAlertsByNextID(nextID NextID) (Data, error) {
 	v := url.Values{}
 	v.Set("withClosed", "true")
-	v.Set("nextId", nextID)
+	v.Set("nextId", string(nextID))
 	d, err := c.findAlertsWithParam(v)
 	return d, err
 }
