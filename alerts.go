@@ -44,66 +44,58 @@ type Alert struct {
 	ClosedAt  int64   `json:"closedAt,omitempty"`
 }
 
-// NextID is next id of alert
-type NextID string
-
-// Data includes alert and next id
-type Data struct {
+// AlertsResp includes alert and next id
+type AlertsResp struct {
 	Alerts []*Alert `json:"alerts"`
-	ID     NextID   `json:"nextId,omitempty"`
+	NextID string   `json:"nextId,omitempty"`
 }
 
-var d Data
-
-func (c *Client) findAlertsWithParam(v url.Values) (Data, error) {
+func (c *Client) findAlertsWithParam(v url.Values) (*AlertsResp, error) {
+	var d AlertsResp
 	u := c.urlFor("/api/v0/alerts")
 	u.RawQuery = v.Encode()
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", u.String(), v.Encode()), nil)
+	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
 	resp, err := c.Request(req)
 	defer closeResponse(resp)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&d)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
-	return d, err
+	return &d, err
 }
 
 // FindAlerts find open alerts
-func (c *Client) FindAlerts() (Data, error) {
-	d, err := c.findAlertsWithParam(url.Values{})
-	return d, err
+func (c *Client) FindAlerts() (*AlertsResp, error) {
+	return c.findAlertsWithParam(url.Values{})
 }
 
 // FindAlertsByNextID find next open alerts by next id
-func (c *Client) FindAlertsByNextID(nextID NextID) (Data, error) {
+func (c *Client) FindAlertsByNextID(nextID string) (*AlertsResp, error) {
 	v := url.Values{}
 	v.Set("nextId", string(nextID))
-	d, err := c.findAlertsWithParam(v)
-	return d, err
+	return c.findAlertsWithParam(v)
 }
 
 // FindWithClosedAlerts find open and close alerts
-func (c *Client) FindWithClosedAlerts() (Data, error) {
+func (c *Client) FindWithClosedAlerts() (*AlertsResp, error) {
 	v := url.Values{}
 	v.Set("withClosed", "true")
-	d, err := c.findAlertsWithParam(v)
-	return d, err
+	return c.findAlertsWithParam(v)
 }
 
 // FindWithClosedAlertsByNextID find open and close alerts by next id
-func (c *Client) FindWithClosedAlertsByNextID(nextID NextID) (Data, error) {
+func (c *Client) FindWithClosedAlertsByNextID(nextID string) (*AlertsResp, error) {
 	v := url.Values{}
-	v.Set("withClosed", "true")
 	v.Set("nextId", string(nextID))
-	d, err := c.findAlertsWithParam(v)
-	return d, err
+	v.Set("withClosed", "true")
+	return c.findAlertsWithParam(v)
 }
 
 // CloseAlert close alert

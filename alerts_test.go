@@ -120,15 +120,19 @@ func TestFindAlertsWithNextId(t *testing.T) {
 		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 
-	if alerts.ID != "2fsf8jRxFG1" {
-		t.Error("request sends json including nextId but: ", alerts.ID)
+	if alerts.NextID != "2fsf8jRxFG1" {
+		t.Error("request sends json including nextId but: ", alerts.NextID)
 	}
 }
 
 func TestFindAlertsByNextId(t *testing.T) {
+	var nextID = "2fsf8jRxFG1"
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/alerts" {
 			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
+		}
+		if req.URL.RawQuery != "nextId="+nextID {
+			t.Error("request Query should be /api/v/alerts?nextId=", nextID, " but: ", req.URL.RawQuery)
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
@@ -159,7 +163,7 @@ func TestFindAlertsByNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, err := client.FindAlertsByNextID("2fsf8jRxFG1")
+	alerts, err := client.FindAlertsByNextID(nextID)
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
@@ -181,8 +185,8 @@ func TestFindAlertsByNextId(t *testing.T) {
 		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 
-	if alerts.ID != "2ghy4jDhEH3" {
-		t.Error("request sends json including nextId but: ", alerts.ID)
+	if alerts.NextID != "2ghy4jDhEH3" {
+		t.Error("request sends json including nextId but: ", alerts.NextID)
 	}
 }
 func TestFindWithClosedAlerts(t *testing.T) {
@@ -252,9 +256,17 @@ func TestFindWithClosedAlerts(t *testing.T) {
 }
 
 func TestFindWithClosedAlertsByNextId(t *testing.T) {
+	var nextID = "2wpLU5fBXbG"
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/alerts" {
 			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
+		}
+		q := req.URL.Query()
+		if q.Get("nextId") != nextID {
+			t.Error("request nextId should be ", nextID, "but: ", q.Get("nextId"))
+		}
+		if q.Get("withClosed") != "true" {
+			t.Error("request withClosed should be true but: ", q.Get("withClosed"))
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
@@ -295,7 +307,7 @@ func TestFindWithClosedAlertsByNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, err := client.FindWithClosedAlertsByNextID("2wpLU5fBXbG")
+	alerts, err := client.FindWithClosedAlertsByNextID(nextID)
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
@@ -317,7 +329,7 @@ func TestFindWithClosedAlertsByNextId(t *testing.T) {
 		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 
-	if alerts.ID != "2fsf8jRxFG1" {
-		t.Error("request sends json including nextId but: ", alerts.ID)
+	if alerts.NextID != "2fsf8jRxFG1" {
+		t.Error("request sends json including nextId but: ", alerts.NextID)
 	}
 }
