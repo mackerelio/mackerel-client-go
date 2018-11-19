@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 /*
@@ -43,9 +44,17 @@ type Alert struct {
 	ClosedAt  int64   `json:"closedAt,omitempty"`
 }
 
-// FindAlerts find alerts
-func (c *Client) FindAlerts() ([]*Alert, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/alerts").String(), nil)
+// AlertsResp includes alert and next id
+type AlertsResp struct {
+	Alerts []*Alert `json:"alerts"`
+	NextID string   `json:"nextId,omitempty"`
+}
+
+func (c *Client) findAlertsWithParam(v url.Values) (*AlertsResp, error) {
+	var d AlertsResp
+	u := c.urlFor("/api/v0/alerts")
+	u.RawQuery = v.Encode()
+	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -55,14 +64,38 @@ func (c *Client) FindAlerts() ([]*Alert, error) {
 		return nil, err
 	}
 
-	var data struct {
-		Alerts []*Alert `json:"alerts"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	err = json.NewDecoder(resp.Body).Decode(&d)
 	if err != nil {
 		return nil, err
 	}
-	return data.Alerts, err
+	return &d, err
+}
+
+// FindAlerts find open alerts
+func (c *Client) FindAlerts() (*AlertsResp, error) {
+	return c.findAlertsWithParam(url.Values{})
+}
+
+// FindAlertsByNextID find next open alerts by next id
+func (c *Client) FindAlertsByNextID(nextID string) (*AlertsResp, error) {
+	v := url.Values{}
+	v.Set("nextId", nextID)
+	return c.findAlertsWithParam(v)
+}
+
+// FindWithClosedAlerts find open and close alerts
+func (c *Client) FindWithClosedAlerts() (*AlertsResp, error) {
+	v := url.Values{}
+	v.Set("withClosed", "true")
+	return c.findAlertsWithParam(v)
+}
+
+// FindWithClosedAlertsByNextID find open and close alerts by next id
+func (c *Client) FindWithClosedAlertsByNextID(nextID string) (*AlertsResp, error) {
+	v := url.Values{}
+	v.Set("nextId", nextID)
+	v.Set("withClosed", "true")
+	return c.findAlertsWithParam(v)
 }
 
 // CloseAlert close alert
