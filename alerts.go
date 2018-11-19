@@ -71,7 +71,9 @@ func (c *Client) FindAlerts() ([]*Alert, string, error) {
 func (c *Client) FindAlertsByNextID(nextID string) ([]*Alert, string, error) {
 	v := url.Values{}
 	v.Set("nextId", nextID)
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/alerts").String(), v.Encode()), nil)
+	u := c.urlFor("/api/v0/alerts")
+	u.RawQuery = v.Encode()
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", u.String(), v.Encode()), nil)
 	if err != nil {
 		return nil, "", err
 	}
@@ -96,7 +98,9 @@ func (c *Client) FindAlertsByNextID(nextID string) ([]*Alert, string, error) {
 func (c *Client) FindWithClosedAlerts() ([]*Alert, string, error) {
 	v := url.Values{}
 	v.Set("withClosed", "true")
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/alerts").String(), v.Encode()), nil)
+	u := c.urlFor("/api/v0/alerts")
+	u.RawQuery = v.Encode()
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", u.String(), v.Encode()), nil)
 	if err != nil {
 		return nil, "", err
 	}
