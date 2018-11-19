@@ -41,26 +41,26 @@ func TestFindAlerts(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, _, err := client.FindAlerts()
+	alerts, err := client.FindAlerts()
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
 
-	if alerts[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[0])
+	if alerts.Alerts[0].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[0])
 	}
 
-	if alerts[1].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[1])
+	if alerts.Alerts[1].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[1])
 	}
 
-	if alerts[1].Status != "CRITICAL" {
-		t.Error("request sends json including status but: ", alerts[1])
+	if alerts.Alerts[1].Status != "CRITICAL" {
+		t.Error("request sends json including status but: ", alerts.Alerts[1])
 	}
 
-	if alerts[1].OpenedAt != 1441939801 {
-		t.Error("request sends json including openedAt but: ", alerts[1])
+	if alerts.Alerts[1].OpenedAt != 1441939801 {
+		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 }
 
@@ -98,30 +98,30 @@ func TestFindAlertsWithNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, nextID, err := client.FindAlerts()
+	alerts, err := client.FindAlerts()
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
 
-	if alerts[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[0])
+	if alerts.Alerts[0].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[0])
 	}
 
-	if alerts[1].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[1])
+	if alerts.Alerts[1].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[1])
 	}
 
-	if alerts[1].Status != "CRITICAL" {
-		t.Error("request sends json including status but: ", alerts[1])
+	if alerts.Alerts[1].Status != "CRITICAL" {
+		t.Error("request sends json including status but: ", alerts.Alerts[1])
 	}
 
-	if alerts[1].OpenedAt != 1441939801 {
-		t.Error("request sends json including openedAt but: ", alerts[1])
+	if alerts.Alerts[1].OpenedAt != 1441939801 {
+		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 
-	if nextID != "2fsf8jRxFG1" {
-		t.Error("request sends json including nextId but: ", nextID)
+	if alerts.ID != "2fsf8jRxFG1" {
+		t.Error("request sends json including nextId but: ", alerts.ID)
 	}
 }
 
@@ -159,30 +159,30 @@ func TestFindAlertsByNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, nextID, err := client.FindAlertsByNextID("2fsf8jRxFG1")
+	alerts, err := client.FindAlertsByNextID("2fsf8jRxFG1")
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
 
-	if alerts[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[0])
+	if alerts.Alerts[0].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[0])
 	}
 
-	if alerts[1].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[1])
+	if alerts.Alerts[1].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[1])
 	}
 
-	if alerts[1].Status != "CRITICAL" {
-		t.Error("request sends json including status but: ", alerts[1])
+	if alerts.Alerts[1].Status != "CRITICAL" {
+		t.Error("request sends json including status but: ", alerts.Alerts[1])
 	}
 
-	if alerts[1].OpenedAt != 1441939801 {
-		t.Error("request sends json including openedAt but: ", alerts[1])
+	if alerts.Alerts[1].OpenedAt != 1441939801 {
+		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 
-	if nextID != "2ghy4jDhEH3" {
-		t.Error("request sends json including nextId but: ", nextID)
+	if alerts.ID != "2ghy4jDhEH3" {
+		t.Error("request sends json including nextId but: ", alerts.ID)
 	}
 }
 func TestFindWithClosedAlerts(t *testing.T) {
@@ -228,26 +228,26 @@ func TestFindWithClosedAlerts(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, _, err := client.FindWithClosedAlerts()
+	alerts, err := client.FindWithClosedAlerts()
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
 
-	if alerts[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[0])
+	if alerts.Alerts[0].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[0])
 	}
 
-	if alerts[1].Status != "CRITICAL" {
-		t.Error("request sends json including type but: ", alerts[1])
+	if alerts.Alerts[1].Status != "CRITICAL" {
+		t.Error("request sends json including type but: ", alerts.Alerts[1])
 	}
 
-	if alerts[2].Status != "OK" {
-		t.Error("request sends json including status but: ", alerts[1])
+	if alerts.Alerts[2].Status != "OK" {
+		t.Error("request sends json including status but: ", alerts.Alerts[1])
 	}
 
-	if alerts[2].ClosedAt != 1441940101 {
-		t.Error("request sends json including openedAt but: ", alerts[1])
+	if alerts.Alerts[2].ClosedAt != 1441940101 {
+		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 }
 
@@ -295,29 +295,29 @@ func TestFindWithClosedAlertsByNextId(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	alerts, nextID, err := client.FindWithClosedAlertsByNextID("2wpLU5fBXbG")
+	alerts, err := client.FindWithClosedAlertsByNextID("2wpLU5fBXbG")
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
 
-	if alerts[0].Type != "connectivity" {
-		t.Error("request sends json including type but: ", alerts[0])
+	if alerts.Alerts[0].Type != "connectivity" {
+		t.Error("request sends json including type but: ", alerts.Alerts[0])
 	}
 
-	if alerts[1].Status != "CRITICAL" {
-		t.Error("request sends json including type but: ", alerts[1])
+	if alerts.Alerts[1].Status != "CRITICAL" {
+		t.Error("request sends json including type but: ", alerts.Alerts[1])
 	}
 
-	if alerts[2].Status != "OK" {
-		t.Error("request sends json including status but: ", alerts[1])
+	if alerts.Alerts[2].Status != "OK" {
+		t.Error("request sends json including status but: ", alerts.Alerts[1])
 	}
 
-	if alerts[2].ClosedAt != 1441940101 {
-		t.Error("request sends json including openedAt but: ", alerts[1])
+	if alerts.Alerts[2].ClosedAt != 1441940101 {
+		t.Error("request sends json including openedAt but: ", alerts.Alerts[1])
 	}
 
-	if nextID != "2fsf8jRxFG1" {
-		t.Error("request sends json including nextId but: ", nextID)
+	if alerts.ID != "2fsf8jRxFG1" {
+		t.Error("request sends json including nextId but: ", alerts.ID)
 	}
 }
