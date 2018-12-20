@@ -9,6 +9,44 @@ import (
 	"testing"
 )
 
+func TestFindRoles(t *testing.T) {
+	testServiceName := "testService"
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		uri := fmt.Sprintf("/api/v0/services/%s/roles", testServiceName)
+		if req.URL.Path != uri {
+			t.Error("request URL should be ", uri, " but: ", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+			"roles": {
+				{
+					"name": "My-Role",
+					"memo": "hello",
+				},
+			},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	roles, err := client.FindRoles(testServiceName)
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if roles[0].Memo != "hello" {
+		t.Error("request sends json including memo but: ", roles[0])
+	}
+}
+
 func TestCreateRole(t *testing.T) {
 	testServiceName := "testService"
 	testRoleName := "testRole"
