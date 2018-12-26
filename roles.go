@@ -15,6 +15,29 @@ type Role struct {
 // CreateRoleParam parameters for CreateRole
 type CreateRoleParam Role
 
+// FindRoles finds roles.
+func (c *Client) FindRoles(serviceName string) ([]*Role, error) {
+	uri := fmt.Sprintf("/api/v0/services/%s/roles", serviceName)
+	req, err := http.NewRequest("GET", c.urlFor(uri).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Roles []*Role `json:"roles"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data.Roles, err
+}
+
 // CreateRole creates role.
 func (c *Client) CreateRole(serviceName string, param *CreateRoleParam) (*Role, error) {
 	uri := fmt.Sprintf("/api/v0/services/%s/roles", serviceName)
