@@ -10,7 +10,7 @@ testdeps:
 
 LINT_RET = .golint.txt
 lint: testdeps
-	go tool vet .
+	go vet .
 	rm -f $(LINT_RET)
 	golint ./... | tee $(LINT_RET)
 	test ! -s $(LINT_RET)
