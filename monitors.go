@@ -48,7 +48,9 @@ import (
       "operator": ">",
       "warning": 50.0,
       "critical": 100.0,
-      "maxCheckAttempts": 1
+      "maxCheckAttempts": 1,
+      "missingDurationWarning": 360,
+      "missingDurationCritical": 720
     },
     {
       "id"  : "2cSZzK3XfmG",
@@ -170,13 +172,15 @@ type MonitorServiceMetric struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Service          string   `json:"service,omitempty"`
-	Metric           string   `json:"metric,omitempty"`
-	Operator         string   `json:"operator,omitempty"`
-	Warning          *float64 `json:"warning"`
-	Critical         *float64 `json:"critical"`
-	Duration         uint64   `json:"duration,omitempty"`
-	MaxCheckAttempts uint64   `json:"maxCheckAttempts,omitempty"`
+	Service                 string   `json:"service,omitempty"`
+	Metric                  string   `json:"metric,omitempty"`
+	Operator                string   `json:"operator,omitempty"`
+	Warning                 *float64 `json:"warning"`
+	Critical                *float64 `json:"critical"`
+	Duration                uint64   `json:"duration,omitempty"`
+	MaxCheckAttempts        uint64   `json:"maxCheckAttempts,omitempty"`
+	MissingDurationWarning  uint64   `json:"missingDurationWarning,omitempty"`
+	MissingDurationCritical uint64   `json:"missingDurationCritical,omitempty"`
 }
 
 // MonitorType returns monitor type.
