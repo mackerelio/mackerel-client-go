@@ -3,6 +3,7 @@ test: lint gofmt
 
 testdeps:
 	go get -d -v -t ./...
+	GO111MODULE=off \
 	go get golang.org/x/lint/golint \
 		golang.org/x/tools/cmd/cover \
 		github.com/axw/gocov/gocov \
