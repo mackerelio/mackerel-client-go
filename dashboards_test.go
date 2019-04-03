@@ -19,15 +19,23 @@ func TestFindDashboards(t *testing.T) {
 			"dashboards": {
 				{
 					"id":           "2c5bLca8d",
-					"title":        "My Dashboard",
-					"bodyMarkDown": "# A test dashboard",
+					"title":        "My Dashboard(Legacy)",
+					"bodyMarkDown": "# A test Legacy dashboard",
 					"urlPath":      "2u4PP3TJqbu",
 					"createdAt":    1439346145003,
 					"updatedAt":    1439346145003,
+					"isLegacy":     true,
+				},
+				{
+					"id":        "2c5bLca8e",
+					"title":     "My Custom Dashboard(Current)",
+					"urlPath":   "2u4PP3TJqbv",
+					"createdAt": 1552909732,
+					"updatedAt": 1552992837,
+					"memo":      "A test Current Dashboard",
 				},
 			},
 		})
-
 		res.Header()["Content-Type"] = []string{"application/json"}
 		fmt.Fprint(res, string(respJSON))
 	}))
@@ -44,11 +52,11 @@ func TestFindDashboards(t *testing.T) {
 		t.Error("request sends json including id but: ", dashboards[0])
 	}
 
-	if dashboards[0].Title != "My Dashboard" {
+	if dashboards[0].Title != "My Dashboard(Legacy)" {
 		t.Error("request sends json including title but: ", dashboards[0])
 	}
 
-	if dashboards[0].BodyMarkDown != "# A test dashboard" {
+	if dashboards[0].BodyMarkDown != "# A test Legacy dashboard" {
 		t.Error("request sends json including bodyMarkDown but: ", dashboards[0])
 	}
 
@@ -62,6 +70,10 @@ func TestFindDashboards(t *testing.T) {
 
 	if dashboards[0].UpdatedAt != 1439346145003 {
 		t.Error("request sends json including updatedAt but: ", dashboards[0])
+	}
+
+	if dashboards[0].IsLegacy != true {
+		t.Error("request sends json including IsLegacy but: ", dashboards[0])
 	}
 }
 
