@@ -73,7 +73,11 @@ func TestFindDashboards(t *testing.T) {
 	}
 
 	if dashboards[0].IsLegacy != true {
-		t.Error("request sends json including IsLegacy but: ", dashboards[0])
+		t.Error("request sends json including isLegacy but: ", dashboards[0])
+	}
+
+	if dashboards[1].Memo != "A test Current Dashboard" {
+		t.Error("request sends json including memo but: ", dashboards[1])
 	}
 }
 
