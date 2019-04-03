@@ -23,14 +23,36 @@ import (
 
 // Dashboard information
 type Dashboard struct {
-	ID           string `json:"id,omitempty"`
-	Title        string `json:"title,omitempty"`
-	BodyMarkDown string `json:"bodyMarkdown,omitempty"`
-	URLPath      string `json:"urlPath,omitempty"`
-	CreatedAt    int64  `json:"createdAt,omitempty"`
-	UpdatedAt    int64  `json:"updatedAt,omitempty"`
-	IsLegacy     bool   `json:"isLegacy,omitempty"`
-	Memo         string `json:"memo,omitempty"`
+	ID           string   `json:"id,omitempty"`
+	Title        string   `json:"title,omitempty"`
+	BodyMarkDown string   `json:"bodyMarkdown,omitempty"`
+	URLPath      string   `json:"urlPath,omitempty"`
+	CreatedAt    int64    `json:"createdAt,omitempty"`
+	UpdatedAt    int64    `json:"updatedAt,omitempty"`
+	IsLegacy     bool     `json:"isLegacy,omitempty"`
+	Memo         string   `json:"memo,omitempty"`
+	Widgets      []Widget `json:"widgets,omitenpty"`
+}
+
+// Widget information
+type Widget struct {
+	Type   string   `json:"type,omitempty"`
+	Title  string   `json:"title,omitempty"`
+	Metric []Metric `json:"metric,omitempty"`
+	Graph  []Graph  `json:"graph,omitempty"`
+	Layout []Layout `json:"layout,omitempty"`
+}
+
+// Metric information
+type Metric struct {
+}
+
+// Graph information
+type Graph struct {
+}
+
+// Layout information
+type Layout struct {
 }
 
 // FindDashboards find dashboards
