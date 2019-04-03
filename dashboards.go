@@ -29,6 +29,8 @@ type Dashboard struct {
 	URLPath      string `json:"urlPath,omitempty"`
 	CreatedAt    int64  `json:"createdAt,omitempty"`
 	UpdatedAt    int64  `json:"updatedAt,omitempty"`
+	IsLegacy     bool   `json:"isLegacy,omitempty"`
+	Memo         string `json:"memo,omitempty"`
 }
 
 // FindDashboards find dashboards
