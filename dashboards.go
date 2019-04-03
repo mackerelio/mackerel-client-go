@@ -45,14 +45,20 @@ type Widget struct {
 
 // Metric information
 type Metric struct {
+	Type string `json:"type,omitempty"`
 }
 
 // Graph information
 type Graph struct {
+	Type string `json:"type,omitempty"`
 }
 
 // Layout information
 type Layout struct {
+	X      int16 `json:"x,omitempty"`
+	Y      int16 `json:"y,omitempty"`
+	Width  int16 `json:"width,omitempty"`
+	Height int16 `json:"height,omitempty"`
 }
 
 // FindDashboards find dashboards
