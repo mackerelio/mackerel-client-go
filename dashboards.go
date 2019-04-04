@@ -118,13 +118,13 @@ type Dashboard struct {
 
 // Widget information
 type Widget struct {
-	Type     string   `json:"type,omitempty"`
-	Title    string   `json:"title,omitempty"`
-	Metric   []Metric `json:"metric,omitempty"`
-	Graph    []Graph  `json:"graph,omitempty"`
-	Layout   []Layout `json:"layout,omitempty"`
-	Markdown string   `json:"markdown,omitempty"`
-	Range    []Range  `json:"range,omitempty"`
+	Type     string `json:"type,omitempty"`
+	Title    string `json:"title,omitempty"`
+	Metric   Metric `json:"metric,omitempty"`
+	Graph    Graph  `json:"graph,omitempty"`
+	Layout   Layout `json:"layout,omitempty"`
+	Markdown string `json:"markdown,omitempty"`
+	Range    Range  `json:"range,omitempty"`
 }
 
 // Metric information
@@ -158,10 +158,10 @@ type Range struct {
 
 // Layout information
 type Layout struct {
-	X      uint8  `json:"x,omitempty"`
-	Y      uint8  `json:"y,omitempty"`
-	Width  uint16 `json:"width,omitempty"`
-	Height uint16 `json:"height,omitempty"`
+	X      int64 `json:"x,omitempty"`
+	Y      int64 `json:"y,omitempty"`
+	Width  int64 `json:"width,omitempty"`
+	Height int64 `json:"height,omitempty"`
 }
 
 // FindDashboards find dashboards
