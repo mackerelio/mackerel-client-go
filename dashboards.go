@@ -118,21 +118,42 @@ type Dashboard struct {
 
 // Widget information
 type Widget struct {
-	Type   string   `json:"type,omitempty"`
-	Title  string   `json:"title,omitempty"`
-	Metric []Metric `json:"metric,omitempty"`
-	Graph  []Graph  `json:"graph,omitempty"`
-	Layout []Layout `json:"layout,omitempty"`
+	Type     string   `json:"type,omitempty"`
+	Title    string   `json:"title,omitempty"`
+	Metric   []Metric `json:"metric,omitempty"`
+	Graph    []Graph  `json:"graph,omitempty"`
+	Layout   []Layout `json:"layout,omitempty"`
+	Markdown string   `json:"markdown,omitempty"`
+	Range    []Range  `json:"range,omitempty"`
 }
 
 // Metric information
 type Metric struct {
-	Type string `json:"type,omitempty"`
+	Type        string `json:"type,omitempty"`
+	HostID      string `json:"hostId,omitempty"`
+	Name        string `json:"name,omitempty"`
+	ServiceName string `json:"seriviceName,omitempty"`
+	Expression  string `json:"expression,omitempty"`
 }
 
 // Graph information
 type Graph struct {
-	Type string `json:"type,omitempty"`
+	Type         string `json:"type,omitempty"`
+	HostID       string `json:"hostId,omitempty"`
+	Name         string `json:"name,omitempty"`
+	RoleFullName string `json:"roleFullname,omitempty"`
+	ServiceName  string `json:"seriviceName,omitempty"`
+	Expression   string `json:"expression,omitempty"`
+	IsStacked    bool   `json:"isStacked,omitempty"`
+}
+
+// Range information
+type Range struct {
+	Type   string `json:"type,omitempty"`
+	Period int64  `json:"period,omitempty"`
+	Offset int64  `json:"offset,omitempty"`
+	Start  int64  `json:"start,omitempty"`
+	End    int64  `json:"end,omitempty"`
 }
 
 // Layout information
