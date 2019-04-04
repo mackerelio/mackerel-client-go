@@ -161,7 +161,7 @@ func TestFindDashboard(t *testing.T) {
 				"urlPath":   "2u4PP3TJqbv",
 				"memo":      "A test Current Dashboard",
 				"widgets": []map[string]interface{}{
-					map[string]interface{}{
+					{
 						"type":     "markdown",
 						"title":    "markdown",
 						"markdown": "# body",
@@ -172,7 +172,7 @@ func TestFindDashboard(t *testing.T) {
 							"height": 3,
 						},
 					},
-					map[string]interface{}{
+					{
 						"type":  "graph",
 						"title": "graph",
 						"graph": map[string]interface{}{
@@ -187,7 +187,7 @@ func TestFindDashboard(t *testing.T) {
 							"height": 10,
 						},
 					},
-					map[string]interface{}{
+					{
 						"type":  "value",
 						"title": "value",
 						"metric": map[string]interface{}{
