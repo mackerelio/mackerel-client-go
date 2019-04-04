@@ -15,9 +15,9 @@ func TestFindDashboards(t *testing.T) {
 			t.Error("request URL should be /api/v0/dashboards but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
-			"dashboards": {
-				{
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"dashboards": []interface{}{
+				map[string]interface{}{
 					"id":           "2c5bLca8d",
 					"title":        "My Dashboard(Legacy)",
 					"bodyMarkDown": "# A test Legacy dashboard",
@@ -26,16 +26,16 @@ func TestFindDashboards(t *testing.T) {
 					"updatedAt":    1439346145003,
 					"isLegacy":     true,
 				},
-				{
+				map[string]interface{}{
 					"id":        "2c5bLca8e",
 					"title":     "My Custom Dashboard(Current)",
 					"urlPath":   "2u4PP3TJqbv",
 					"createdAt": 1552909732,
 					"updatedAt": 1552992837,
 					"memo":      "A test Current Dashboard",
-				},
-			},
+				}},
 		})
+
 		res.Header()["Content-Type"] = []string{"application/json"}
 		fmt.Fprint(res, string(respJSON))
 	}))
@@ -145,7 +145,7 @@ func TestFindDashboardForLegacy(t *testing.T) {
 
 func TestFindDashboard(t *testing.T) {
 
-	testID := "2c5bLca8d"
+	testID := "2c5bLca8e"
 
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
@@ -155,17 +155,59 @@ func TestFindDashboard(t *testing.T) {
 		respJSON, _ := json.Marshal(
 			map[string]interface{}{
 				"id":        "2c5bLca8e",
-				"title":     "My Custom Dashboard(Current)",
-				"urlPath":   "2u4PP3TJqbv",
 				"createdAt": 1552909732,
 				"updatedAt": 1552992837,
+				"title":     "My Custom Dashboard(Current)",
+				"urlPath":   "2u4PP3TJqbv",
 				"memo":      "A test Current Dashboard",
-			},
-		)
+				"widgets": []map[string]interface{}{
+					map[string]interface{}{
+						"type":     "markdown",
+						"title":    "markdown",
+						"markdown": "# body",
+						"layout": map[string]interface{}{
+							"x":      0,
+							"y":      0,
+							"width":  24,
+							"height": 3,
+						},
+					},
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph",
+						"graph": map[string]interface{}{
+							"type":   "host",
+							"hostId": "2u4PP3TJqbw",
+							"name":   "loadavg.loadavg15",
+						},
+						"layout": map[string]interface{}{
+							"x":      0,
+							"y":      7,
+							"width":  8,
+							"height": 10,
+						},
+					},
+					map[string]interface{}{
+						"type":  "value",
+						"title": "value",
+						"metric": map[string]interface{}{
+							"type":       "expression",
+							"expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')",
+						},
+						"layout": map[string]interface{}{
+							"x":      0,
+							"y":      17,
+							"width":  8,
+							"height": 5,
+						},
+					},
+				},
+			})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
 		fmt.Fprint(res, string(respJSON))
 	}))
+
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
