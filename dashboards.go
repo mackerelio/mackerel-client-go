@@ -7,6 +7,8 @@ import (
 )
 
 /*
+`/dashboards` Response
+Legacy
 {
   "dashboards": [
 	{
@@ -15,8 +17,88 @@ import (
 	  "bodyMarkdown": "# A test dashboard",
 	  "urlPath": "2u4PP3TJqbu",
 	  "createdAt": 1439346145003,
-	  "updatedAt": 1439346145003
+	  "updatedAt": 1439346145003,
+	  "isLegacy": true
 	}
+  ]
+}
+
+Current
+{
+	"dashboards": [
+		{
+			"id":        "2c5bLca8e",
+			"title":     "My Custom Dashboard(Current)",
+			"urlPath":   "2u4PP3TJqbv",
+			"createdAt": 1552909732,
+			"updatedAt": 1552992837,
+			"memo":      "A test Current Dashboard"
+		}
+	]
+}
+*/
+
+/*
+`/dashboards/${ID}` Response`
+Legacy
+{
+	"id": "2c5bLca8d",
+	"title": "My Dashboard",
+	"bodyMarkdown": "# A test dashboard",
+	"urlPath": "2u4PP3TJqbu",
+	"createdAt": 1439346145003,
+	"updatedAt": 1439346145003,
+	"isLegacy": true
+}
+Current
+{
+  "id": "2c5bLca8e",
+  "createdAt": 1552909732,
+  "updatedAt": 1552992837,
+  "title": "My Custom Dashboard(Current),
+  "urlPath": "2u4PP3TJqbv",
+  "memo": "A test Current Dashboard",
+  "widgets": [
+    {
+      "type": "markdown",
+      "title": "markdown",
+      "markdown": "# body",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 24,
+        "height": 3
+      }
+    },
+    {
+      "type": "graph",
+      "title": "graph",
+      "graph": {
+        "type": "host",
+        "hostId": "2u4PP3TJqbw",
+        "name": "loadavg.loadavg15"
+      },
+      "layout": {
+        "x": 0,
+        "y": 7,
+        "width": 8,
+        "height": 10
+      }
+    },
+    {
+      "type": "value",
+      "title": "value",
+      "metric": {
+        "type": "expression",
+        "expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')"
+      },
+      "layout": {
+        "x": 0,
+        "y": 17,
+        "width": 8,
+        "height": 5
+      }
+    }
   ]
 }
 */
@@ -55,10 +137,10 @@ type Graph struct {
 
 // Layout information
 type Layout struct {
-	X      int16 `json:"x,omitempty"`
-	Y      int16 `json:"y,omitempty"`
-	Width  int16 `json:"width,omitempty"`
-	Height int16 `json:"height,omitempty"`
+	X      uint8  `json:"x,omitempty"`
+	Y      uint8  `json:"y,omitempty"`
+	Width  uint16 `json:"width,omitempty"`
+	Height uint16 `json:"height,omitempty"`
 }
 
 // FindDashboards find dashboards
