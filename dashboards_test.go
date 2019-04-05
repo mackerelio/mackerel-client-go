@@ -238,8 +238,9 @@ func TestFindDashboard(t *testing.T) {
 	}
 
 	if dashboard.Memo != "A test Current Dashboard" {
-		t.Error("request sends json including isLegacy but:", dashboard)
+		t.Error("request sends json including memo but:", dashboard)
 	}
+
 }
 
 func TestCreateDashboard(t *testing.T) {
