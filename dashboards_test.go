@@ -241,7 +241,7 @@ func TestFindDashboard(t *testing.T) {
 		t.Error("request sends json including memo but:", dashboard)
 	}
 
-	// Widget Test : Markdown
+	// Widget Test : Widget(Common) && Markdown && Layout(Common)
 	if dashboard.Widgets[0].Type != "markdown" {
 		t.Error("request sends json including widgets.type but:", dashboard)
 	}
@@ -268,6 +268,29 @@ func TestFindDashboard(t *testing.T) {
 
 	if dashboard.Widgets[0].Layout.Height != 3 {
 		t.Error("request sends json including widgets.layout.height  but:", dashboard)
+	}
+
+	// Widget Test : Graph ( && Host Type)
+	if dashboard.Widgets[1].Graph.Type != "host" {
+		t.Error("request sends json including widgets.graph.type but:", dashboard)
+	}
+
+	if dashboard.Widgets[1].Graph.HostID != "2u4PP3TJqbw" {
+		t.Error("request sends json including widgets.graph.hostId but:", dashboard)
+	}
+
+	if dashboard.Widgets[1].Graph.Name != "loadavg.loadavg15" {
+		t.Error("request sends json including widgets.graph.name but:", dashboard)
+	}
+
+	// Widget Test : Metric ( && Expression Type)
+
+	if dashboard.Widgets[2].Metric.Type != "expression" {
+		t.Error("request sends json including widgets.metric.type but:", dashboard)
+	}
+
+	if dashboard.Widgets[2].Metric.Expression != "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')" {
+		t.Error("request sends json including widgets.metric.expression but:", dashboard)
 	}
 
 }
