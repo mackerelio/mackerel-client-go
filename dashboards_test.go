@@ -163,7 +163,7 @@ func TestFindDashboard(t *testing.T) {
 				"widgets": []map[string]interface{}{
 					{
 						"type":     "markdown",
-						"title":    "markdown",
+						"title":    "markdown_widget",
 						"markdown": "# body",
 						"layout": map[string]interface{}{
 							"x":      0,
@@ -174,7 +174,7 @@ func TestFindDashboard(t *testing.T) {
 					},
 					{
 						"type":  "graph",
-						"title": "graph",
+						"title": "graph_widget",
 						"graph": map[string]interface{}{
 							"type":   "host",
 							"hostId": "2u4PP3TJqbw",
@@ -189,7 +189,7 @@ func TestFindDashboard(t *testing.T) {
 					},
 					{
 						"type":  "value",
-						"title": "value",
+						"title": "value_widget",
 						"metric": map[string]interface{}{
 							"type":       "expression",
 							"expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')",
@@ -239,6 +239,35 @@ func TestFindDashboard(t *testing.T) {
 
 	if dashboard.Memo != "A test Current Dashboard" {
 		t.Error("request sends json including memo but:", dashboard)
+	}
+
+	// Widget Test : Markdown
+	if dashboard.Widgets[0].Type != "markdown" {
+		t.Error("request sends json including widgets.type but:", dashboard)
+	}
+
+	if dashboard.Widgets[0].Title != "markdown_widget" {
+		t.Error("request sends json including widgets.title but:", dashboard)
+	}
+
+	if dashboard.Widgets[0].Markdown != "# body" {
+		t.Error("request sends json including widgets.markdown but:", dashboard)
+	}
+
+	if dashboard.Widgets[0].Layout.X != 0 {
+		t.Error("request sends json including widgets.layout.x but:", dashboard)
+	}
+
+	if dashboard.Widgets[0].Layout.Y != 0 {
+		t.Error("request sends json including widgets.layout.y  but:", dashboard)
+	}
+
+	if dashboard.Widgets[0].Layout.Width != 24 {
+		t.Error("request sends json including widgets.layout.width  but:", dashboard)
+	}
+
+	if dashboard.Widgets[0].Layout.Height != 3 {
+		t.Error("request sends json including widgets.layout.height  but:", dashboard)
 	}
 
 }
