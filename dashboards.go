@@ -132,7 +132,7 @@ type Metric struct {
 	Type        string `json:"type,omitempty"`
 	HostID      string `json:"hostId,omitempty"`
 	Name        string `json:"name,omitempty"`
-	ServiceName string `json:"seriviceName,omitempty"`
+	ServiceName string `json:"serviceName,omitempty"`
 	Expression  string `json:"expression,omitempty"`
 }
 
