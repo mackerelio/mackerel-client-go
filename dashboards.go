@@ -142,7 +142,7 @@ type Graph struct {
 	HostID       string `json:"hostId,omitempty"`
 	Name         string `json:"name,omitempty"`
 	RoleFullName string `json:"roleFullname,omitempty"`
-	ServiceName  string `json:"seriviceName,omitempty"`
+	ServiceName  string `json:"serviceName,omitempty"`
 	Expression   string `json:"expression,omitempty"`
 	IsStacked    bool   `json:"isStacked,omitempty"`
 }
