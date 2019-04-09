@@ -1,6 +1,8 @@
+.PHONY: test
 test: lint gofmt
 	go test -v ./...
 
+.PHONY: testdeps
 testdeps:
 	go get -d -v -t ./...
 	GO111MODULE=off \
@@ -10,6 +12,7 @@ testdeps:
 		github.com/mattn/goveralls
 
 LINT_RET = .golint.txt
+.PHONY: lint
 lint: testdeps
 	go vet .
 	rm -f $(LINT_RET)
@@ -17,12 +20,12 @@ lint: testdeps
 	test ! -s $(LINT_RET)
 
 GOFMT_RET = .gofmt.txt
+.PHONY: gofmt
 gofmt: testdeps
 	rm -f $(GOFMT_RET)
 	gofmt -s -d *.go | tee $(GOFMT_RET)
 	test ! -s $(GOFMT_RET)
 
+.PHONY: cover
 cover: testdeps
 	goveralls
-
-.PHONY: test testdeps lint gofmt cover
