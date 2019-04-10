@@ -85,9 +85,9 @@ type CreateHostParam struct {
 	Name             string        `json:"name"`
 	DisplayName      string        `json:"displayName,omitempty"`
 	Meta             HostMeta      `json:"meta"`
-	Interfaces       []Interface   `json:"interfaces,omitempty"`
-	RoleFullnames    []string      `json:"roleFullnames,omitempty"`
-	Checks           []CheckConfig `json:"checks,omitempty"`
+	Interfaces       []Interface   `json:"interfaces"`
+	RoleFullnames    []string      `json:"roleFullnames"`
+	Checks           []CheckConfig `json:"checks"`
 	CustomIdentifier string        `json:"customIdentifier,omitempty"`
 }
 
