@@ -11,30 +11,30 @@ import (
 Legacy
 {
   "dashboards": [
-	{
-	  "id": "2c5bLca8d",
-	  "title": "My Dashboard",
-	  "bodyMarkdown": "# A test dashboard",
-	  "urlPath": "2u4PP3TJqbu",
-	  "createdAt": 1439346145003,
-	  "updatedAt": 1439346145003,
-	  "isLegacy": true
-	}
+    {
+       "id": "2c5bLca8d",
+       "title": "My Dashboard",
+       "bodyMarkdown": "# A test dashboard",
+       "urlPath": "2u4PP3TJqbu",
+       "createdAt": 1439346145003,
+       "updatedAt": 1439346145003,
+       "isLegacy": true
+    }
   ]
 }
 
 Current
 {
-	"dashboards": [
-		{
-			"id":        "2c5bLca8e",
-			"title":     "My Custom Dashboard(Current)",
-			"urlPath":   "2u4PP3TJqbv",
-			"createdAt": 1552909732,
-			"updatedAt": 1552992837,
-			"memo":      "A test Current Dashboard"
-		}
-	]
+  "dashboards": [
+    {
+      "id":        "2c5bLca8e",
+      "title":     "My Custom Dashboard(Current)",
+      "urlPath":   "2u4PP3TJqbv",
+      "createdAt": 1552909732,
+      "updatedAt": 1552992837,
+      "memo":      "A test Current Dashboard"
+    }
+  ]
 }
 */
 
@@ -42,13 +42,13 @@ Current
 `/dashboards/${ID}` Response`
 Legacy
 {
-	"id": "2c5bLca8d",
-	"title": "My Dashboard",
-	"bodyMarkdown": "# A test dashboard",
-	"urlPath": "2u4PP3TJqbu",
-	"createdAt": 1439346145003,
-	"updatedAt": 1439346145003,
-	"isLegacy": true
+  "id": "2c5bLca8d",
+  "title": "My Dashboard",
+  "bodyMarkdown": "# A test dashboard",
+  "urlPath": "2u4PP3TJqbu",
+  "createdAt": 1439346145003,
+  "updatedAt": 1439346145003,
+  "isLegacy": true
 }
 Current
 {
