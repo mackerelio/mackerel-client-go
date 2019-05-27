@@ -73,11 +73,11 @@ type Interface struct {
 
 // FindHostsParam parameters for FindHosts
 type FindHostsParam struct {
-	Service          string
-	Roles            []string
-	Name             string
-	Statuses         []string
-	CustomIdentifier string
+	Service          string   `json:"service,omitempty"`
+	Roles            []string `json:"roles"`
+	Name             string   `json:"name,omitempty"`
+	Statuses         []string `json:"statuses"`
+	CustomIdentifier string   `json:"customIdentifier,omitempty"`
 }
 
 // CreateHostParam parameters for CreateHost
