@@ -24,6 +24,10 @@ type Client struct {
 	UserAgent         string
 	AdditionalHeaders http.Header
 	HTTPClient        *http.Client
+
+	// Logger specifies an optional logger.
+	// If nil, logging is done via the log package's standard logger.
+	Logger *log.Logger
 }
 
 // NewClient returns new mackerel.Client
@@ -40,7 +44,7 @@ func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, 
 	}
 	client := &http.Client{}
 	client.Timeout = apiRequestTimeout
-	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}, client}, nil
+	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}, client, nil}, nil
 }
 
 func (c *Client) urlFor(path string) *url.URL {
@@ -69,10 +73,15 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	req = c.buildReq(req)
 
+	logPrintf := log.Printf
+	if c.Logger != nil {
+		logPrintf = c.Logger.Printf
+	}
+
 	if c.Verbose {
 		dump, err := httputil.DumpRequest(req, true)
 		if err == nil {
-			log.Printf("%s", dump)
+			logPrintf("%s", dump)
 		}
 	}
 
@@ -83,7 +92,7 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	if c.Verbose {
 		dump, err := httputil.DumpResponse(resp, true)
 		if err == nil {
-			log.Printf("%s", dump)
+			logPrintf("%s", dump)
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
