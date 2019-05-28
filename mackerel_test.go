@@ -1,8 +1,11 @@
 package mackerel
 
 import (
+	"bytes"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -55,5 +58,22 @@ func TestBuildReq(t *testing.T) {
 	}
 	if h := req.Header.Get("X-Revision"); h != xRev {
 		t.Errorf("X-Revision should be '%s' but %s", xRev, h)
+	}
+}
+
+func TestLogger(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte("OK"))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, true)
+	var buf bytes.Buffer
+	client.Logger = log.New(&buf, "<api>", 0)
+	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
+	client.Request(req)
+	s := strings.TrimSpace(buf.String())
+	if !strings.HasPrefix(s, "<api>") || !strings.HasSuffix(s, "OK") {
+		t.Errorf("verbose log should match /<api>.*OK/; but %s", s)
 	}
 }
