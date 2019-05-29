@@ -16,6 +16,15 @@ const (
 	apiRequestTimeout = 30 * time.Second
 )
 
+// PrioritizedLogger is the interface that groups prioritized logging methods.
+type PrioritizedLogger interface {
+	Tracef(format string, v ...interface{})
+	Debugf(format string, v ...interface{})
+	Infof(format string, v ...interface{})
+	Warningf(format string, v ...interface{})
+	Errorf(format string, v ...interface{})
+}
+
 // Client api client for mackerel
 type Client struct {
 	BaseURL           *url.URL
@@ -25,9 +34,10 @@ type Client struct {
 	AdditionalHeaders http.Header
 	HTTPClient        *http.Client
 
-	// Logger specifies an optional logger.
-	// If nil, logging is done via the log package's standard logger.
-	Logger *log.Logger
+	// Client will send logging events to both Logger and PrioritizedLogger.
+	// When neither Logger or PrioritizedLogger is set, the log package's standard logger will be used.
+	Logger            *log.Logger
+	PrioritizedLogger PrioritizedLogger
 }
 
 // NewClient returns new mackerel.Client
@@ -44,7 +54,14 @@ func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, 
 	}
 	client := &http.Client{}
 	client.Timeout = apiRequestTimeout
-	return &Client{u, apikey, verbose, defaultUserAgent, http.Header{}, client, nil}, nil
+	return &Client{
+		BaseURL:           u,
+		APIKey:            apikey,
+		Verbose:           verbose,
+		UserAgent:         defaultUserAgent,
+		AdditionalHeaders: http.Header{},
+		HTTPClient:        client,
+	}, nil
 }
 
 func (c *Client) urlFor(path string) *url.URL {
@@ -69,19 +86,26 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 	return req
 }
 
+func (c *Client) tracef(format string, v ...interface{}) {
+	if c.PrioritizedLogger != nil {
+		c.PrioritizedLogger.Tracef(format, v...)
+	}
+	if c.Logger != nil {
+		c.Logger.Printf(format, v...)
+	}
+	if c.PrioritizedLogger == nil && c.Logger == nil {
+		log.Printf(format, v...)
+	}
+}
+
 // Request request to mackerel and receive response
 func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	req = c.buildReq(req)
 
-	logPrintf := log.Printf
-	if c.Logger != nil {
-		logPrintf = c.Logger.Printf
-	}
-
 	if c.Verbose {
 		dump, err := httputil.DumpRequest(req, true)
 		if err == nil {
-			logPrintf("%s", dump)
+			c.tracef("%s", dump)
 		}
 	}
 
@@ -92,7 +116,7 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	if c.Verbose {
 		dump, err := httputil.DumpResponse(resp, true)
 		if err == nil {
-			logPrintf("%s", dump)
+			c.tracef("%s", dump)
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
