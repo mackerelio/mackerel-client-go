@@ -107,12 +107,12 @@ Current
 type Dashboard struct {
 	ID           string   `json:"id,omitempty"`
 	Title        string   `json:"title,omitempty"`
-	BodyMarkDown string   `json:"bodyMarkdown,omitempty"`
 	URLPath      string   `json:"urlPath,omitempty"`
 	CreatedAt    int64    `json:"createdAt,omitempty"`
 	UpdatedAt    int64    `json:"updatedAt,omitempty"`
 	IsLegacy     bool     `json:"isLegacy,omitempty"`
 	Memo         string   `json:"memo,omitempty"`
+	BodyMarkDown string   `json:"bodyMarkdown,omitempty"`
 	Widgets      []Widget `json:"widgets,omitenpty"`
 }
 
@@ -120,18 +120,18 @@ type Dashboard struct {
 type Widget struct {
 	Type     string `json:"type,omitempty"`
 	Title    string `json:"title,omitempty"`
+	Layout   Layout `json:"layout,omitempty"`
 	Metric   Metric `json:"metric,omitempty"`
 	Graph    Graph  `json:"graph,omitempty"`
-	Layout   Layout `json:"layout,omitempty"`
-	Markdown string `json:"markdown,omitempty"`
 	Range    Range  `json:"range,omitempty"`
+	Markdown string `json:"markdown,omitempty"`
 }
 
 // Metric information
 type Metric struct {
 	Type        string `json:"type,omitempty"`
-	HostID      string `json:"hostId,omitempty"`
 	Name        string `json:"name,omitempty"`
+	HostID      string `json:"hostId,omitempty"`
 	ServiceName string `json:"serviceName,omitempty"`
 	Expression  string `json:"expression,omitempty"`
 }
@@ -139,12 +139,12 @@ type Metric struct {
 // Graph information
 type Graph struct {
 	Type         string `json:"type,omitempty"`
-	HostID       string `json:"hostId,omitempty"`
 	Name         string `json:"name,omitempty"`
+	HostID       string `json:"hostId,omitempty"`
 	RoleFullName string `json:"roleFullname,omitempty"`
+	IsStacked    bool   `json:"isStacked,omitempty"`
 	ServiceName  string `json:"serviceName,omitempty"`
 	Expression   string `json:"expression,omitempty"`
-	IsStacked    bool   `json:"isStacked,omitempty"`
 }
 
 // Range information
