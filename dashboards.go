@@ -113,12 +113,12 @@ type Dashboard struct {
 	UpdatedAt int64  `json:"updatedAt,omitempty"`
 
 	// current dashboard
-	Memo     string `json:"memo,omitempty"`
-	Widgets      []Widget `json:"widgets,omitenpty"`
+	Memo    string   `json:"memo,omitempty"`
+	Widgets []Widget `json:"widgets,omitenpty"`
 
 	// legacy dashboard
-	IsLegacy bool   `json:"isLegacy,omitempty"`
-	BodyMarkDown string   `json:"bodyMarkdown,omitempty"`
+	IsLegacy     bool   `json:"isLegacy,omitempty"`
+	BodyMarkDown string `json:"bodyMarkdown,omitempty"`
 }
 
 // Widget information
