@@ -106,19 +106,19 @@ Current
 // Dashboard information
 type Dashboard struct {
 	// Common to legacy dashboard and current dashboard
-	ID           string   `json:"id,omitempty"`
-	Title        string   `json:"title,omitempty"`
-	URLPath      string   `json:"urlPath,omitempty"`
-	CreatedAt    int64    `json:"createdAt,omitempty"`
-	UpdatedAt    int64    `json:"updatedAt,omitempty"`
+	ID        string `json:"id,omitempty"`
+	Title     string `json:"title,omitempty"`
+	URLPath   string `json:"urlPath,omitempty"`
+	CreatedAt int64  `json:"createdAt,omitempty"`
+	UpdatedAt int64  `json:"updatedAt,omitempty"`
 
 	// current dashboard
 	BodyMarkDown string   `json:"bodyMarkdown,omitempty"`
 	Widgets      []Widget `json:"widgets,omitenpty"`
 
 	// legacy dashboard
-	IsLegacy     bool     `json:"isLegacy,omitempty"`
-	Memo         string   `json:"memo,omitempty"`
+	IsLegacy bool   `json:"isLegacy,omitempty"`
+	Memo     string `json:"memo,omitempty"`
 }
 
 // Widget information
