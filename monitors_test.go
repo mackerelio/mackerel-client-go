@@ -66,6 +66,18 @@ func TestFindMonitors(t *testing.T) {
 					"warning":    20,
 					"critical":   30,
 				},
+				{
+					"id":                 "3CSsK3HKiHb",
+					"type":               "anomalyDetection",
+					"isMute":             false,
+					"name":               "My first anomaly detection",
+					"trainingPeriodFrom": 1561429260,
+					"scopes": []string{
+						"myService: myRole",
+					},
+					"maxCheckAttempts":   3,
+					"warningSensitivity": "insensitive",
+				},
 			},
 		})
 
@@ -152,6 +164,21 @@ func TestFindMonitors(t *testing.T) {
 		}
 		if m.Memo != "a monitor for expression" {
 			t.Error("request sends json including memo but: ", m)
+		}
+	}
+	{
+		m, ok := monitors[3].(*MonitorAnomalyDetection)
+		if !ok || m.Type != "anomalyDetection" {
+			t.Error("request sends json including anomalyDetection but: ", monitors[3])
+		}
+		if m.TrainingPeriodFrom != 1561429260 {
+			t.Error("request sends json including trainingPeriodFrom but: ", m)
+		}
+		if m.MaxCheckAttempts != 3 {
+			t.Error("request sends json including maxCheckAttempts but: ", m)
+		}
+		if m.WarningSensitivity != "insensitive" {
+			t.Error("request sends json including warningSensitivity but: ", m)
 		}
 	}
 }
