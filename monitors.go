@@ -283,13 +283,12 @@ type MonitorAnomalyDetection struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	WarningSensitivity  string `json:"warningSensitivity"`
-	CriticalSensitivity string `json:"criticalSensitivity"`
+	WarningSensitivity  string `json:"warningSensitivity,omitempty"`
+	CriticalSensitivity string `json:"criticalSensitivity,omitempty"`
 	TrainingPeriodFrom  uint64 `json:"trainingPeriodFrom,omitempty"`
 	MaxCheckAttempts    uint64 `json:"maxCheckAttempts,omitempty"`
 
-	Scopes        []string `json:"scopes,omitempty"`
-	ExcludeScopes []string `json:"excludeScopes,omitempty"`
+	Scopes []string `json:"scopes"`
 }
 
 // MonitorType returns monitor type.
