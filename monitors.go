@@ -72,6 +72,18 @@ import (
       "headers": [
         { "name": "Cache-Control", "value": "no-cache"}
       ]
+    },
+    {
+      "id": "3CSsK3HKiHb",
+      "type": "anomalyDetection",
+      "isMute": false,
+      "name": "My first anomaly detection",
+      "trainingPeriodFrom": 1561429260,
+      "scopes": [
+        "MyService: MyRole"
+      ],
+      "maxCheckAttempts": 3,
+      "warningSensitivity": "insensitive"
     }
   ]
 }
@@ -87,11 +99,12 @@ type Monitor interface {
 }
 
 const (
-	monitorTypeConnectivity  = "connectivity"
-	monitorTypeHostMeric     = "host"
-	monitorTypeServiceMetric = "service"
-	monitorTypeExternalHTTP  = "external"
-	monitorTypeExpression    = "expression"
+	monitorTypeConnectivity     = "connectivity"
+	monitorTypeHostMeric        = "host"
+	monitorTypeServiceMetric    = "service"
+	monitorTypeExternalHTTP     = "external"
+	monitorTypeExpression       = "expression"
+	monitorTypeAnomalyDetection = "anomalyDetection"
 )
 
 // Ensure each monitor type conforms to the Monitor interface.
@@ -101,16 +114,18 @@ var (
 	_ Monitor = (*MonitorServiceMetric)(nil)
 	_ Monitor = (*MonitorExternalHTTP)(nil)
 	_ Monitor = (*MonitorExpression)(nil)
+	_ Monitor = (*MonitorAnomalyDetection)(nil)
 )
 
 // Ensure only monitor types defined in this package can be assigned to the
 // Monitor interface.
 //
-func (m *MonitorConnectivity) isMonitor()  {}
-func (m *MonitorHostMetric) isMonitor()    {}
-func (m *MonitorServiceMetric) isMonitor() {}
-func (m *MonitorExternalHTTP) isMonitor()  {}
-func (m *MonitorExpression) isMonitor()    {}
+func (m *MonitorConnectivity) isMonitor()     {}
+func (m *MonitorHostMetric) isMonitor()       {}
+func (m *MonitorServiceMetric) isMonitor()    {}
+func (m *MonitorExternalHTTP) isMonitor()     {}
+func (m *MonitorExpression) isMonitor()       {}
+func (m *MonitorAnomalyDetection) isMonitor() {}
 
 // MonitorConnectivity represents connectivity monitor.
 type MonitorConnectivity struct {
@@ -259,6 +274,32 @@ func (m *MonitorExpression) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExpression) MonitorID() string { return m.ID }
 
+// MonitorAnomalyDetection represents anomaly detection monitor.
+type MonitorAnomalyDetection struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	WarningSensitivity  string `json:"warningSensitivity,omitempty"`
+	CriticalSensitivity string `json:"criticalSensitivity,omitempty"`
+	TrainingPeriodFrom  uint64 `json:"trainingPeriodFrom,omitempty"`
+	MaxCheckAttempts    uint64 `json:"maxCheckAttempts,omitempty"`
+
+	Scopes []string `json:"scopes"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorAnomalyDetection) MonitorType() string { return monitorTypeAnomalyDetection }
+
+// MonitorName returns monitor name.
+func (m *MonitorAnomalyDetection) MonitorName() string { return m.Name }
+
+// MonitorID returns monitor id.
+func (m *MonitorAnomalyDetection) MonitorID() string { return m.ID }
+
 // FindMonitors find monitors
 func (c *Client) FindMonitors() ([]Monitor, error) {
 	req, err := http.NewRequest("GET", c.urlFor("/api/v0/monitors").String(), nil)
@@ -374,6 +415,8 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 		m = &MonitorExternalHTTP{}
 	case monitorTypeExpression:
 		m = &MonitorExpression{}
+	case monitorTypeAnomalyDetection:
+		m = &MonitorAnomalyDetection{}
 	}
 	if err := json.Unmarshal(mes, m); err != nil {
 		return nil, err
