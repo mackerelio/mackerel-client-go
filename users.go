@@ -40,3 +40,25 @@ func (c *Client) FindUsers() ([]*User, error) {
 	}
 	return data.Users, err
 }
+
+// DeleteUser delete users.
+func (c *Client) DeleteUser(userID string) (*User, error) {
+	req, err := http.NewRequest("DELETE", c.urlFor(fmt.Sprintf("/api/v0/users/%s", userID)).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	user := &User{}
+	err = json.NewDecoder(resp.Body).Decode(user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
