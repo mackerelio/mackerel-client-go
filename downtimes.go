@@ -10,10 +10,10 @@ import (
 // Downtime information
 type Downtime struct {
 	ID                   string              `json:"id,omitempty"`
-	Name                 string              `json:"name,omitempty"`
+	Name                 string              `json:"name"`
 	Memo                 string              `json:"memo,omitempty"`
-	Start                int64               `json:"start,omitempty"`
-	Duration             int64               `json:"duration,omitempty"`
+	Start                int64               `json:"start"`
+	Duration             int64               `json:"duration"`
 	Recurrence           *DowntimeRecurrence `json:"recurrence,omitempty"`
 	ServiceScopes        []string            `json:"serviceScopes,omitempty"`
 	ServiceExcludeScopes []string            `json:"serviceExcludeScopes,omitempty"`
@@ -25,8 +25,8 @@ type Downtime struct {
 
 // DowntimeRecurrence ...
 type DowntimeRecurrence struct {
-	Type     DowntimeRecurrenceType `json:"type,omitempty"`
-	Interval int64                  `json:"interval,omitempty"`
+	Type     DowntimeRecurrenceType `json:"type"`
+	Interval int64                  `json:"interval"`
 	Weekdays []DowntimeWeekday      `json:"weekdays,omitempty"`
 	Until    int64                  `json:"until,omitempty"`
 }
