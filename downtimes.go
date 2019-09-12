@@ -128,7 +128,7 @@ func (w DowntimeWeekday) String() string {
 	return weekdayToString[w]
 }
 
-// FindDowntimes find downtimes
+// FindDowntimes finds downtimes
 func (c *Client) FindDowntimes() ([]*Downtime, error) {
 	req, err := http.NewRequest("GET", c.urlFor("/api/v0/downtimes").String(), nil)
 	if err != nil {
@@ -183,7 +183,7 @@ func (c *Client) UpdateDowntime(downtimeID string, param *Downtime) (*Downtime, 
 	return &data, nil
 }
 
-// DeleteDowntime delete downtime
+// DeleteDowntime deletes downtime
 func (c *Client) DeleteDowntime(downtimeID string) (*Downtime, error) {
 	req, err := http.NewRequest(
 		"DELETE",
