@@ -6,12 +6,14 @@ import (
 	"net/http"
 )
 
+// Invitation information
 type Invitation struct {
 	Email     string `json:"email,omitempty"`
 	Authority string `json:"authority,omitempty"`
 	ExpiresAt int64  `json:"expiresAt,omitempty"`
 }
 
+// FindInvitations find invitations.
 func (c *Client) FindInvitations() ([]*Invitation, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/invitations")).String(), nil)
 
