@@ -2,7 +2,6 @@ package mackerel
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -15,7 +14,7 @@ type Invitation struct {
 
 // FindInvitations find invitations.
 func (c *Client) FindInvitations() ([]*Invitation, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/invitations")).String(), nil)
+	req, err := http.NewRequest("GET", c.urlFor("/api/v0/invitations").String(), nil)
 
 	if err != nil {
 		return nil, err
