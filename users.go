@@ -21,7 +21,7 @@ type User struct {
 
 // FindUsers find users.
 func (c *Client) FindUsers() ([]*User, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/users")).String(), nil)
+	req, err := http.NewRequest("GET", c.urlFor("/api/v0/users").String(), nil)
 	if err != nil {
 		return nil, err
 	}
