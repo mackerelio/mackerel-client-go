@@ -21,7 +21,7 @@ type CreateServiceParam struct {
 
 // FindServices finds services.
 func (c *Client) FindServices() ([]*Service, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/services")).String(), nil)
+	req, err := http.NewRequest("GET", c.urlFor("/api/v0/services").String(), nil)
 	if err != nil {
 		return nil, err
 	}
