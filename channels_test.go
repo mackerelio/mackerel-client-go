@@ -75,10 +75,26 @@ func TestListChannels(t *testing.T) {
 		t.Errorf("Wrong data for emails: %v", channels[0].UserIDs)
 	}
 
+	if channels[1].Mentions.OK != "ok message" {
+		t.Error("request has mentions.ok but: ", channels[1].Mentions.OK)
+	}
+	if channels[1].Mentions.Warning != "warning message" {
+		t.Error("request has mentions.warning but: ", channels[1].Mentions.Warning)
+	}
+	if channels[1].Mentions.Critical != "" {
+		t.Error("request does not have mentions.critical but: ", channels[1].Mentions.Critical)
+	}
+
+	if channels[0].URL != "" {
+		t.Error("request has no URL but: ", channels[0])
+	}
 	if channels[1].URL != "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX" {
 		t.Error("request sends json including URL but: ", channels[1])
 	}
 	if channels[2].URL != "http://example.com/webhook" {
 		t.Error("request sends json including URL but: ", channels[2])
+	}
+	if channels[3].URL != "" {
+		t.Error("request has no URL but: ", channels[3])
 	}
 }
