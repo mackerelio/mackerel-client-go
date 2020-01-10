@@ -3,8 +3,14 @@ package mackerel
 // TODO
 
 // Channel represents a Mackerel notification channel.
+// ref. https://mackerel.io/api-docs/entry/channels
 type Channel struct {
-	ID   string `json:"id"`
+	ID string `json:"id"`
+	ChannelWithoutID
+}
+
+// ChannelWithoutID represents a Mackerel notification channel without the ID.
+type ChannelWithoutID struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 
