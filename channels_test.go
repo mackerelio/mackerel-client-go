@@ -46,7 +46,7 @@ func TestListChannels(t *testing.T) {
 					"name":   "webhook channel",
 					"type":   "webhook",
 					"url":    "http://example.com/webhook",
-					"events": []string{"alert"},
+					"events": []string{"alertGroup"},
 				},
 				{
 					"id":   "defabcdef",
@@ -67,24 +67,82 @@ func TestListChannels(t *testing.T) {
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
+	if len(channels) != 4 {
+		t.Error("request has 4 channels but: ", len(channels))
+	}
 
+	if channels[0].ID != "abcdefabc" {
+		t.Error("request has ID but: ", channels[0].ID)
+	}
+	if channels[1].ID != "bcdefabcd" {
+		t.Error("request has ID but: ", channels[1].ID)
+	}
+	if channels[2].ID != "cdefabcde" {
+		t.Error("request has ID but: ", channels[2].ID)
+	}
+	if channels[3].ID != "defabcdef" {
+		t.Error("request has ID but: ", channels[3].ID)
+	}
+	if channels[0].Name != "email channel" {
+		t.Error("request has Name but: ", channels[0].Name)
+	}
+	if channels[1].Name != "slack channel" {
+		t.Error("request has Name but: ", channels[1].Name)
+	}
+	if channels[2].Name != "webhook channel" {
+		t.Error("request has Name but: ", channels[2].Name)
+	}
+	if channels[3].Name != "line channel" {
+		t.Error("request has Name but: ", channels[3].Name)
+	}
+	if channels[0].Type != "email" {
+		t.Error("request has Type but: ", channels[0].Type)
+	}
+	if channels[1].Type != "slack" {
+		t.Error("request has Type but: ", channels[1].Type)
+	}
+	if channels[2].Type != "webhook" {
+		t.Error("request has Type but: ", channels[2].Type)
+	}
+	if channels[3].Type != "line" {
+		t.Error("request has Type but: ", channels[3].Type)
+	}
 	if reflect.DeepEqual(channels[0].Emails, []string{"test@example.com", "test2@example.com"}) != true {
 		t.Errorf("Wrong data for emails: %v", channels[0].Emails)
 	}
+	if len(channels[1].Emails) > 0 {
+		t.Errorf("Wrong data for emails: %v", channels[1].Emails)
+	}
+	if len(channels[2].Emails) > 0 {
+		t.Errorf("Wrong data for emails: %v", channels[2].Emails)
+	}
+	if len(channels[3].Emails) > 0 {
+		t.Errorf("Wrong data for emails: %v", channels[3].Emails)
+	}
 	if reflect.DeepEqual(channels[0].UserIDs, []string{"1234", "2345"}) != true {
-		t.Errorf("Wrong data for emails: %v", channels[0].UserIDs)
+		t.Errorf("Wrong data for userIds: %v", channels[0].UserIDs)
 	}
-
-	if channels[1].Mentions.OK != "ok message" {
-		t.Error("request has mentions.ok but: ", channels[1].Mentions.OK)
+	if len(channels[1].UserIDs) > 0 {
+		t.Errorf("Wrong data for userIds: %v", channels[1].UserIDs)
 	}
-	if channels[1].Mentions.Warning != "warning message" {
-		t.Error("request has mentions.warning but: ", channels[1].Mentions.Warning)
+	if len(channels[2].UserIDs) > 0 {
+		t.Errorf("Wrong data for userIds: %v", channels[2].UserIDs)
 	}
-	if channels[1].Mentions.Critical != "" {
-		t.Error("request does not have mentions.critical but: ", channels[1].Mentions.Critical)
+	if len(channels[3].UserIDs) > 0 {
+		t.Errorf("Wrong data for userIds: %v", channels[3].UserIDs)
 	}
-
+	if reflect.DeepEqual(channels[0].Events, []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", channels[0].Events)
+	}
+	if reflect.DeepEqual(channels[1].Events, []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", channels[1].Events)
+	}
+	if reflect.DeepEqual(channels[2].Events, []string{"alertGroup"}) != true {
+		t.Errorf("Wrong data for events: %v", channels[2].Events)
+	}
+	if len(channels[3].Events) > 0 {
+		t.Errorf("Wrong data for events: %v", channels[3].Events)
+	}
 	if channels[0].URL != "" {
 		t.Error("request has no URL but: ", channels[0])
 	}
@@ -96,6 +154,30 @@ func TestListChannels(t *testing.T) {
 	}
 	if channels[3].URL != "" {
 		t.Error("request has no URL but: ", channels[3])
+	}
+	if reflect.DeepEqual(channels[0].Mentions, Mentions{}) != true {
+		t.Error("request has mentions but: ", channels[0].Mentions)
+	}
+	if reflect.DeepEqual(channels[1].Mentions, Mentions{OK: "ok message", Warning: "warning message"}) != true {
+		t.Error("request has mentions but: ", channels[1].Mentions)
+	}
+	if reflect.DeepEqual(channels[2].Mentions, Mentions{}) != true {
+		t.Error("request has mentions but: ", channels[2].Mentions)
+	}
+	if reflect.DeepEqual(channels[3].Mentions, Mentions{}) != true {
+		t.Error("request has mentions but: ", channels[3].Mentions)
+	}
+	if channels[0].EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	}
+	if !channels[1].EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	}
+	if channels[2].EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	}
+	if channels[3].EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
 	}
 }
 
