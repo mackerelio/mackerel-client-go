@@ -23,18 +23,21 @@ type ChannelWithoutID struct {
 	UserIDs []string `json:"userIds,omitempty"`
 
 	// Exists when the type is "slack"
-	Mentions struct {
-		OK       string `json:"ok,omitempty"`
-		Warning  string `json:"warning,omitempty"`
-		Critical string `json:"critical,omitempty"`
-	} `json:"mentions,omitempty"`
-	EnabledGraphImage bool `json:"enabledGraphImage,omitempty"`
+	Mentions          Mentions `json:"mentions,omitempty"`
+	EnabledGraphImage bool     `json:"enabledGraphImage,omitempty"`
 
 	// Exists when the type is "slack" or "webhook"
 	URL string `json:"url,omitempty"`
 
 	// Exists when the type is "email", "slack", or "webhook"
 	Events []string `json:"events,omitempty"`
+}
+
+// Mentions represents the structure used for slack channel mentions
+type Mentions struct {
+	OK       string `json:"ok,omitempty"`
+	Warning  string `json:"warning,omitempty"`
+	Critical string `json:"critical,omitempty"`
 }
 
 // ListChannels requests the channels API and returns a list of Channel
