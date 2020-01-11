@@ -98,3 +98,49 @@ func TestListChannels(t *testing.T) {
 		t.Error("request has no URL but: ", channels[3])
 	}
 }
+
+func TestCreateChannel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/channels" {
+			t.Error("request URL should be /api/v0/channels but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"name": "slack channel",
+			"type": "slack",
+			"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
+			"mentions": map[string]interface{}{
+				"ok":      "ok message",
+				"warning": "warning message",
+			},
+			"enabledGraphImage": true,
+			"events":            []string{"alert"},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	_, err := client.CreateChannel(&ChannelWithoutID{
+		Name: "slack channel",
+		Type: "slack",
+		URL:  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
+		Mentions: Mentions{
+			OK:      "ok message",
+			Warning: "warning message",
+		},
+		EnabledGraphImage: true,
+		Events:            []string{"alert"},
+	})
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+}
