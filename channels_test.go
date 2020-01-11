@@ -110,6 +110,7 @@ func TestCreateChannel(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
+			"id":   "abcdefabc",
 			"name": "slack channel",
 			"type": "slack",
 			"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
@@ -128,7 +129,7 @@ func TestCreateChannel(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
-	_, err := client.CreateChannel(&ChannelWithoutID{
+	channel, err := client.CreateChannel(&ChannelWithoutID{
 		Name: "slack channel",
 		Type: "slack",
 		URL:  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
@@ -142,5 +143,24 @@ func TestCreateChannel(t *testing.T) {
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
+	}
+
+	if channel.ID != "abcdefabc" {
+		t.Error("request sends json including ID but: ", channel.ID)
+	}
+	if channel.Name != "slack channel" {
+		t.Error("request sends json including name but: ", channel.Name)
+	}
+	if channel.URL != "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX" {
+		t.Error("request sends json including URL but: ", channel.URL)
+	}
+	if reflect.DeepEqual(channel.Mentions, Mentions{OK: "ok message", Warning: "warning message"}) != true {
+		t.Errorf("Wrong data for mentions: %v", channel.Mentions)
+	}
+	if !channel.EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", channel.EnabledGraphImage)
+	}
+	if reflect.DeepEqual(channel.Events, []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", channel.Events)
 	}
 }
