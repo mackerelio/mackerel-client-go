@@ -40,8 +40,8 @@ type Mentions struct {
 	Critical string `json:"critical,omitempty"`
 }
 
-// ListChannels requests the channels API and returns a list of Channel
-func (c *Client) ListChannels() ([]*Channel, error) {
+// FindChannels requests the channels API and returns a list of Channel
+func (c *Client) FindChannels() ([]*Channel, error) {
 	req, err := http.NewRequest("GET", c.urlFor("/api/v0/channels").String(), nil)
 	if err != nil {
 		return nil, err

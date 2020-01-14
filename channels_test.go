@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestListChannels(t *testing.T) {
+func TestFindChannels(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/channels" {
 			t.Error("request URL should be /api/v0/channels but: ", req.URL.Path)
@@ -62,7 +62,7 @@ func TestListChannels(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	channels, err := client.ListChannels()
+	channels, err := client.FindChannels()
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
