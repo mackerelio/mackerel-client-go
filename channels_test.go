@@ -211,7 +211,7 @@ func TestCreateChannel(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
-	channel, err := client.CreateChannel(&ChannelWithoutID{
+	channel, err := client.CreateChannel(&CreateChannelParams{
 		Name: "slack channel",
 		Type: "slack",
 		URL:  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",

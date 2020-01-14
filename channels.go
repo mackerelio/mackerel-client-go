@@ -10,11 +10,11 @@ import (
 // ref. https://mackerel.io/api-docs/entry/channels
 type Channel struct {
 	ID string `json:"id"`
-	ChannelWithoutID
+	CreateChannelParams
 }
 
-// ChannelWithoutID represents a Mackerel notification channel without the ID.
-type ChannelWithoutID struct {
+// CreateChannelParams represents a Mackerel notification channel to be used by CreateChannel.
+type CreateChannelParams struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 
@@ -63,7 +63,7 @@ func (c *Client) ListChannels() ([]*Channel, error) {
 }
 
 // CreateChannel requests the channels API with the given params to create a channel and returns the created channel.
-func (c *Client) CreateChannel(param *ChannelWithoutID) (*Channel, error) {
+func (c *Client) CreateChannel(param *CreateChannelParams) (*Channel, error) {
 	resp, err := c.PostJSON("/api/v0/channels", param)
 	defer closeResponse(resp)
 	if err != nil {
