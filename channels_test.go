@@ -112,41 +112,41 @@ func TestFindChannels(t *testing.T) {
 	if channels[3].Type != "line" {
 		t.Error("request has Type but: ", channels[3].Type)
 	}
-	if reflect.DeepEqual(channels[0].Emails, []string{"test@example.com", "test2@example.com"}) != true {
-		t.Errorf("Wrong data for emails: %v", channels[0].Emails)
+	if reflect.DeepEqual(*(channels[0].Emails), []string{"test@example.com", "test2@example.com"}) != true {
+		t.Errorf("Wrong data for emails: %v", *(channels[0].Emails))
 	}
-	if len(channels[1].Emails) > 0 {
-		t.Errorf("Wrong data for emails: %v", channels[1].Emails)
+	if channels[1].Emails != nil {
+		t.Errorf("Wrong data for emails: %v", *(channels[1].Emails))
 	}
-	if len(channels[2].Emails) > 0 {
-		t.Errorf("Wrong data for emails: %v", channels[2].Emails)
+	if channels[2].Emails != nil {
+		t.Errorf("Wrong data for emails: %v", *(channels[2].Emails))
 	}
-	if len(channels[3].Emails) > 0 {
-		t.Errorf("Wrong data for emails: %v", channels[3].Emails)
+	if channels[3].Emails != nil {
+		t.Errorf("Wrong data for emails: %v", *(channels[3].Emails))
 	}
-	if reflect.DeepEqual(channels[0].UserIDs, []string{"1234", "2345"}) != true {
-		t.Errorf("Wrong data for userIds: %v", channels[0].UserIDs)
+	if reflect.DeepEqual(*(channels[0].UserIDs), []string{"1234", "2345"}) != true {
+		t.Errorf("Wrong data for userIds: %v", *(channels[0].UserIDs))
 	}
-	if len(channels[1].UserIDs) > 0 {
-		t.Errorf("Wrong data for userIds: %v", channels[1].UserIDs)
+	if channels[1].UserIDs != nil {
+		t.Errorf("Wrong data for userIds: %v", *(channels[1].UserIDs))
 	}
-	if len(channels[2].UserIDs) > 0 {
-		t.Errorf("Wrong data for userIds: %v", channels[2].UserIDs)
+	if channels[2].UserIDs != nil {
+		t.Errorf("Wrong data for userIds: %v", *(channels[2].UserIDs))
 	}
-	if len(channels[3].UserIDs) > 0 {
-		t.Errorf("Wrong data for userIds: %v", channels[3].UserIDs)
+	if channels[3].UserIDs != nil {
+		t.Errorf("Wrong data for userIds: %v", *(channels[3].UserIDs))
 	}
-	if reflect.DeepEqual(channels[0].Events, []string{"alert"}) != true {
-		t.Errorf("Wrong data for events: %v", channels[0].Events)
+	if reflect.DeepEqual(*(channels[0].Events), []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", *(channels[0].Events))
 	}
-	if reflect.DeepEqual(channels[1].Events, []string{"alert"}) != true {
-		t.Errorf("Wrong data for events: %v", channels[1].Events)
+	if reflect.DeepEqual(*(channels[1].Events), []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", *(channels[1].Events))
 	}
-	if reflect.DeepEqual(channels[2].Events, []string{"alertGroup"}) != true {
-		t.Errorf("Wrong data for events: %v", channels[2].Events)
+	if reflect.DeepEqual(*(channels[2].Events), []string{"alertGroup"}) != true {
+		t.Errorf("Wrong data for events: %v", *(channels[2].Events))
 	}
-	if len(channels[3].Events) > 0 {
-		t.Errorf("Wrong data for events: %v", channels[3].Events)
+	if channels[3].Events != nil {
+		t.Errorf("Wrong data for events: %v", *(channels[3].Events))
 	}
 	if channels[0].URL != "" {
 		t.Error("request has no URL but: ", channels[0])
@@ -225,7 +225,7 @@ func TestCreateChannel(t *testing.T) {
 			Warning: "warning message",
 		},
 		EnabledGraphImage: boolPointer(true),
-		Events:            []string{"alert"},
+		Events:            &[]string{"alert"},
 	})
 
 	if err != nil {
@@ -247,8 +247,8 @@ func TestCreateChannel(t *testing.T) {
 	if !*channel.EnabledGraphImage {
 		t.Error("request sends json including enabledGraphImage but: ", *channel.EnabledGraphImage)
 	}
-	if reflect.DeepEqual(channel.Events, []string{"alert"}) != true {
-		t.Errorf("Wrong data for events: %v", channel.Events)
+	if reflect.DeepEqual(*(channel.Events), []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", *(channel.Events))
 	}
 }
 
@@ -304,7 +304,7 @@ func TestDeleteChannel(t *testing.T) {
 	if !*channel.EnabledGraphImage {
 		t.Error("request sends json including enabledGraphImage but: ", *channel.EnabledGraphImage)
 	}
-	if reflect.DeepEqual(channel.Events, []string{"alert"}) != true {
-		t.Errorf("Wrong data for events: %v", channel.Events)
+	if reflect.DeepEqual(*(channel.Events), []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", *(channel.Events))
 	}
 }

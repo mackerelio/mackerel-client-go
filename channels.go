@@ -16,8 +16,8 @@ type Channel struct {
 	Type string `json:"type"`
 
 	// Exists when the type is "email"
-	Emails  []string `json:"emails,omitempty"`
-	UserIDs []string `json:"userIds,omitempty"`
+	Emails  *[]string `json:"emails,omitempty"`
+	UserIDs *[]string `json:"userIds,omitempty"`
 
 	// Exists when the type is "slack"
 	Mentions Mentions `json:"mentions,omitempty"`
@@ -29,7 +29,7 @@ type Channel struct {
 	URL string `json:"url,omitempty"`
 
 	// Exists when the type is "email", "slack", or "webhook"
-	Events []string `json:"events,omitempty"`
+	Events *[]string `json:"events,omitempty"`
 }
 
 // Mentions represents the structure used for slack channel mentions
