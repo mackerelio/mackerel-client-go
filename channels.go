@@ -9,7 +9,8 @@ import (
 // Channel represents a Mackerel notification channel.
 // ref. https://mackerel.io/api-docs/entry/channels
 type Channel struct {
-	ID string `json:"id"`
+	// ID is excluded when used to call CreateChannel
+	ID string `json:"id,omitempty"`
 
 	Name string `json:"name"`
 	Type string `json:"type"`
