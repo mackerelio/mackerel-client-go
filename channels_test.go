@@ -9,6 +9,11 @@ import (
 	"testing"
 )
 
+// boolPointer is a helper function to initialize a bool pointer
+func boolPointer(b bool) *bool {
+	return &b
+}
+
 func TestFindChannels(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/channels" {
@@ -167,17 +172,17 @@ func TestFindChannels(t *testing.T) {
 	if reflect.DeepEqual(channels[3].Mentions, Mentions{}) != true {
 		t.Error("request has mentions but: ", channels[3].Mentions)
 	}
-	if channels[0].EnabledGraphImage {
-		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	if channels[0].EnabledGraphImage != nil {
+		t.Error("request sends json including enabledGraphImage but: ", *(channels[0].EnabledGraphImage))
 	}
-	if !channels[1].EnabledGraphImage {
-		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	if !*(channels[1].EnabledGraphImage) {
+		t.Error("request sends json including enabledGraphImage but: ", *(channels[1].EnabledGraphImage))
 	}
-	if channels[2].EnabledGraphImage {
-		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	if channels[2].EnabledGraphImage != nil {
+		t.Error("request sends json including enabledGraphImage but: ", *(channels[2].EnabledGraphImage))
 	}
-	if channels[3].EnabledGraphImage {
-		t.Error("request sends json including enabledGraphImage but: ", channels[0].EnabledGraphImage)
+	if channels[3].EnabledGraphImage != nil {
+		t.Error("request sends json including enabledGraphImage but: ", *(channels[3].EnabledGraphImage))
 	}
 }
 
@@ -211,7 +216,7 @@ func TestCreateChannel(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
-	channel, err := client.CreateChannel(&CreateChannelParams{
+	channel, err := client.CreateChannel(&Channel{
 		Name: "slack channel",
 		Type: "slack",
 		URL:  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
@@ -219,7 +224,7 @@ func TestCreateChannel(t *testing.T) {
 			OK:      "ok message",
 			Warning: "warning message",
 		},
-		EnabledGraphImage: true,
+		EnabledGraphImage: boolPointer(true),
 		Events:            []string{"alert"},
 	})
 
@@ -239,8 +244,8 @@ func TestCreateChannel(t *testing.T) {
 	if reflect.DeepEqual(channel.Mentions, Mentions{OK: "ok message", Warning: "warning message"}) != true {
 		t.Errorf("Wrong data for mentions: %v", channel.Mentions)
 	}
-	if !channel.EnabledGraphImage {
-		t.Error("request sends json including enabledGraphImage but: ", channel.EnabledGraphImage)
+	if !*channel.EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", *channel.EnabledGraphImage)
 	}
 	if reflect.DeepEqual(channel.Events, []string{"alert"}) != true {
 		t.Errorf("Wrong data for events: %v", channel.Events)
@@ -296,8 +301,8 @@ func TestDeleteChannel(t *testing.T) {
 	if reflect.DeepEqual(channel.Mentions, Mentions{OK: "ok message", Warning: "warning message"}) != true {
 		t.Errorf("Wrong data for mentions: %v", channel.Mentions)
 	}
-	if !channel.EnabledGraphImage {
-		t.Error("request sends json including enabledGraphImage but: ", channel.EnabledGraphImage)
+	if !*channel.EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", *channel.EnabledGraphImage)
 	}
 	if reflect.DeepEqual(channel.Events, []string{"alert"}) != true {
 		t.Errorf("Wrong data for events: %v", channel.Events)
