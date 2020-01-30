@@ -83,3 +83,19 @@ func TestCreateGraphDefs(t *testing.T) {
 		t.Error("err should be nil but: ", err)
 	}
 }
+
+func TestGraphDefsOmitJSON(t *testing.T) {
+	g := GraphDefsParam{
+		Metrics: []*GraphDefsMetric{
+			{},
+		},
+	}
+	want := `{"name":"","metrics":[{"name":"","isStacked":false}]}`
+	b, err := json.Marshal(&g)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if s := string(b); s != want {
+		t.Errorf("json.Marshal(%#v) = %q; want %q", g, s, want)
+	}
+}
