@@ -1,4 +1,5 @@
 .*
+!.github
 !.gitignore
 !.dependabot
 !.travis.yml

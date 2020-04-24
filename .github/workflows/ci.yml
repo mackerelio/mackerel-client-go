@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: ['ubuntu-18.04', 'macOS-10.15', 'windows-2019']
+        go: ['1.14.x']
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - uses: actions/setup-go@v2-beta
+      with:
+        go-version: ${{ matrix.go }}
+    - run: |
+        make gofmt lint
+        go test -race -covermode atomic -coverprofile=profile.cov ./...
+      shell: bash
+    - uses: shogo82148/actions-goveralls@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-profile: profile.cov
+        parallel: true
+        job-number: ${{ strategy.job-index }}
+    # TODO: slack?
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: shogo82148/actions-goveralls@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true

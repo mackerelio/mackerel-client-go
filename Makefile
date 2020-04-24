@@ -9,20 +9,13 @@ testdeps:
 		golang.org/x/tools/cmd/cover \
 		github.com/mattn/goveralls
 
-LINT_RET = .golint.txt
 .PHONY: lint
 lint: testdeps
-	go vet .
-	rm -f $(LINT_RET)
-	golint ./... | tee $(LINT_RET)
-	test ! -s $(LINT_RET)
+	golint -set_exit_status ./...
 
-GOFMT_RET = .gofmt.txt
 .PHONY: gofmt
 gofmt: testdeps
-	rm -f $(GOFMT_RET)
-	gofmt -s -d *.go | tee $(GOFMT_RET)
-	test ! -s $(GOFMT_RET)
+	! gofmt -s -d ./ | grep '^'
 
 .PHONY: cover
 cover: testdeps
