@@ -4,11 +4,9 @@ test: lint gofmt
 
 .PHONY: testdeps
 testdeps:
-	go get -d -v -t ./...
-	GO111MODULE=off \
-	go get golang.org/x/lint/golint \
+	go install \
+		golang.org/x/lint/golint \
 		golang.org/x/tools/cmd/cover \
-		github.com/axw/gocov/gocov \
 		github.com/mattn/goveralls
 
 LINT_RET = .golint.txt
