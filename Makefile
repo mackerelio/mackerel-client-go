@@ -6,8 +6,7 @@ test: lint gofmt
 testdeps:
 	go install \
 		golang.org/x/lint/golint \
-		golang.org/x/tools/cmd/cover \
-		github.com/mattn/goveralls
+		golang.org/x/tools/cmd/cover
 
 .PHONY: lint
 lint: testdeps
@@ -16,7 +15,3 @@ lint: testdeps
 .PHONY: gofmt
 gofmt: testdeps
 	! gofmt -s -d ./ | grep '^'
-
-.PHONY: cover
-cover: testdeps
-	goveralls
