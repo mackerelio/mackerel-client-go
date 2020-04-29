@@ -114,7 +114,7 @@ type Dashboard struct {
 
 	// current dashboard
 	Memo    string   `json:"memo,omitempty"`
-	Widgets []Widget `json:"widgets,omitenpty"`
+	Widgets []Widget `json:"widgets,omitempty"`
 
 	// legacy dashboard
 	IsLegacy     bool   `json:"isLegacy,omitempty"`
