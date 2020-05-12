@@ -54,8 +54,8 @@ func TestCreateNotificationGroup(t *testing.T) {
 			{ID: "3TdoBWxYRQd", SkipDefault: false},
 		},
 		Services: []*NotificationGroupService{
-			{Name: "My Service #01"},
-			{Name: "My Service #02"},
+			{Name: "my-service-01"},
+			{Name: "my-service-02"},
 		},
 	}
 
@@ -114,7 +114,7 @@ func TestFindNotificationGroups(t *testing.T) {
 						{"id": "3Ja3HG5Mngw", "skipDefault": false},
 					},
 					"services": []map[string]string{
-						{"name": "My Service #01"},
+						{"name": "my-service-01"},
 					},
 				},
 			},
@@ -157,7 +157,7 @@ func TestFindNotificationGroups(t *testing.T) {
 				{ID: "3Ja3HG5Mngw", SkipDefault: false},
 			},
 			Services: []*NotificationGroupService{
-				{Name: "My Service #01"},
+				{Name: "my-service-01"},
 			},
 		},
 	}
@@ -211,8 +211,8 @@ func TestUpdateNotificationGroup(t *testing.T) {
 			{ID: "3TdoBWxYRQd", SkipDefault: false},
 		},
 		Services: []*NotificationGroupService{
-			{Name: "My Service #01"},
-			{Name: "My Service #02"},
+			{Name: "my-service-01"},
+			{Name: "my-service-02"},
 		},
 	}
 
@@ -256,7 +256,7 @@ func TestDeleteNotificationGroup(t *testing.T) {
 				{"id": "2CRrhj1SFwG", "skipDefault": true},
 			},
 			"services": []map[string]string{
-				{"name": "My Service"},
+				{"name": "my-service-01"},
 			},
 		})
 
@@ -282,7 +282,7 @@ func TestDeleteNotificationGroup(t *testing.T) {
 			{ID: "2CRrhj1SFwG", SkipDefault: true},
 		},
 		Services: []*NotificationGroupService{
-			{Name: "My Service"},
+			{Name: "my-service-01"},
 		},
 	}
 
