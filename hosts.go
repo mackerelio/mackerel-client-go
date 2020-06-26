@@ -301,3 +301,8 @@ func (c *Client) ListHostMetricNames(id string) ([]string, error) {
 	}
 	return data.Names, err
 }
+
+// ListHosts finds hosts
+func (c *Client) ListHosts() ([]*Host, error) {
+	return c.FindHosts(&FindHostsParam{})
+}
