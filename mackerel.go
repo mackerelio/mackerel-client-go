@@ -3,6 +3,8 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -157,6 +159,7 @@ func (c *Client) requestJSON(method string, path string, payload interface{}) (*
 
 func closeResponse(resp *http.Response) {
 	if resp != nil {
+		io.Copy(ioutil.Discard, resp.Body)
 		resp.Body.Close()
 	}
 }
