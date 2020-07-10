@@ -111,7 +111,7 @@ const (
 	HostStatusPoweroff = "poweroff"
 )
 
-// GetRoleFullnames getrolefullnames
+// GetRoleFullnames gets role-full-names
 func (h *Host) GetRoleFullnames() []string {
 	if len(h.Roles) < 1 {
 		return nil
@@ -146,7 +146,7 @@ func (h *Host) IPAddresses() map[string]string {
 	return ipAddresses
 }
 
-// FindHost find the host
+// FindHost finds the host
 func (c *Client) FindHost(id string) (*Host, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)
 	if err != nil {
@@ -168,7 +168,7 @@ func (c *Client) FindHost(id string) (*Host, error) {
 	return data.Host, err
 }
 
-// FindHosts find hosts
+// FindHosts finds hosts
 func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	v := url.Values{}
 	if param.Service != "" {
@@ -212,7 +212,7 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	return data.Hosts, err
 }
 
-// CreateHost creating host
+// CreateHost creates host
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 	resp, err := c.PostJSON("/api/v0/hosts", param)
 	defer closeResponse(resp)
@@ -273,7 +273,7 @@ func (c *Client) UpdateHostRoleFullnames(hostID string, roleFullnames []string) 
 	return nil
 }
 
-// RetireHost retuire the host
+// RetireHost retires the host
 func (c *Client) RetireHost(id string) error {
 	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/retire", id), "{}")
 	defer closeResponse(resp)
