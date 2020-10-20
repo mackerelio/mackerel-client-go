@@ -35,6 +35,7 @@ type Client struct {
 	UserAgent         string
 	AdditionalHeaders http.Header
 	HTTPClient        *http.Client
+	MaxRetries        int // 0 for no retry
 
 	// Client will send logging events to both Logger and PrioritizedLogger.
 	// When neither Logger or PrioritizedLogger is set, the log package's standard logger will be used.
@@ -64,6 +65,12 @@ func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, 
 		AdditionalHeaders: http.Header{},
 		HTTPClient:        client,
 	}, nil
+}
+
+// SetMaxRetries configures this client to retry HTTP request up to *max* times
+func (c *Client) SetMaxRetries(max int) *Client {
+	c.MaxRetries = max
+	return c
 }
 
 func (c *Client) urlFor(path string) *url.URL {
@@ -110,8 +117,16 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 			c.tracef("%s", dump)
 		}
 	}
-
-	resp, err = c.HTTPClient.Do(req)
+	// retry on error up to (c.MaxRetryCount) times
+	for i := 0; i <= c.MaxRetries; i++ {
+		resp, err = c.HTTPClient.Do(req)
+		if err == nil {
+			break
+		}
+		if c.Verbose && c.MaxRetries > 0 {
+			c.tracef("request failed, will retry (%d / %d)", i+1, c.MaxRetries)
+		}
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -28,6 +29,108 @@ func TestRequest(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
 	client.Request(req)
+}
+
+func TestRequest_Failed(t *testing.T) {
+	// Overwrite http.Client to control errors
+	httpClient := &http.Client{}
+	httpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return errors.New("emulated http error")
+	}
+	serverRequested := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		defer func() { serverRequested++ }()
+		// return 302 will cause error by httpClient.CheckRedirect
+		http.Redirect(res, req, "http://example.com/DUMMY", 302)
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	client.HTTPClient = httpClient
+
+	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
+	_, err := client.Request(req)
+
+	if expectedServerRequested := 1; serverRequested != expectedServerRequested {
+		t.Errorf("should request %d times but %d", expectedServerRequested, serverRequested)
+	}
+	if err == nil {
+		t.Error("error should not be nil but nil")
+	}
+}
+
+func TestSetMaxRetries(t *testing.T) {
+	client := NewClient("DUMMY-KEY")
+	if expectedMaxRetries := 0; client.MaxRetries != expectedMaxRetries {
+		t.Errorf("client.MaxRetries should be %d, but %d", expectedMaxRetries, client.MaxRetries)
+	}
+
+	client.SetMaxRetries(2)
+	if expectedMaxRetries := 2; client.MaxRetries != expectedMaxRetries {
+		t.Errorf("client.MaxRetries should be %d, but %d", expectedMaxRetries, client.MaxRetries)
+	}
+}
+
+func TestRequest_Retry(t *testing.T) {
+	// Overwrite http.Client to control errors
+	httpClient := &http.Client{}
+	httpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return errors.New("emulated http error")
+	}
+	serverRequested := 0
+	howManyTimesErrorReturns := 2
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		defer func() { serverRequested++ }()
+		if howManyTimesErrorReturns > 0 {
+			howManyTimesErrorReturns--
+			// return 302 will cause error by httpClient.CheckRedirect
+			http.Redirect(res, req, "http://example.com/DUMMY", 302)
+		}
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	client.SetMaxRetries(2)
+	client.HTTPClient = httpClient
+
+	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
+	_, err := client.Request(req)
+
+	if expectedServerRequested := 3; serverRequested != expectedServerRequested {
+		t.Errorf("should request %d times but %d", expectedServerRequested, serverRequested)
+	}
+	if err != nil {
+		t.Errorf("error should be nil but %v", err)
+	}
+}
+
+func TestRequest_RetryButFailed(t *testing.T) {
+	// Overwrite http.Client to control errors
+	httpClient := &http.Client{}
+	httpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return errors.New("emulated http error")
+	}
+	serverRequested := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		defer func() { serverRequested++ }()
+		// return 302 will cause error by httpClient.CheckRedirect
+		http.Redirect(res, req, "http://example.com/DUMMY", 302)
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	client.SetMaxRetries(2)
+	client.HTTPClient = httpClient
+
+	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
+	_, err := client.Request(req)
+
+	if expectedServerRequested := 3; serverRequested != expectedServerRequested {
+		t.Errorf("should request %d times but %d", expectedServerRequested, serverRequested)
+	}
+	if err == nil {
+		t.Error("error should not be nil but nil")
+	}
 }
 
 func TestUrlFor(t *testing.T) {
