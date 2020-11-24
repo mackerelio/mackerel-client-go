@@ -271,12 +271,14 @@ var testCases = []struct {
 			Type:                 "connectivity",
 			IsMute:               false,
 			NotificationInterval: 0,
+			AlertStatusOnGone:    "WARNING",
 			Scopes:               nil,
 			ExcludeScopes:        nil,
 		},
 		`{
 			"id": "2cSZzK3XfmA",
-			"type": "connectivity"
+			"type": "connectivity",
+			"alertStatusOnGone": "WARNING"
 		}`,
 	},
 	{

@@ -16,7 +16,8 @@ import (
       "type": "connectivity",
       "isMute": false,
       "scopes": [],
-      "excludeScopes": []
+      "excludeScopes": [],
+      "alertStatusOnGone": "WARNING"
     },
     {
       "id"  : "2cSZzK3XfmG",
@@ -132,6 +133,7 @@ type MonitorConnectivity struct {
 	ID                   string `json:"id,omitempty"`
 	Name                 string `json:"name,omitempty"`
 	Memo                 string `json:"memo,omitempty"`
+	AlertStatusOnGone    string `json:"alertStatusOnGone,omitempty"`
 	Type                 string `json:"type,omitempty"`
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
