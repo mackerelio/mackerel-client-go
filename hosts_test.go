@@ -463,3 +463,51 @@ func TestListHostMetricNames(t *testing.T) {
 		t.Errorf("Wrong data for metric names: %v", names)
 	}
 }
+
+func TestListMonitoredStatues(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/ABCDEFGHIJ/monitored-statuses" {
+			t.Error("request URL should be /api/v0/hosts/ABCDEFGHIJ/monitored-statuses but: ", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+			"monitoredStatuses": {
+				{
+					"status":    "OK",
+					"monitorId": "abcdefghij",
+					"detail": map[string]string{
+						"memo":    "memo",
+						"type":    "check",
+						"message": "LOG OK: 0 warnings, 0 criticals for pattern /ERROR/.",
+					},
+				},
+			}})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	statuses, err := client.ListMonitoredStatues("ABCDEFGHIJ")
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if reflect.DeepEqual(statuses, []MonitoredStatus{{
+		MonitorID: "abcdefghij",
+		Status:    "OK",
+		Detail: MonitoredStatusDetail{
+			Type:    "check",
+			Memo:    "memo",
+			Message: "LOG OK: 0 warnings, 0 criticals for pattern /ERROR/.",
+		},
+	}}) != true {
+		t.Errorf("Wrong data for monitored statuses: %v", statuses)
+	}
+}
