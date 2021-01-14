@@ -100,6 +100,20 @@ type CheckConfig struct {
 // UpdateHostParam parameters for UpdateHost
 type UpdateHostParam CreateHostParam
 
+// MonitoredStatus monitored status
+type MonitoredStatus struct {
+	MonitorID string                `json:"monitorId"`
+	Status    string                `json:"status"`
+	Detail    MonitoredStatusDetail `json:"detail,omitempty"`
+}
+
+// MonitoredStatusDetail monitored status detail
+type MonitoredStatusDetail struct {
+	Type    string `json:"type"`
+	Message string `json:"message,omitempty"`
+	Memo    string `json:"memo,omitempty"`
+}
+
 const (
 	// HostStatusWorking represents "working" status
 	HostStatusWorking = "working"
@@ -300,4 +314,29 @@ func (c *Client) ListHostMetricNames(id string) ([]string, error) {
 		return nil, err
 	}
 	return data.Names, err
+}
+
+// ListMonitoredStatues lists monitored statues of a host
+func (c *Client) ListMonitoredStatues(id string) ([]MonitoredStatus, error) {
+
+	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/monitored-statuses", id)).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		MonitoredStatuses []MonitoredStatus `json:"monitoredStatuses"`
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.MonitoredStatuses, nil
 }
