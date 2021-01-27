@@ -42,6 +42,8 @@ type Client struct {
 	// When neither Logger or PrioritizedLogger is set, the log package's standard logger will be used.
 	Logger            *log.Logger
 	PrioritizedLogger PrioritizedLogger
+
+	OrgService *OrgService
 }
 
 type NewClientOptions struct {
@@ -64,14 +66,16 @@ func NewClient(apiKey string, opts *NewClientOptions) (*Client, error) {
 	}
 	client := &http.Client{}
 	client.Timeout = apiRequestTimeout
-	return &Client{
+	c := &Client{
 		BaseURL:           u,
 		APIKey:            apiKey,
 		Verbose:           opts.Verbose,
 		UserAgent:         defaultUserAgent,
 		AdditionalHeaders: http.Header{},
 		HTTPClient:        client,
-	}, nil
+	}
+	c.OrgService = &OrgService{c: c}
+	return c, nil
 }
 
 // APIError represents the error type from Mackerel API.
@@ -179,6 +183,13 @@ func (c *Client) requestJSON(ctx context.Context, method string, path string, pa
 	}
 	req.Header.Add("Content-Type", "application/json")
 	return c.Request(req)
+}
+
+func closeResponse(resp *http.Response) {
+	if resp != nil {
+		io.Copy(ioutil.Discard, resp.Body)
+		resp.Body.Close()
+	}
 }
 
 func (c *Client) urlFor(path string) *url.URL {
