@@ -113,7 +113,7 @@ type Dashboard struct {
 	UpdatedAt int64  `json:"updatedAt,omitempty"`
 
 	// current dashboard
-	Memo    string   `json:"memo,omitempty"`
+	Memo    string   `json:"memo"`
 	Widgets []Widget `json:"widgets,omitempty"`
 
 	// legacy dashboard
@@ -124,7 +124,7 @@ type Dashboard struct {
 // Widget information
 type Widget struct {
 	Type     string `json:"type,omitempty"`
-	Title    string `json:"title,omitempty"`
+	Title    string `json:"title"`
 	Layout   Layout `json:"layout,omitempty"`
 	Metric   Metric `json:"metric,omitempty"`
 	Graph    Graph  `json:"graph,omitempty"`
@@ -141,6 +141,15 @@ type Metric struct {
 	Expression  string `json:"expression,omitempty"`
 }
 
+// MarshalJSON marshals as JSON
+func (m Metric) MarshalJSON() ([]byte, error) {
+	type Alias Metric
+	if m.Type == "" {
+		return []byte("null"), nil
+	}
+	return json.Marshal(Alias(m))
+}
+
 // Graph information
 type Graph struct {
 	Type         string `json:"type,omitempty"`
@@ -152,6 +161,15 @@ type Graph struct {
 	Expression   string `json:"expression,omitempty"`
 }
 
+// MarshalJSON marshals as JSON
+func (g Graph) MarshalJSON() ([]byte, error) {
+	type Alias Graph
+	if g.Type == "" {
+		return []byte("null"), nil
+	}
+	return json.Marshal(Alias(g))
+}
+
 // Range information
 type Range struct {
 	Type   string `json:"type,omitempty"`
@@ -161,10 +179,19 @@ type Range struct {
 	End    int64  `json:"end,omitempty"`
 }
 
+// MarshalJSON marshals as JSON
+func (r Range) MarshalJSON() ([]byte, error) {
+	type Alias Range
+	if r.Type == "" {
+		return []byte("null"), nil
+	}
+	return json.Marshal(Alias(r))
+}
+
 // Layout information
 type Layout struct {
-	X      int64 `json:"x,omitempty"`
-	Y      int64 `json:"y,omitempty"`
+	X      int64 `json:"x"`
+	Y      int64 `json:"y"`
 	Width  int64 `json:"width,omitempty"`
 	Height int64 `json:"height,omitempty"`
 }
