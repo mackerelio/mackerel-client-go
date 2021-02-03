@@ -107,14 +107,14 @@ Current
 type Dashboard struct {
 	// Common to legacy dashboard and current dashboard
 	ID        string `json:"id,omitempty"`
-	Title     string `json:"title,omitempty"`
-	URLPath   string `json:"urlPath,omitempty"`
+	Title     string `json:"title"`
+	URLPath   string `json:"urlPath"`
 	CreatedAt int64  `json:"createdAt,omitempty"`
 	UpdatedAt int64  `json:"updatedAt,omitempty"`
 
 	// current dashboard
 	Memo    string   `json:"memo"`
-	Widgets []Widget `json:"widgets,omitempty"`
+	Widgets []Widget `json:"widgets"`
 
 	// legacy dashboard
 	IsLegacy     bool   `json:"isLegacy,omitempty"`
@@ -123,9 +123,9 @@ type Dashboard struct {
 
 // Widget information
 type Widget struct {
-	Type     string `json:"type,omitempty"`
+	Type     string `json:"type"`
 	Title    string `json:"title"`
-	Layout   Layout `json:"layout,omitempty"`
+	Layout   Layout `json:"layout"`
 	Metric   Metric `json:"metric,omitempty"`
 	Graph    Graph  `json:"graph,omitempty"`
 	Range    Range  `json:"range,omitempty"`
@@ -134,7 +134,7 @@ type Widget struct {
 
 // Metric information
 type Metric struct {
-	Type        string `json:"type,omitempty"`
+	Type        string `json:"type"`
 	Name        string `json:"name,omitempty"`
 	HostID      string `json:"hostId,omitempty"`
 	ServiceName string `json:"serviceName,omitempty"`
@@ -152,7 +152,7 @@ func (m Metric) MarshalJSON() ([]byte, error) {
 
 // Graph information
 type Graph struct {
-	Type         string `json:"type,omitempty"`
+	Type         string `json:"type"`
 	Name         string `json:"name,omitempty"`
 	HostID       string `json:"hostId,omitempty"`
 	RoleFullName string `json:"roleFullname,omitempty"`
@@ -172,28 +172,47 @@ func (g Graph) MarshalJSON() ([]byte, error) {
 
 // Range information
 type Range struct {
-	Type   string `json:"type,omitempty"`
+	Type   string `json:"type"`
 	Period int64  `json:"period,omitempty"`
 	Offset int64  `json:"offset,omitempty"`
 	Start  int64  `json:"start,omitempty"`
 	End    int64  `json:"end,omitempty"`
 }
 
+type rangeAbsolute struct {
+	Type   string `json:"type"`
+	Period int64  `json:"-"`
+	Offset int64  `json:"-"`
+	Start  int64  `json:"start"`
+	End    int64  `json:"end"`
+}
+
+type rangeRelative struct {
+	Type   string `json:"type"`
+	Period int64  `json:"period"`
+	Offset int64  `json:"offset"`
+	Start  int64  `json:"-"`
+	End    int64  `json:"-"`
+}
+
 // MarshalJSON marshals as JSON
 func (r Range) MarshalJSON() ([]byte, error) {
-	type Alias Range
-	if r.Type == "" {
+	switch r.Type {
+	case "absolute":
+		return json.Marshal(rangeAbsolute(r))
+	case "relative":
+		return json.Marshal(rangeRelative(r))
+	default:
 		return []byte("null"), nil
 	}
-	return json.Marshal(Alias(r))
 }
 
 // Layout information
 type Layout struct {
 	X      int64 `json:"x"`
 	Y      int64 `json:"y"`
-	Width  int64 `json:"width,omitempty"`
-	Height int64 `json:"height,omitempty"`
+	Width  int64 `json:"width"`
+	Height int64 `json:"height"`
 }
 
 // FindDashboards find dashboards
