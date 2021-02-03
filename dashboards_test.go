@@ -511,3 +511,40 @@ func TestDeleteDashboard(t *testing.T) {
 		t.Error("request sends json including updatedAt but: ", dashboard)
 	}
 }
+
+func TestRangeMarshalJSON(t *testing.T) {
+	tests := []struct {
+		r    Range
+		want string
+	}{
+		{
+			r: Range{
+				Type:  "absolute",
+				Start: 100,
+				End:   200,
+			},
+			want: `{"type":"absolute","start":100,"end":200}`,
+		},
+		{
+			r: Range{
+				Type:   "relative",
+				Period: 100,
+				Offset: 0,
+			},
+			want: `{"type":"relative","period":100,"offset":0}`,
+		},
+		{
+			r:    Range{},
+			want: `null`,
+		},
+	}
+	for _, tt := range tests {
+		b, err := json.Marshal(tt.r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if s := string(b); s != tt.want {
+			t.Errorf("MarshalJSON(%v) = %q; want %q", tt.r, s, tt.want)
+		}
+	}
+}
