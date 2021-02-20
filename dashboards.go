@@ -88,10 +88,23 @@ Current
     {
       "type": "value",
       "title": "value",
+      "fractionSize": 2,
+      "suffix": "total",
       "metric": {
         "type": "expression",
         "expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')"
       },
+      "layout": {
+        "x": 0,
+        "y": 17,
+        "width": 8,
+        "height": 5
+      }
+    },
+    {
+      "type": "alertStatus",
+      "title": "alertStatus",
+      "roleFullname": "test:dashboard",
       "layout": {
         "x": 0,
         "y": 17,
@@ -123,13 +136,16 @@ type Dashboard struct {
 
 // Widget information
 type Widget struct {
-	Type     string `json:"type"`
-	Title    string `json:"title"`
-	Layout   Layout `json:"layout"`
-	Metric   Metric `json:"metric,omitempty"`
-	Graph    Graph  `json:"graph,omitempty"`
-	Range    Range  `json:"range,omitempty"`
-	Markdown string `json:"markdown,omitempty"`
+	Type         string `json:"type"`
+	Title        string `json:"title"`
+	Layout       Layout `json:"layout"`
+	Metric       Metric `json:"metric,omitempty"`
+	Graph        Graph  `json:"graph,omitempty"`
+	Range        Range  `json:"range,omitempty"`
+	Markdown     string `json:"markdown,omitempty"`
+	FractionSize int64  `json:"fractionSize,omitempty"`
+	Suffix       string `json:"suffix,omitempty"`
+	RoleFullName string `json:"roleFullname,omitempty"`
 }
 
 // Metric information

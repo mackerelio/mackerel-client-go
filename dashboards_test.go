@@ -190,6 +190,8 @@ func TestFindDashboard(t *testing.T) {
 					{
 						"type":  "value",
 						"title": "value_widget",
+						"fractionSize": 2,
+						"suffix": "total",
 						"metric": map[string]interface{}{
 							"type":       "expression",
 							"expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')",
@@ -199,6 +201,17 @@ func TestFindDashboard(t *testing.T) {
 							"y":      17,
 							"width":  8,
 							"height": 5,
+						},
+					},
+					{
+						"type":  "alertStatus",
+						"title": "alert_status_widget",
+						"roleFullname": "test:dashboard",
+						"layout": map[string]interface{}{
+							"x":      9,
+							"y":      3,
+							"width":  6,
+							"height": 6,
 						},
 					},
 				},
@@ -291,6 +304,20 @@ func TestFindDashboard(t *testing.T) {
 
 	if dashboard.Widgets[2].Metric.Expression != "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')" {
 		t.Error("request sends json including widgets.metric.expression but:", dashboard)
+	}
+
+	if dashboard.Widgets[2].FractionSize != 2 {
+		t.Error("request sends json including widgets.fractionsize but:", dashboard)
+	}
+
+	if dashboard.Widgets[2].Suffix != "total" {
+		t.Error("request sends json including widgets.suffix but:", dashboard)
+	}
+
+	// Widget Test : AlertStatus
+
+	if dashboard.Widgets[3].RoleFullName != "test:dashboard" {
+		t.Error("request sends json including widgets.roleFullname but:", dashboard)
 	}
 
 }
