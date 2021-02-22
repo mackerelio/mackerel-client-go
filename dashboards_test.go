@@ -188,10 +188,10 @@ func TestFindDashboard(t *testing.T) {
 						},
 					},
 					{
-						"type":  "value",
-						"title": "value_widget",
+						"type":         "value",
+						"title":        "value_widget",
 						"fractionSize": 2,
-						"suffix": "total",
+						"suffix":       "total",
 						"metric": map[string]interface{}{
 							"type":       "expression",
 							"expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')",
@@ -204,8 +204,8 @@ func TestFindDashboard(t *testing.T) {
 						},
 					},
 					{
-						"type":  "alertStatus",
-						"title": "alert_status_widget",
+						"type":         "alertStatus",
+						"title":        "alert_status_widget",
 						"roleFullname": "test:dashboard",
 						"layout": map[string]interface{}{
 							"x":      9,
