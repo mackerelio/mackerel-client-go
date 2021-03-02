@@ -306,7 +306,7 @@ func TestFindDashboard(t *testing.T) {
 		t.Error("request sends json including widgets.metric.expression but:", dashboard)
 	}
 
-	if dashboard.Widgets[2].FractionSize != 2 {
+	if *(dashboard.Widgets[2].FractionSize) != 2 {
 		t.Error("request sends json including widgets.fractionsize but:", dashboard)
 	}
 
