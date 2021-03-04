@@ -88,10 +88,23 @@ Current
     {
       "type": "value",
       "title": "value",
+      "fractionSize": 2,
+      "suffix": "total",
       "metric": {
         "type": "expression",
         "expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')"
       },
+      "layout": {
+        "x": 0,
+        "y": 17,
+        "width": 8,
+        "height": 5
+      }
+    },
+    {
+      "type": "alertStatus",
+      "title": "alertStatus",
+      "roleFullname": "test:dashboard",
       "layout": {
         "x": 0,
         "y": 17,
@@ -130,6 +143,10 @@ type Widget struct {
 	Graph    Graph  `json:"graph,omitempty"`
 	Range    Range  `json:"range,omitempty"`
 	Markdown string `json:"markdown,omitempty"`
+	// If this field is nil, it will be treated as a two-digit display after the decimal point.
+	FractionSize *int64 `json:"fractionSize,omitempty"`
+	Suffix       string `json:"suffix,omitempty"`
+	RoleFullName string `json:"roleFullname,omitempty"`
 }
 
 // Metric information
