@@ -15,7 +15,7 @@ type Host struct {
 	Name             string      `json:"name"`
 	DisplayName      string      `json:"displayName,omitempty"`
 	CustomIdentifier string      `json:"customIdentifier,omitempty"`
-	Type             string      `json:"type"`
+	Size             string      `json:"size"`
 	Status           string      `json:"status"`
 	Memo             string      `json:"memo"`
 	Roles            Roles       `json:"roles"`
