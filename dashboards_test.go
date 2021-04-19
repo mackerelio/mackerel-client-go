@@ -18,22 +18,14 @@ func TestFindDashboards(t *testing.T) {
 		respJSON, _ := json.Marshal(map[string]interface{}{
 			"dashboards": []interface{}{
 				map[string]interface{}{
-					"id":           "2c5bLca8d",
-					"title":        "My Dashboard(Legacy)",
-					"bodyMarkDown": "# A test Legacy dashboard",
-					"urlPath":      "2u4PP3TJqbu",
-					"createdAt":    1439346145003,
-					"updatedAt":    1439346145003,
-					"isLegacy":     true,
+					"id":        "2c5bLca8d",
+					"title":     "My Dashboard 1",
+					"urlPath":   "2u4PP3TJqbu",
+					"createdAt": 1439346145003,
+					"updatedAt": 1439346145003,
+					"memo":      "My Dashboard memo 1",
 				},
-				map[string]interface{}{
-					"id":        "2c5bLca8e",
-					"title":     "My Custom Dashboard(Current)",
-					"urlPath":   "2u4PP3TJqbv",
-					"createdAt": 1552909732,
-					"updatedAt": 1552992837,
-					"memo":      "A test Current Dashboard",
-				}},
+			},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -52,12 +44,8 @@ func TestFindDashboards(t *testing.T) {
 		t.Error("request sends json including id but: ", dashboards[0])
 	}
 
-	if dashboards[0].Title != "My Dashboard(Legacy)" {
+	if dashboards[0].Title != "My Dashboard 1" {
 		t.Error("request sends json including title but: ", dashboards[0])
-	}
-
-	if dashboards[0].BodyMarkDown != "# A test Legacy dashboard" {
-		t.Error("request sends json including bodyMarkDown but: ", dashboards[0])
 	}
 
 	if dashboards[0].URLPath != "2u4PP3TJqbu" {
@@ -72,74 +60,8 @@ func TestFindDashboards(t *testing.T) {
 		t.Error("request sends json including updatedAt but: ", dashboards[0])
 	}
 
-	if dashboards[0].IsLegacy != true {
-		t.Error("request sends json including isLegacy but: ", dashboards[0])
-	}
-
-	if dashboards[1].Memo != "A test Current Dashboard" {
-		t.Error("request sends json including memo but: ", dashboards[1])
-	}
-}
-
-func TestFindDashboardForLegacy(t *testing.T) {
-
-	testID := "2c5bLca8d"
-
-	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != fmt.Sprintf("/api/v0/dashboards/%s", testID) {
-			t.Error("request URL should be /api/v0/dashboards/<ID> but: ", req.URL.Path)
-		}
-
-		respJSON, _ := json.Marshal(
-			map[string]interface{}{
-				"id":           "2c5bLca8d",
-				"title":        "My Dashboard(Legacy)",
-				"bodyMarkDown": "# A test Legacy dashboard",
-				"urlPath":      "2u4PP3TJqbu",
-				"createdAt":    1439346145003,
-				"updatedAt":    1439346145003,
-				"isLegacy":     true,
-			},
-		)
-
-		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
-	}))
-	defer ts.Close()
-
-	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	dashboard, err := client.FindDashboard(testID)
-
-	if err != nil {
-		t.Error("err should be nil but: ", err)
-	}
-
-	if dashboard.ID != "2c5bLca8d" {
-		t.Error("request sends json including id but: ", dashboard)
-	}
-
-	if dashboard.Title != "My Dashboard(Legacy)" {
-		t.Error("request sends json including title but: ", dashboard)
-	}
-
-	if dashboard.BodyMarkDown != "# A test Legacy dashboard" {
-		t.Error("request sends json including bodyMarkDown but: ", dashboard)
-	}
-
-	if dashboard.URLPath != "2u4PP3TJqbu" {
-		t.Error("request sends json including urlpath but: ", dashboard)
-	}
-
-	if dashboard.CreatedAt != 1439346145003 {
-		t.Error("request sends json including createdAt but: ", dashboard)
-	}
-
-	if dashboard.UpdatedAt != 1439346145003 {
-		t.Error("request sends json including updatedAt but: ", dashboard)
-	}
-
-	if dashboard.IsLegacy != true {
-		t.Error("request sends json including isLegacy but:", dashboard)
+	if dashboards[0].Memo != "My Dashboard memo 1" {
+		t.Error("request sends json including memo but: ", dashboards[0])
 	}
 }
 
@@ -335,12 +257,13 @@ func TestCreateDashboard(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var data struct {
-			ID           string `json:"id"`
-			Title        string `json:"title"`
-			BodyMarkDown string `json:"bodyMarkdown"`
-			URLPath      string `json:"urlPath"`
-			CreatedAt    int64  `json:"createdAt"`
-			UpdatedAt    int64  `json:"updatedAt"`
+			ID        string   `json:"id"`
+			Title     string   `json:"title"`
+			URLPath   string   `json:"urlPath"`
+			CreatedAt int64    `json:"createdAt"`
+			UpdatedAt int64    `json:"updatedAt"`
+			Memo      string   `json:"memo"`
+			Widgets   []Widget `json:"widgets"`
 		}
 
 		err := json.Unmarshal(body, &data)
@@ -349,12 +272,13 @@ func TestCreateDashboard(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
-			"id":           "2c5bLca8d",
-			"title":        "My Dashboard",
-			"bodyMarkDown": "# A test dashboard",
-			"urlPath":      "2u4PP3TJqbu",
-			"createdAt":    1439346145003,
-			"updatedAt":    1439346145003,
+			"id":        "2c5bLca8d",
+			"title":     "My Dashboard",
+			"urlPath":   "2u4PP3TJqbu",
+			"createdAt": 1439346145003,
+			"updatedAt": 1439346145003,
+			"memo":      "My Dashboard Memo",
+			"widgets":   []map[string]interface{}{},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -365,9 +289,10 @@ func TestCreateDashboard(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
 	dashboard, err := client.CreateDashboard(&Dashboard{
-		Title:        "My Dashboard",
-		BodyMarkDown: "# A test dashboard",
-		URLPath:      "2u4PP3TJqbu",
+		Title:   "My Dashboard",
+		URLPath: "2u4PP3TJqbu",
+		Memo:    "My Dashboard Memo",
+		Widgets: []Widget{},
 	})
 
 	if err != nil {
@@ -382,10 +307,6 @@ func TestCreateDashboard(t *testing.T) {
 		t.Error("request sends json including title but: ", dashboard)
 	}
 
-	if dashboard.BodyMarkDown != "# A test dashboard" {
-		t.Error("request sends json including bodyMarkDown but: ", dashboard)
-	}
-
 	if dashboard.URLPath != "2u4PP3TJqbu" {
 		t.Error("request sends json including urlpath but: ", dashboard)
 	}
@@ -396,6 +317,14 @@ func TestCreateDashboard(t *testing.T) {
 
 	if dashboard.UpdatedAt != 1439346145003 {
 		t.Error("request sends json including updatedAt but: ", dashboard)
+	}
+
+	if dashboard.Memo != "My Dashboard Memo" {
+		t.Error("request sends json including memo but: ", dashboard)
+	}
+
+	if len(dashboard.Widgets) != 0 {
+		t.Error("request sends json including widgets but: ", dashboard)
 	}
 }
 
@@ -415,12 +344,13 @@ func TestUpdateDashboard(t *testing.T) {
 		body, _ := ioutil.ReadAll(req.Body)
 
 		var data struct {
-			ID           string `json:"id"`
-			Title        string `json:"title"`
-			BodyMarkDown string `json:"bodyMarkdown"`
-			URLPath      string `json:"urlPath"`
-			CreatedAt    int64  `json:"createdAt"`
-			UpdatedAt    int64  `json:"updatedAt"`
+			ID        string   `json:"id"`
+			Title     string   `json:"title"`
+			URLPath   string   `json:"urlPath"`
+			CreatedAt int64    `json:"createdAt"`
+			UpdatedAt int64    `json:"updatedAt"`
+			Memo      string   `json:"memo"`
+			Widgets   []Widget `json:"widgets"`
 		}
 
 		err := json.Unmarshal(body, &data)
@@ -429,12 +359,13 @@ func TestUpdateDashboard(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
-			"id":           "2c5bLca8d",
-			"title":        "My Dashboard",
-			"bodyMarkDown": "# A test dashboard",
-			"urlPath":      "2u4PP3TJqbu",
-			"createdAt":    1439346145003,
-			"updatedAt":    1439346145003,
+			"id":        "2c5bLca8d",
+			"title":     "My Dashboard",
+			"urlPath":   "2u4PP3TJqbu",
+			"createdAt": 1439346145003,
+			"updatedAt": 1439346145003,
+			"memo":      "My Dashboard Memo",
+			"widgets":   []map[string]interface{}{},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -445,9 +376,10 @@ func TestUpdateDashboard(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
 	dashboard, err := client.UpdateDashboard(testID, &Dashboard{
-		Title:        "My Dashboard",
-		BodyMarkDown: "# A test dashboard",
-		URLPath:      "2u4PP3TJqbu",
+		Title:   "My Dashboard",
+		URLPath: "2u4PP3TJqbu",
+		Memo:    "My Dashboard Memo",
+		Widgets: []Widget{},
 	})
 
 	if err != nil {
@@ -462,10 +394,6 @@ func TestUpdateDashboard(t *testing.T) {
 		t.Error("request sends json including title but: ", dashboard)
 	}
 
-	if dashboard.BodyMarkDown != "# A test dashboard" {
-		t.Error("request sends json including bodyMarkDown but: ", dashboard)
-	}
-
 	if dashboard.URLPath != "2u4PP3TJqbu" {
 		t.Error("request sends json including urlpath but: ", dashboard)
 	}
@@ -476,6 +404,14 @@ func TestUpdateDashboard(t *testing.T) {
 
 	if dashboard.UpdatedAt != 1439346145003 {
 		t.Error("request sends json including updatedAt but: ", dashboard)
+	}
+
+	if dashboard.Memo != "My Dashboard Memo" {
+		t.Error("request sends json including memo but: ", dashboard)
+	}
+
+	if len(dashboard.Widgets) != 0 {
+		t.Error("request sends json including widgets but: ", dashboard)
 	}
 }
 
@@ -493,12 +429,13 @@ func TestDeleteDashboard(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
-			"id":           "2c5bLca8d",
-			"title":        "My Dashboard",
-			"bodyMarkDown": "# A test dashboard",
-			"urlPath":      "2u4PP3TJqbu",
-			"createdAt":    1439346145003,
-			"updatedAt":    1439346145003,
+			"id":        "2c5bLca8d",
+			"title":     "My Dashboard",
+			"urlPath":   "2u4PP3TJqbu",
+			"createdAt": 1439346145003,
+			"updatedAt": 1439346145003,
+			"memo":      "My Dashboard Memo",
+			"widgets":   []map[string]interface{}{},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -522,10 +459,6 @@ func TestDeleteDashboard(t *testing.T) {
 		t.Error("request sends json including title but: ", dashboard)
 	}
 
-	if dashboard.BodyMarkDown != "# A test dashboard" {
-		t.Error("request sends json including bodyMarkDown but: ", dashboard)
-	}
-
 	if dashboard.URLPath != "2u4PP3TJqbu" {
 		t.Error("request sends json including urlpath but: ", dashboard)
 	}
@@ -536,6 +469,14 @@ func TestDeleteDashboard(t *testing.T) {
 
 	if dashboard.UpdatedAt != 1439346145003 {
 		t.Error("request sends json including updatedAt but: ", dashboard)
+	}
+
+	if dashboard.Memo != "My Dashboard Memo" {
+		t.Error("request sends json including memo but: ", dashboard)
+	}
+
+	if len(dashboard.Widgets) != 0 {
+		t.Error("request sends json including widgets but: ", dashboard)
 	}
 }
 

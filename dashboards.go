@@ -8,22 +8,6 @@ import (
 
 /*
 `/dashboards` Response
-Legacy
-{
-  "dashboards": [
-    {
-       "id": "2c5bLca8d",
-       "title": "My Dashboard",
-       "bodyMarkdown": "# A test dashboard",
-       "urlPath": "2u4PP3TJqbu",
-       "createdAt": 1439346145003,
-       "updatedAt": 1439346145003,
-       "isLegacy": true
-    }
-  ]
-}
-
-Current
 {
   "dashboards": [
     {
@@ -40,17 +24,6 @@ Current
 
 /*
 `/dashboards/${ID}` Response`
-Legacy
-{
-  "id": "2c5bLca8d",
-  "title": "My Dashboard",
-  "bodyMarkdown": "# A test dashboard",
-  "urlPath": "2u4PP3TJqbu",
-  "createdAt": 1439346145003,
-  "updatedAt": 1439346145003,
-  "isLegacy": true
-}
-Current
 {
   "id": "2c5bLca8e",
   "createdAt": 1552909732,
@@ -118,20 +91,13 @@ Current
 
 // Dashboard information
 type Dashboard struct {
-	// Common to legacy dashboard and current dashboard
-	ID        string `json:"id,omitempty"`
-	Title     string `json:"title"`
-	URLPath   string `json:"urlPath"`
-	CreatedAt int64  `json:"createdAt,omitempty"`
-	UpdatedAt int64  `json:"updatedAt,omitempty"`
-
-	// current dashboard
-	Memo    string   `json:"memo"`
-	Widgets []Widget `json:"widgets"`
-
-	// legacy dashboard
-	IsLegacy     bool   `json:"isLegacy,omitempty"`
-	BodyMarkDown string `json:"bodyMarkdown,omitempty"`
+	ID        string   `json:"id,omitempty"`
+	Title     string   `json:"title"`
+	URLPath   string   `json:"urlPath"`
+	CreatedAt int64    `json:"createdAt,omitempty"`
+	UpdatedAt int64    `json:"updatedAt,omitempty"`
+	Memo      string   `json:"memo"`
+	Widgets   []Widget `json:"widgets"`
 }
 
 // Widget information
