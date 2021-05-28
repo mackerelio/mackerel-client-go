@@ -3,11 +3,11 @@ mackerel-client-go
 
 [![Build Status](https://github.com/mackerelio/mackerel-client-go/workflows/Build/badge.svg?branch=master)][actions]
 [![Coverage Status](https://coveralls.io/repos/mackerelio/mackerel-client-go/badge.svg?branch=master)][coveralls]
-[![GoDoc](https://godoc.org/github.com/mackerelio/mackerel-client-go?status.svg)][godoc]
+[![pkg.go.dev](https://pkg.go.dev/badge/github.com/mackerelio/mackerel-client-go)][pkg.go.dev]
 
 [actions]: https://github.com/mackerelio/mackerel-client-go/actions?workflow=Build
 [coveralls]: https://coveralls.io/r/mackerelio/mackerel-client-go?branch=master
-[godoc]: https://godoc.org/github.com/mackerelio/mackerel-client-go
+[pkg.go.dev]: https://pkg.go.dev/github.com/mackerelio/mackerel-client-go
 
 mackerel-client-go is a Go client library for [mackerel.io API](https://mackerel.io/api-docs/).
 
