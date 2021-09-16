@@ -89,7 +89,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	awsIntegrations, err := client.ListAWSIntegrations()
+	awsIntegrations, err := client.FindAWSIntegrations()
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}

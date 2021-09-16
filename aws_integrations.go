@@ -48,8 +48,8 @@ type UpdateAWSIntegrationParam CreateAWSIntegrationParam
 // ListAWSIntegrationExcludableMetrics List of excludeable metric names for aws integration
 type ListAWSIntegrationExcludableMetrics map[string][]string
 
-// ListAWSIntegrations finds AWS Integration Settings
-func (c *Client) ListAWSIntegrations() ([]*AWSIntegration, error) {
+// FindAWSIntegrations finds AWS Integration Settings
+func (c *Client) FindAWSIntegrations() ([]*AWSIntegration, error) {
 	req, err := http.NewRequest("GET", c.urlFor("/api/v0/aws-integrations").String(), nil)
 	if err != nil {
 		return nil, err
