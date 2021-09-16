@@ -61,13 +61,13 @@ func (c *Client) FindAWSIntegrations() ([]*AWSIntegration, error) {
 	}
 
 	var data struct {
-		AwsIntegrations []*AWSIntegration `json:"aws_integrations"`
+		AWSIntegrations []*AWSIntegration `json:"aws_integrations"`
 	}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-	return data.AwsIntegrations, err
+	return data.AWSIntegrations, err
 }
 
 // FindAWSIntegration lists AWS Integration Setting
