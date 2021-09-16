@@ -70,7 +70,7 @@ func (c *Client) FindAWSIntegrations() ([]*AWSIntegration, error) {
 	return data.AWSIntegrations, err
 }
 
-// FindAWSIntegration lists AWS Integration Setting
+// FindAWSIntegration finds AWS Integration Setting
 func (c *Client) FindAWSIntegration(awsIntegrationID string) (*AWSIntegration, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)).String(), nil)
 	if err != nil {
