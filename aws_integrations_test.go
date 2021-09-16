@@ -32,7 +32,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 					"region":       "ap-northeast-1",
 					"includedTags": "Name:web-server,Environment:staging,Product:web",
 					"excludedTags": "Name:test-server,Environment:staging,Product:test",
-					"Services": map[string]map[string]interface{}{
+					"services": map[string]map[string]interface{}{
 						"EC2": {
 							"enable":              true,
 							"role":                "web-group",
@@ -61,7 +61,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 					"region":       "eu-central-1",
 					"includedTags": "Name:web-server,Environment:staging,Product:web",
 					"excludedTags": "Name:test-server,Environment:staging,Product:test",
-					"Services": map[string]map[string]interface{}{
+					"services": map[string]map[string]interface{}{
 						"EC2": {
 							"enable":              false,
 							"role":                (*string)(nil),
@@ -129,7 +129,7 @@ func TestFindAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"Services": map[string]map[string]interface{}{
+			"services": map[string]map[string]interface{}{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
@@ -216,7 +216,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"Services": map[string]map[string]interface{}{
+			"services": map[string]map[string]interface{}{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
@@ -332,7 +332,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"Services": map[string]map[string]interface{}{
+			"services": map[string]map[string]interface{}{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
@@ -426,7 +426,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"Services": map[string]map[string]interface{}{
+			"services": map[string]map[string]interface{}{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
