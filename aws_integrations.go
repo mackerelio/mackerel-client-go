@@ -8,20 +8,20 @@ import (
 
 // AWSIntegration aws integration information
 type AWSIntegration struct {
-	ID           string                             `json:"id"`
-	Name         string                             `json:"name"`
-	Memo         string                             `json:"memo"`
-	Key          string                             `json:"key,omitempty"`
-	RoleArn      string                             `json:"roleArn,omitempty"`
-	ExternalID   string                             `json:"externalId,omitempty"`
-	Region       string                             `json:"region"`
-	IncludedTags string                             `json:"includedTags"`
-	ExcludedTags string                             `json:"excludedTags"`
-	Services     map[string]*AWSIntegrationServices `json:"services"`
+	ID           string                            `json:"id"`
+	Name         string                            `json:"name"`
+	Memo         string                            `json:"memo"`
+	Key          string                            `json:"key,omitempty"`
+	RoleArn      string                            `json:"roleArn,omitempty"`
+	ExternalID   string                            `json:"externalId,omitempty"`
+	Region       string                            `json:"region"`
+	IncludedTags string                            `json:"includedTags"`
+	ExcludedTags string                            `json:"excludedTags"`
+	Services     map[string]*AWSIntegrationService `json:"services"`
 }
 
-// AWSIntegrationServices integration settings for each AWS service
-type AWSIntegrationServices struct {
+// AWSIntegrationService integration settings for each AWS service
+type AWSIntegrationService struct {
 	Enable              bool     `json:"enable"`
 	Role                *string  `json:"role"`
 	ExcludedMetrics     []string `json:"excludedMetrics"`
@@ -30,30 +30,30 @@ type AWSIntegrationServices struct {
 
 // CreateAWSIntegrationParam  parameters for CreateAWSIntegration
 type CreateAWSIntegrationParam struct {
-	Name         string                             `json:"name"`
-	Memo         string                             `json:"memo"`
-	Key          string                             `json:"key,omitempty"`
-	SecretKey    string                             `json:"secretKey,omitempty"`
-	RoleArn      string                             `json:"roleArn,omitempty"`
-	ExternalID   string                             `json:"externalId,omitempty"`
-	Region       string                             `json:"region"`
-	IncludedTags string                             `json:"includedTags"`
-	ExcludedTags string                             `json:"excludedTags"`
-	Services     map[string]*AWSIntegrationServices `json:"services"`
+	Name         string                            `json:"name"`
+	Memo         string                            `json:"memo"`
+	Key          string                            `json:"key,omitempty"`
+	SecretKey    string                            `json:"secretKey,omitempty"`
+	RoleArn      string                            `json:"roleArn,omitempty"`
+	ExternalID   string                            `json:"externalId,omitempty"`
+	Region       string                            `json:"region"`
+	IncludedTags string                            `json:"includedTags"`
+	ExcludedTags string                            `json:"excludedTags"`
+	Services     map[string]*AWSIntegrationService `json:"services"`
 }
 
 // UpdateAWSIntegrationParam parameters for UpdateAwsIntegration
 type UpdateAWSIntegrationParam struct {
-	Name         string                             `json:"name"`
-	Memo         string                             `json:"memo"`
-	Key          string                             `json:"key,omitempty"`
-	SecretKey    string                             `json:"secretKey,omitempty"`
-	RoleArn      string                             `json:"roleArn,omitempty"`
-	ExternalID   string                             `json:"externalId,omitempty"`
-	Region       string                             `json:"region"`
-	IncludedTags string                             `json:"includedTags"`
-	ExcludedTags string                             `json:"excludedTags"`
-	Services     map[string]*AWSIntegrationServices `json:"services"`
+	Name         string                            `json:"name"`
+	Memo         string                            `json:"memo"`
+	Key          string                            `json:"key,omitempty"`
+	SecretKey    string                            `json:"secretKey,omitempty"`
+	RoleArn      string                            `json:"roleArn,omitempty"`
+	ExternalID   string                            `json:"externalId,omitempty"`
+	Region       string                            `json:"region"`
+	IncludedTags string                            `json:"includedTags"`
+	ExcludedTags string                            `json:"excludedTags"`
+	Services     map[string]*AWSIntegrationService `json:"services"`
 }
 
 // ListAWSIntegrationExcludableMetrics List of excludeable metric names for aws integration

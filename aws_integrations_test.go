@@ -98,7 +98,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 		t.Error("aws integrations id should be empty but: ", awsIntegrations[0].ID)
 	}
 
-	if reflect.DeepEqual(awsIntegrations[0].Services["EC2"], &AWSIntegrationServices{
+	if reflect.DeepEqual(awsIntegrations[0].Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
@@ -164,7 +164,7 @@ func TestFindAWSIntegration(t *testing.T) {
 		t.Error("aws integrations id should be empty but: ", awsIntegration.ID)
 	}
 
-	if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationServices{
+	if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
@@ -196,7 +196,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 			t.Error("request sends json including name but: ", awsIntegration.Name)
 		}
 
-		if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationServices{
+		if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationService{
 			Enable:              true,
 			Role:                toPointer("web-group"),
 			ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
@@ -252,7 +252,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		Region:       "ap-northeast-1",
 		IncludedTags: "Name:web-server,Environment:staging,Product:web",
 		ExcludedTags: "Name:test-server,Environment:staging,Product:test",
-		Services: map[string]*AWSIntegrationServices{
+		Services: map[string]*AWSIntegrationService{
 			"EC2": {
 				Enable:              true,
 				Role:                toPointer("web-group"),
@@ -280,7 +280,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		t.Error("aws integrations id should be empty but ", awsIntegrations.ID)
 	}
 
-	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationServices{
+	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
@@ -312,7 +312,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 			t.Error("request sends json including name but: ", awsIntegration.Name)
 		}
 
-		if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationServices{
+		if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationService{
 			Enable:              true,
 			Role:                toPointer("web-group"),
 			ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
@@ -368,7 +368,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		Region:       "ap-northeast-1",
 		IncludedTags: "Name:web-server,Environment:staging,Product:web",
 		ExcludedTags: "Name:test-server,Environment:staging,Product:test",
-		Services: map[string]*AWSIntegrationServices{
+		Services: map[string]*AWSIntegrationService{
 			"EC2": {
 				Enable:              true,
 				Role:                toPointer("web-group"),
@@ -396,7 +396,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		t.Error("aws integrations id should be empty but: ", awsIntegrations.ID)
 	}
 
-	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationServices{
+	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
@@ -461,7 +461,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 		t.Error("aws integrations id should be empty but: ", awsIntegrations.ID)
 	}
 
-	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationServices{
+	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
