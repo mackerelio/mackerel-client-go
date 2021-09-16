@@ -43,18 +43,7 @@ type CreateAWSIntegrationParam struct {
 }
 
 // UpdateAWSIntegrationParam parameters for UpdateAwsIntegration
-type UpdateAWSIntegrationParam struct {
-	Name         string                            `json:"name"`
-	Memo         string                            `json:"memo"`
-	Key          string                            `json:"key,omitempty"`
-	SecretKey    string                            `json:"secretKey,omitempty"`
-	RoleArn      string                            `json:"roleArn,omitempty"`
-	ExternalID   string                            `json:"externalId,omitempty"`
-	Region       string                            `json:"region"`
-	IncludedTags string                            `json:"includedTags"`
-	ExcludedTags string                            `json:"excludedTags"`
-	Services     map[string]*AWSIntegrationService `json:"services"`
-}
+type UpdateAWSIntegrationParam CreateAWSIntegrationParam
 
 // ListAWSIntegrationExcludableMetrics List of excludeable metric names for aws integration
 type ListAWSIntegrationExcludableMetrics map[string][]string
