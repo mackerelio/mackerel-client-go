@@ -84,6 +84,7 @@ type FindHostsParam struct {
 type CreateHostParam struct {
 	Name             string        `json:"name"`
 	DisplayName      string        `json:"displayName,omitempty"`
+	Memo             string        `json:"memo,omitempty"`
 	Meta             HostMeta      `json:"meta"`
 	Interfaces       []Interface   `json:"interfaces"`
 	RoleFullnames    []string      `json:"roleFullnames"`
