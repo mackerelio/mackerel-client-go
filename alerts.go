@@ -98,6 +98,26 @@ func (c *Client) FindWithClosedAlertsByNextID(nextID string) (*AlertsResp, error
 	return c.findAlertsWithParam(v)
 }
 
+// GetAlert gets Alert
+func (c *Client) GetAlert(alertID string) (*Alert, error) {
+	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/alerts/%s", alertID)).String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var alert *Alert
+	err = json.NewDecoder(resp.Body).Decode(&alert)
+	if err != nil {
+		return nil, err
+	}
+	return alert, err
+}
+
 // CloseAlert close alert
 func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 	var reqBody struct {
