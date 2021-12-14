@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -331,5 +332,52 @@ func TestFindWithClosedAlertsByNextId(t *testing.T) {
 
 	if alerts.NextID != "2fsf8jRxFG1" {
 		t.Error("request sends json including nextId but: ", alerts.NextID)
+	}
+}
+
+func TestGetAlert(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		url := fmt.Sprintf("/api/v0/alerts/%s", "2wpLU5fBXbG")
+		if req.URL.Path != url {
+			t.Error("request URL should be /api/v0/alerts/<ID> but: ", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"id":        "2wpLU5fBXbG",
+			"status":    "CRITICAL",
+			"monitorId": "2cYjfibBkaj",
+			"type":      "connectivity",
+			"openedAt":  1445399342,
+			"hostId":    "2vJ965ygiXf",
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	alert, err := client.GetAlert("2wpLU5fBXbG")
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if alert.ID != "2wpLU5fBXbG" {
+		t.Error("alert id should be \"2wpLU5fBXbG\" but: ", alert.ID)
+	}
+
+	if reflect.DeepEqual(alert, &Alert{
+		ID:        "2wpLU5fBXbG",
+		Status:    "CRITICAL",
+		MonitorID: "2cYjfibBkaj",
+		Type:      "connectivity",
+		HostID:    "2vJ965ygiXf",
+		OpenedAt:  1445399342,
+	}) != true {
+		t.Errorf("Wrong data for alert: %v", alert)
 	}
 }
