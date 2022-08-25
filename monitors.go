@@ -121,7 +121,6 @@ var (
 
 // Ensure only monitor types defined in this package can be assigned to the
 // Monitor interface.
-//
 func (m *MonitorConnectivity) isMonitor()     {}
 func (m *MonitorHostMetric) isMonitor()       {}
 func (m *MonitorServiceMetric) isMonitor()    {}
