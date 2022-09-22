@@ -3,6 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -430,6 +431,98 @@ func TestRetireHost_NotFound(t *testing.T) {
 	}
 	if expected := "API request failed: Host Not Found."; apiErr.Error() != expected {
 		t.Errorf("api error string should be %s but got: %s", expected, apiErr.Error())
+	}
+}
+
+func TestBulkRetireHosts(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/bulk-retire" {
+			t.Error("request URL should be /api/v0/hosts/bulk-retire but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		body, _ := io.ReadAll(req.Body)
+		var data struct {
+			IDs []string `json:"ids"`
+		}
+		if err := json.Unmarshal(body, &data); err != nil {
+			t.Error("request body should be decoded as json: ", string(body))
+		}
+
+		if reflect.DeepEqual(data.IDs, []string{"123456ABCD", "789012EFGH"}) != true {
+			t.Errorf("request IDs should be []string{\"123456ABCD\", \"789012EFGH\"} but: %+v", data.IDs)
+		}
+
+		respJSON, _ := json.Marshal(map[string]bool{
+			"success": true,
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		res.WriteHeader(http.StatusOK)
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	ids := []string{"123456ABCD", "789012EFGH"}
+	if err := client.BulkRetireHosts(ids); err != nil {
+		t.Error("error should be nil but: ", err)
+	}
+}
+
+func TestBulkRetireHosts_NotFound(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/bulk-retire" {
+			t.Error("request URL should be /api/v0/hosts/bulk-retire but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		body, _ := io.ReadAll(req.Body)
+		var data struct {
+			IDs []string `json:"ids"`
+		}
+		if err := json.Unmarshal(body, &data); err != nil {
+			t.Error("request body should be decoded as json: ", string(body))
+		}
+
+		if expectIDs := []string{"123456ABCD", "789012EFGH"}; reflect.DeepEqual(data.IDs, expectIDs) != true {
+			t.Errorf("request IDs should be %+v but: %+v", expectIDs, data.IDs)
+		}
+
+		respJSON, _ := json.Marshal(map[string]string{
+			"error": "Hosts not found.",
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		res.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	ids := []string{"123456ABCD", "789012EFGH"}
+	err := client.BulkRetireHosts(ids)
+	if err == nil {
+		t.Error("error should not be nil")
+	}
+
+	apiErr, ok := err.(*APIError)
+	if !ok {
+		t.Error("error should be APIError")
+	}
+	if expectStatus := http.StatusNotFound; apiErr.StatusCode != expectStatus {
+		t.Errorf("api error StatusCode should be %d but got %d", expectStatus, apiErr.StatusCode)
+	}
+	if expect := "API request failed: Hosts not found."; apiErr.Error() != expect {
+		t.Errorf("api error string should be \"%s\" but got \"%s\"", expect, apiErr.Error())
 	}
 }
 

@@ -295,6 +295,15 @@ func (c *Client) RetireHost(id string) error {
 	return err
 }
 
+// BulkRetireHosts retires the hosts
+func (c *Client) BulkRetireHosts(ids []string) error {
+	resp, err := c.PostJSON("/api/v0/hosts/bulk-retire", map[string][]string{
+		"ids": ids,
+	})
+	defer closeResponse(resp)
+	return err
+}
+
 // ListHostMetricNames lists metric names of a host
 func (c *Client) ListHostMetricNames(id string) ([]string, error) {
 	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metric-names", id)).String(), nil)
