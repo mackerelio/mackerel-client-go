@@ -153,8 +153,8 @@ func TestFindHosts(t *testing.T) {
 
 func TestFindHostByCustomIdentifier(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/api/v0/hosts-by-custom-identifier/mydb001" {
-			t.Error("request URL should be /api/v0/hosts-by-custom-identifier/mydb001 but: ", req.URL.Path)
+		if req.URL.RawPath != "/api/v0/hosts-by-custom-identifier/mydb001%2F001" {
+			t.Error("request URL.RawPath should be /api/v0/hosts-by-custom-identifier/mydb001%$2F001 but: ", req.URL.RawPath)
 		}
 
 		query := req.URL.Query()
@@ -172,7 +172,7 @@ func TestFindHostByCustomIdentifier(t *testing.T) {
 				"name":             "mydb001",
 				"status":           "working",
 				"memo":             "hello",
-				"customIdentifier": "mydb001",
+				"customIdentifier": "mydb001/001",
 			},
 		})
 
@@ -182,7 +182,7 @@ func TestFindHostByCustomIdentifier(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	host, err := client.FindHostByCustomIdentifier("mydb001", &FindHostByCustomIdentifierParam{CaseInsensitive: true})
+	host, err := client.FindHostByCustomIdentifier("mydb001/001", &FindHostByCustomIdentifierParam{CaseInsensitive: true})
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
@@ -193,6 +193,9 @@ func TestFindHostByCustomIdentifier(t *testing.T) {
 	}
 	if host.ID != "9rxGOHfVF8F" {
 		t.Error("request sends json including ID but: ", host)
+	}
+	if host.CustomIdentifier != "mydb001/001" {
+		t.Error("request sends json including CustomIdentifier but: ", host)
 	}
 }
 
