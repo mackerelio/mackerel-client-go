@@ -115,6 +115,11 @@ type MonitoredStatusDetail struct {
 	Memo    string `json:"memo,omitempty"`
 }
 
+// FindHostByCustomIdentifierParam parameters for FindHostByCustomIdentifier
+type FindHostByCustomIdentifierParam struct {
+	CaseInsensitive bool
+}
+
 const (
 	// HostStatusWorking represents "working" status
 	HostStatusWorking = "working"
@@ -225,6 +230,34 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 	}
 
 	return data.Hosts, err
+}
+
+// FindHostByCustomIdentifier finds host via CustomIdentifier
+func (c *Client) FindHostByCustomIdentifier(customIdentifier string, param *FindHostByCustomIdentifierParam) (*Host, error) {
+	v := url.Values{}
+	if param.CaseInsensitive {
+		v.Set("caseInsensitive", "true")
+	}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s?%s", c.urlFor("/api/v0/hosts-by-custom-identifier").String(), url.PathEscape(customIdentifier), v.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Request(req)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data struct {
+		Host *Host `json:"host"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.Host, err
 }
 
 // CreateHost creates host
