@@ -57,7 +57,9 @@ type UpdateAlertParam struct {
 }
 
 // UpdateAlertResponse is for UpdateAlert
-type UpdateAlertResponse = UpdateAlertParam
+type UpdateAlertResponse struct {
+	Memo string `json:"memo,omitempty"`
+}
 
 func (c *Client) findAlertsWithParam(v url.Values) (*AlertsResp, error) {
 	var d AlertsResp
