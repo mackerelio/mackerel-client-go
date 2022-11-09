@@ -158,7 +158,7 @@ func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAle
 		return nil, err
 	}
 
-	var data = UpdateAlertResponse{}
+	var data UpdateAlertResponse
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
