@@ -42,12 +42,23 @@ type Alert struct {
 	Reason    string  `json:"reason,omitempty"`
 	OpenedAt  int64   `json:"openedAt,omitempty"`
 	ClosedAt  int64   `json:"closedAt,omitempty"`
+	Memo      string  `json:"memo,omitempty"`
 }
 
 // AlertsResp includes alert and next id
 type AlertsResp struct {
 	Alerts []*Alert `json:"alerts"`
 	NextID string   `json:"nextId,omitempty"`
+}
+
+// UpdateAlertParam is for UpdateAlert
+type UpdateAlertParam struct {
+	Memo string `json:"memo,omitempty"`
+}
+
+// UpdateAlertResponse is for UpdateAlert
+type UpdateAlertResponse struct {
+	Memo string `json:"memo,omitempty"`
 }
 
 func (c *Client) findAlertsWithParam(v url.Values) (*AlertsResp, error) {
@@ -137,4 +148,21 @@ func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 	}
 
 	return data, nil
+}
+
+// UpdateAlert updates an Alert
+func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
+	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/alerts/%s", alertID), param)
+	defer closeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data UpdateAlertResponse
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }
