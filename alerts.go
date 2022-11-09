@@ -150,7 +150,7 @@ func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 	return data, nil
 }
 
-// UpdateAlert updates a Alert
+// UpdateAlert updates an Alert
 func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
 	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/alerts/%s", alertID), param)
 	defer closeResponse(resp)
