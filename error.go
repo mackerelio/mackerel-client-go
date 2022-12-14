@@ -17,19 +17,16 @@ func (err *APIError) Error() string {
 	return fmt.Sprintf("API request failed: %s", err.Message)
 }
 
-func extractErrorMessage(r io.Reader) (errorMessage string) {
+func extractErrorMessage(r io.Reader) (errorMessage string, err error) {
 	bs, err := ioutil.ReadAll(r)
 	if err != nil {
-		return
+		return "", err
 	}
 	var data struct{ Error struct{ Message string } }
 	err = json.Unmarshal(bs, &data)
 	if err == nil {
-		errorMessage = data.Error.Message
+		return data.Error.Message, nil
 	} else {
-		var data struct{ Error string }
-		json.Unmarshal(bs, &data)
-		errorMessage = data.Error
+		return "", err
 	}
-	return
 }
