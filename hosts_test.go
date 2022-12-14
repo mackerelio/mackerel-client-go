@@ -456,8 +456,8 @@ func TestRetireHost_NotFound(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]string{
-			"error": "Host Not Found.",
+		respJSON, _ := json.Marshal(map[string]map[string]string{
+			"error": {"message": "Host Not Found."},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -544,8 +544,8 @@ func TestBulkRetireHosts_NotFound(t *testing.T) {
 			t.Errorf("request IDs should be %+v but: %+v", expectIDs, data.IDs)
 		}
 
-		respJSON, _ := json.Marshal(map[string]string{
-			"error": "Hosts not found.",
+		respJSON, _ := json.Marshal(map[string]map[string]string{
+			"error": {"message": "Hosts Not Found."},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -569,7 +569,7 @@ func TestBulkRetireHosts_NotFound(t *testing.T) {
 	if expectStatus := http.StatusNotFound; apiErr.StatusCode != expectStatus {
 		t.Errorf("api error StatusCode should be %d but got %d", expectStatus, apiErr.StatusCode)
 	}
-	if expect := "API request failed: Hosts not found."; apiErr.Error() != expect {
+	if expect := "API request failed: Hosts Not Found."; apiErr.Error() != expect {
 		t.Errorf("api error string should be \"%s\" but got \"%s\"", expect, apiErr.Error())
 	}
 }

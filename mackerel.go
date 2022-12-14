@@ -122,12 +122,12 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		message := extractErrorMessage(resp.Body)
+		message, err := extractErrorMessage(resp.Body)
 		defer resp.Body.Close()
-		if message != "" {
-			return nil, &APIError{StatusCode: resp.StatusCode, Message: message}
+		if err != nil {
+			return nil, &APIError{StatusCode: resp.StatusCode, Message: resp.Status}
 		}
-		return nil, &APIError{StatusCode: resp.StatusCode, Message: resp.Status}
+		return nil, &APIError{StatusCode: resp.StatusCode, Message: message}
 	}
 	return resp, nil
 }
