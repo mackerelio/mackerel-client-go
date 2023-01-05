@@ -27,7 +27,10 @@ func TestRequest(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
 	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
-	client.Request(req)
+	_, err := client.Request(req)
+	if err != nil {
+		t.Errorf("request is error %v", err)
+	}
 }
 
 func TestUrlFor(t *testing.T) {
@@ -66,7 +69,7 @@ func TestBuildReq(t *testing.T) {
 
 func TestLogger(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		res.Write([]byte("OK"))
+		res.Write([]byte("OK")) //nolint
 	}))
 	defer ts.Close()
 
@@ -74,7 +77,10 @@ func TestLogger(t *testing.T) {
 	var buf bytes.Buffer
 	client.Logger = log.New(&buf, "<api>", 0)
 	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
-	client.Request(req)
+	_, err := client.Request(req)
+	if err != nil {
+		t.Errorf("request is error %v", err)
+	}
 	s := strings.TrimSpace(buf.String())
 	if !strings.HasPrefix(s, "<api>") || !strings.HasSuffix(s, "OK") {
 		t.Errorf("verbose log should match /<api>.*OK/; but %s", s)

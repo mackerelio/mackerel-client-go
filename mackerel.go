@@ -158,7 +158,7 @@ func (c *Client) requestJSON(method string, path string, payload interface{}) (*
 
 func closeResponse(resp *http.Response) {
 	if resp != nil {
-		io.Copy(io.Discard, resp.Body)
+		io.Copy(io.Discard, resp.Body) // nolint
 		resp.Body.Close()
 	}
 }
