@@ -3,7 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -184,7 +184,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var awsIntegration *AWSIntegration
 		err := json.Unmarshal(body, &awsIntegration)
@@ -300,7 +300,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var awsIntegration *AWSIntegration
 		err := json.Unmarshal(body, &awsIntegration)

@@ -3,7 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,7 +20,7 @@ func TestCreateNotificationGroup(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var notificationGroup NotificationGroup
 		if err := json.Unmarshal(body, &notificationGroup); err != nil {
@@ -177,7 +177,7 @@ func TestUpdateNotificationGroup(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var notificationGroup NotificationGroup
 		if err := json.Unmarshal(body, &notificationGroup); err != nil {

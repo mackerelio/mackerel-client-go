@@ -3,7 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -135,7 +135,7 @@ func TestCreateDowntime(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var d Downtime
 		err := json.Unmarshal(body, &d)
@@ -208,7 +208,7 @@ func TestUpdateDowntime(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var d Downtime
 		err := json.Unmarshal(body, &d)

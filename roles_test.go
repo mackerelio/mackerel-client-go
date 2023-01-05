@@ -3,7 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -61,7 +61,7 @@ func TestCreateRole(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, err := ioutil.ReadAll(req.Body)
+		body, err := io.ReadAll(req.Body)
 		if err != nil {
 			t.Error(err.Error())
 		}

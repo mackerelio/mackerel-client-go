@@ -3,7 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -19,7 +19,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 		if req.Method != "POST" {
 			t.Error("request method should be POST but: ", req.Method)
 		}
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var data struct {
 			Service     string   `json:"service,omitempty"`

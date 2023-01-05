@@ -23,8 +23,8 @@ jobs:
     - uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go }}
+    - uses: golangci/golangci-lint-action@v3
     - run: |
-        make gofmt lint
         go test -race -covermode atomic -coverprofile=profile.cov ./...
       shell: bash
     - uses: shogo82148/actions-goveralls@v1

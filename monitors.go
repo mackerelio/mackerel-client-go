@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -428,7 +427,7 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 }
 
 func decodeMonitorReader(r io.Reader) (Monitor, error) {
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}

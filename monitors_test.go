@@ -658,7 +658,7 @@ func TestDecodeEncodeMonitor(t *testing.T) {
 
 func equalJSON(x, y string) bool {
 	var xval, yval interface{}
-	json.Unmarshal([]byte(x), &xval)
-	json.Unmarshal([]byte(y), &yval)
+	json.Unmarshal([]byte(x), &xval) //nolint
+	json.Unmarshal([]byte(y), &yval) //nolint
 	return reflect.DeepEqual(xval, yval)
 }
