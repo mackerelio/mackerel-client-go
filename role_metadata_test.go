@@ -2,7 +2,7 @@ package mackerel
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -106,7 +106,7 @@ func TestPutRoleMetaData(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 		reqJSON := `{"env":"staging","instance_type":"c4.xlarge","region":"jp","type":12345}` + "\n"
 		if string(body) != reqJSON {
 			t.Errorf("request body should be %v but %v", reqJSON, string(body))

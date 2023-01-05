@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -209,7 +208,7 @@ func TestCreateHost(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var data struct {
 			Name          string        `json:"name"`
@@ -275,7 +274,7 @@ func TestUpdateHost(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var data struct {
 			Name          string        `json:"name"`
@@ -341,7 +340,7 @@ func TestUpdateHostStatus(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var data struct {
 			Status string `json:"status"`
@@ -383,7 +382,7 @@ func TestUpdateHostRoleFullnames(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var data struct {
 			RoleFullnames []string `json:"roleFullnames"`
@@ -421,7 +420,7 @@ func TestRetireHost(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 
 		var data interface{}
 		err := json.Unmarshal(body, &data)

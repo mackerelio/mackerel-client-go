@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 )
 
 // APIError represents the error type from Mackerel API.
@@ -18,7 +17,7 @@ func (err *APIError) Error() string {
 }
 
 func extractErrorMessage(r io.Reader) (errorMessage string, err error) {
-	bs, err := ioutil.ReadAll(r)
+	bs, err := io.ReadAll(r)
 	if err != nil {
 		return "", err
 	}

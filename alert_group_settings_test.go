@@ -3,7 +3,7 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -82,7 +82,7 @@ func TestCreateAlertGroupSetting(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 		var alertGroupSetting AlertGroupSetting
 		if err := json.Unmarshal(body, &alertGroupSetting); err != nil {
 			t.Fatal("request body should be decoded as json ", string(body))
@@ -184,7 +184,7 @@ func TestUpdateAlertGroupSetting(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		body, _ := ioutil.ReadAll(req.Body)
+		body, _ := io.ReadAll(req.Body)
 		var alertGroupSetting AlertGroupSetting
 		if err := json.Unmarshal(body, &alertGroupSetting); err != nil {
 			t.Fatal("request body should be decoded as json ", string(body))
