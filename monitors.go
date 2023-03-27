@@ -101,7 +101,7 @@ type Monitor interface {
 
 const (
 	monitorTypeConnectivity     = "connectivity"
-	monitorTypeHostMeric        = "host"
+	monitorTypeHostMetric       = "host"
 	monitorTypeServiceMetric    = "service"
 	monitorTypeExternalHTTP     = "external"
 	monitorTypeExpression       = "expression"
@@ -171,7 +171,7 @@ type MonitorHostMetric struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorHostMetric) MonitorType() string { return monitorTypeHostMeric }
+func (m *MonitorHostMetric) MonitorType() string { return monitorTypeHostMetric }
 
 // MonitorName returns monitor name.
 func (m *MonitorHostMetric) MonitorName() string { return m.Name }
@@ -422,7 +422,7 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 	switch typeData.Type {
 	case monitorTypeConnectivity:
 		m = &MonitorConnectivity{}
-	case monitorTypeHostMeric:
+	case monitorTypeHostMetric:
 		m = &MonitorHostMetric{}
 	case monitorTypeServiceMetric:
 		m = &MonitorServiceMetric{}
