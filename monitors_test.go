@@ -661,6 +661,27 @@ func TestDecodeEncodeMonitor(t *testing.T) {
 	}
 }
 
+func TestDecodeUnknownMonitor(t *testing.T) {
+	json := `{
+		"id"  : "2cSZzK3XfmE",
+		"type": "unknown",
+		"unknownField": "unknownValue"
+	}`
+	gotMonitor, err := decodeMonitorReader(strings.NewReader(json))
+	if gotMonitor != nil {
+		t.Errorf("gotMonitor should be nil but: %v", gotMonitor)
+	}
+	if err == nil {
+		t.Errorf("err should be unknownMonitorTypeError but: %v", err)
+	} else {
+		switch err.(type) {
+		case *unknownMonitorTypeError:
+		default:
+			t.Errorf("err should be unknownMonitorTypeError but: %v", err)
+		}
+	}
+}
+
 func equalJSON(x, y string) bool {
 	var xval, yval interface{}
 	json.Unmarshal([]byte(x), &xval) //nolint

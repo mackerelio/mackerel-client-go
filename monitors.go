@@ -325,7 +325,12 @@ func (c *Client) FindMonitors() ([]Monitor, error) {
 	for _, rawmes := range data.Monitors {
 		m, err := decodeMonitor(rawmes)
 		if err != nil {
-			return nil, err
+			switch err.(type) {
+			case *unknownMonitorTypeError:
+				break
+			default:
+				return nil, err
+			}
 		}
 		ms = append(ms, m)
 	}
@@ -397,6 +402,14 @@ func (c *Client) DeleteMonitor(monitorID string) (Monitor, error) {
 	return decodeMonitorReader(resp.Body)
 }
 
+type unknownMonitorTypeError struct {
+	Type string
+}
+
+func (e *unknownMonitorTypeError) Error() string {
+	return fmt.Sprintf("unknown monitor type: %s", e.Type)
+}
+
 // decodeMonitor decodes json.RawMessage and returns monitor.
 func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 	var typeData struct {
@@ -419,6 +432,8 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 		m = &MonitorExpression{}
 	case monitorTypeAnomalyDetection:
 		m = &MonitorAnomalyDetection{}
+	default:
+		return nil, &unknownMonitorTypeError{Type: typeData.Type}
 	}
 	if err := json.Unmarshal(mes, m); err != nil {
 		return nil, err
