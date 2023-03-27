@@ -79,6 +79,11 @@ func TestFindMonitors(t *testing.T) {
 					"maxCheckAttempts":   3,
 					"warningSensitivity": "insensitive",
 				},
+				{
+					"id":           "2cSZzK3XfmE",
+					"type":         "unknown",
+					"unknownField": "unknownValue",
+				},
 			},
 		})
 
