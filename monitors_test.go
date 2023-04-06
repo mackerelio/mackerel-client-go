@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -674,9 +675,8 @@ func TestDecodeUnknownMonitor(t *testing.T) {
 	if err == nil {
 		t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 	} else {
-		switch err.(type) {
-		case *unknownMonitorTypeError:
-		default:
+		var e *unknownMonitorTypeError
+		if !errors.As(err, &e) {
 			t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 		}
 	}

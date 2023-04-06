@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -324,13 +325,13 @@ func (c *Client) FindMonitors() ([]Monitor, error) {
 	ms := make([]Monitor, 0, len(data.Monitors))
 	for _, rawmes := range data.Monitors {
 		m, err := decodeMonitor(rawmes)
+
+		var e *unknownMonitorTypeError
 		if err != nil {
-			switch err.(type) {
-			case *unknownMonitorTypeError:
+			if errors.As(err, &e) {
 				break
-			default:
-				return nil, err
 			}
+			return nil, err
 		}
 		ms = append(ms, m)
 	}
