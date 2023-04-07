@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -101,7 +102,7 @@ type Monitor interface {
 
 const (
 	monitorTypeConnectivity     = "connectivity"
-	monitorTypeHostMeric        = "host"
+	monitorTypeHostMetric       = "host"
 	monitorTypeServiceMetric    = "service"
 	monitorTypeExternalHTTP     = "external"
 	monitorTypeExpression       = "expression"
@@ -171,7 +172,7 @@ type MonitorHostMetric struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorHostMetric) MonitorType() string { return monitorTypeHostMeric }
+func (m *MonitorHostMetric) MonitorType() string { return monitorTypeHostMetric }
 
 // MonitorName returns monitor name.
 func (m *MonitorHostMetric) MonitorName() string { return m.Name }
@@ -324,7 +325,12 @@ func (c *Client) FindMonitors() ([]Monitor, error) {
 	ms := make([]Monitor, 0, len(data.Monitors))
 	for _, rawmes := range data.Monitors {
 		m, err := decodeMonitor(rawmes)
+
+		var e *unknownMonitorTypeError
 		if err != nil {
+			if errors.As(err, &e) {
+				break
+			}
 			return nil, err
 		}
 		ms = append(ms, m)
@@ -397,6 +403,14 @@ func (c *Client) DeleteMonitor(monitorID string) (Monitor, error) {
 	return decodeMonitorReader(resp.Body)
 }
 
+type unknownMonitorTypeError struct {
+	Type string
+}
+
+func (e *unknownMonitorTypeError) Error() string {
+	return fmt.Sprintf("unknown monitor type: %s", e.Type)
+}
+
 // decodeMonitor decodes json.RawMessage and returns monitor.
 func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 	var typeData struct {
@@ -409,7 +423,7 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 	switch typeData.Type {
 	case monitorTypeConnectivity:
 		m = &MonitorConnectivity{}
-	case monitorTypeHostMeric:
+	case monitorTypeHostMetric:
 		m = &MonitorHostMetric{}
 	case monitorTypeServiceMetric:
 		m = &MonitorServiceMetric{}
@@ -419,6 +433,8 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 		m = &MonitorExpression{}
 	case monitorTypeAnomalyDetection:
 		m = &MonitorAnomalyDetection{}
+	default:
+		return nil, &unknownMonitorTypeError{Type: typeData.Type}
 	}
 	if err := json.Unmarshal(mes, m); err != nil {
 		return nil, err

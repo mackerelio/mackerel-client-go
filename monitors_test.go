@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -78,6 +79,11 @@ func TestFindMonitors(t *testing.T) {
 					},
 					"maxCheckAttempts":   3,
 					"warningSensitivity": "insensitive",
+				},
+				{
+					"id":           "2cSZzK3XfmE",
+					"type":         "unknown",
+					"unknownField": "unknownValue",
 				},
 			},
 		})
@@ -652,6 +658,26 @@ func TestDecodeEncodeMonitor(t *testing.T) {
 		}
 		if gotJSON := string(b); !equalJSON(gotJSON, testCase.json) {
 			t.Errorf("%s: got %v, want %v", testCase.title, gotJSON, testCase.json)
+		}
+	}
+}
+
+func TestDecodeUnknownMonitor(t *testing.T) {
+	json := `{
+		"id"  : "2cSZzK3XfmE",
+		"type": "unknown",
+		"unknownField": "unknownValue"
+	}`
+	gotMonitor, err := decodeMonitorReader(strings.NewReader(json))
+	if gotMonitor != nil {
+		t.Errorf("gotMonitor should be nil but: %v", gotMonitor)
+	}
+	if err == nil {
+		t.Errorf("err should be unknownMonitorTypeError but: %v", err)
+	} else {
+		var e *unknownMonitorTypeError
+		if !errors.As(err, &e) {
+			t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 		}
 	}
 }

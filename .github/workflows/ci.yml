@@ -24,6 +24,8 @@ jobs:
       with:
         go-version: ${{ matrix.go }}
     - uses: golangci/golangci-lint-action@v3
+      with:
+        args: --timeout 5m
     - run: |
         go test -race -covermode atomic -coverprofile=profile.cov ./...
       shell: bash
