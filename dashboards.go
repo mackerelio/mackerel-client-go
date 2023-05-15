@@ -102,17 +102,19 @@ type Dashboard struct {
 
 // Widget information
 type Widget struct {
-	Type     string `json:"type"`
-	Title    string `json:"title"`
-	Layout   Layout `json:"layout"`
-	Metric   Metric `json:"metric,omitempty"`
-	Graph    Graph  `json:"graph,omitempty"`
-	Range    Range  `json:"range,omitempty"`
-	Markdown string `json:"markdown,omitempty"`
+	Type           string          `json:"type"`
+	Title          string          `json:"title"`
+	Layout         Layout          `json:"layout"`
+	Metric         Metric          `json:"metric,omitempty"`
+	Graph          Graph           `json:"graph,omitempty"`
+	Range          Range           `json:"range,omitempty"`
+	Markdown       string          `json:"markdown,omitempty"`
+	ReferenceLines []ReferenceLine `json:"referenceLines,omitempty"`
 	// If this field is nil, it will be treated as a two-digit display after the decimal point.
-	FractionSize *int64 `json:"fractionSize,omitempty"`
-	Suffix       string `json:"suffix,omitempty"`
-	RoleFullName string `json:"roleFullname,omitempty"`
+	FractionSize *int64       `json:"fractionSize,omitempty"`
+	Suffix       string       `json:"suffix,omitempty"`
+	FormatRules  []FormatRule `json:"formatRules,omitempty"`
+	RoleFullName string       `json:"roleFullname,omitempty"`
 }
 
 // Metric information
@@ -131,6 +133,12 @@ func (m Metric) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return json.Marshal(Alias(m))
+}
+
+type FormatRule struct {
+	Name      string  `json:"name"`
+	Threshold float64 `json:"threshold"`
+	Operator  string  `json:"operator"`
 }
 
 // Graph information
@@ -188,6 +196,11 @@ func (r Range) MarshalJSON() ([]byte, error) {
 	default:
 		return []byte("null"), nil
 	}
+}
+
+type ReferenceLine struct {
+	Label string  `json:"label"`
+	Value float64 `json:"value"`
 }
 
 // Layout information
