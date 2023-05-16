@@ -108,12 +108,25 @@ func TestFindDashboard(t *testing.T) {
 							"width":  8,
 							"height": 10,
 						},
+						"referenceLines": []map[string]interface{}{
+							{
+								"label": "critical",
+								"value": 1.23,
+							},
+						},
 					},
 					{
 						"type":         "value",
 						"title":        "value_widget",
 						"fractionSize": 2,
 						"suffix":       "total",
+						"formatRules": []map[string]interface{}{
+							{
+								"name":      "SLO",
+								"threshold": 2.34,
+								"operator":  ">",
+							},
+						},
 						"metric": map[string]interface{}{
 							"type":       "expression",
 							"expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')",
@@ -218,6 +231,14 @@ func TestFindDashboard(t *testing.T) {
 		t.Error("request sends json including widgets.graph.name but:", dashboard)
 	}
 
+	if dashboard.Widgets[1].ReferenceLines[0].Label != "critical" {
+		t.Error("request sends json including widgets.graph.referenceLines.label but:", dashboard)
+	}
+
+	if dashboard.Widgets[1].ReferenceLines[0].Value != 1.23 {
+		t.Error("request sends json including widgets.graph.referenceLines.value but:", dashboard)
+	}
+
 	// Widget Test : Metric ( && Expression Type)
 
 	if dashboard.Widgets[2].Metric.Type != "expression" {
@@ -234,6 +255,18 @@ func TestFindDashboard(t *testing.T) {
 
 	if dashboard.Widgets[2].Suffix != "total" {
 		t.Error("request sends json including widgets.suffix but:", dashboard)
+	}
+
+	if dashboard.Widgets[2].FormatRules[0].Name != "SLO" {
+		t.Error("request sends json including widgets.formatRules.name but:", dashboard)
+	}
+
+	if dashboard.Widgets[2].FormatRules[0].Threshold != 2.34 {
+		t.Error("request sends json including widgets.formatRules.threshold but:", dashboard)
+	}
+
+	if dashboard.Widgets[2].FormatRules[0].Operator != ">" {
+		t.Error("request sends json including widgets.formatRules.operator but:", dashboard)
 	}
 
 	// Widget Test : AlertStatus
