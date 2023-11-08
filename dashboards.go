@@ -3,7 +3,6 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 )
 
 /*
@@ -135,6 +134,7 @@ func (m Metric) MarshalJSON() ([]byte, error) {
 	return json.Marshal(Alias(m))
 }
 
+// FormatRule information
 type FormatRule struct {
 	Name      string  `json:"name"`
 	Threshold float64 `json:"threshold"`
@@ -198,6 +198,7 @@ func (r Range) MarshalJSON() ([]byte, error) {
 	}
 }
 
+// ReferenceLine information
 type ReferenceLine struct {
 	Label string  `json:"label"`
 	Value float64 `json:"value"`
@@ -211,103 +212,36 @@ type Layout struct {
 	Height int64 `json:"height"`
 }
 
-// FindDashboards find dashboards
+// FindDashboards finds dashboards.
 func (c *Client) FindDashboards() ([]*Dashboard, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/dashboards").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		Dashboards []*Dashboard `json:"dashboards"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/dashboards")
 	if err != nil {
 		return nil, err
 	}
-
-	return data.Dashboards, err
+	return data.Dashboards, nil
 }
 
-// FindDashboard find dashboard
-func (c *Client) FindDashboard(dashboardID string) (*Dashboard, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Dashboard
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, err
-}
-
-// CreateDashboard creating dashboard
+// CreateDashboard creates a dashboard.
 func (c *Client) CreateDashboard(param *Dashboard) (*Dashboard, error) {
-	resp, err := c.PostJSON("/api/v0/dashboards", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Dashboard
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return requestPost[Dashboard](c, "/api/v0/dashboards", param)
 }
 
-// UpdateDashboard update dashboard
+// FindDashboard finds a dashboard.
+func (c *Client) FindDashboard(dashboardID string) (*Dashboard, error) {
+	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
+	return requestGet[Dashboard](c, path)
+}
+
+// UpdateDashboard updates a dashboard.
 func (c *Client) UpdateDashboard(dashboardID string, param *Dashboard) (*Dashboard, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Dashboard
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
+	return requestPut[Dashboard](c, path, param)
 }
 
-// DeleteDashboard delete dashboard
+// DeleteDashboard deletes a dashboard.
 func (c *Client) DeleteDashboard(dashboardID string) (*Dashboard, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)).String(),
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Dashboard
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
+	return requestDelete[Dashboard](c, path)
 }

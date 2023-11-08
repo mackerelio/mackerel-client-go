@@ -3,7 +3,6 @@ package mackerel
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -128,83 +127,30 @@ func (w DowntimeWeekday) String() string {
 	return weekdayToString[w]
 }
 
-// FindDowntimes finds downtimes
+// FindDowntimes finds downtimes.
 func (c *Client) FindDowntimes() ([]*Downtime, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/downtimes").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		Downtimes []*Downtime `json:"downtimes"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/downtimes")
 	if err != nil {
 		return nil, err
 	}
-
-	return data.Downtimes, err
+	return data.Downtimes, nil
 }
 
-// CreateDowntime creates a downtime
+// CreateDowntime creates a downtime.
 func (c *Client) CreateDowntime(param *Downtime) (*Downtime, error) {
-	resp, err := c.PostJSON("/api/v0/downtimes", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Downtime
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return requestPost[Downtime](c, "/api/v0/downtimes", param)
 }
 
-// UpdateDowntime updates a downtime
+// UpdateDowntime updates a downtime.
 func (c *Client) UpdateDowntime(downtimeID string, param *Downtime) (*Downtime, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/downtimes/%s", downtimeID), param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Downtime
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	path := fmt.Sprintf("/api/v0/downtimes/%s", downtimeID)
+	return requestPut[Downtime](c, path, param)
 }
 
-// DeleteDowntime deletes downtime
+// DeleteDowntime deletes a downtime.
 func (c *Client) DeleteDowntime(downtimeID string) (*Downtime, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/downtimes/%s", downtimeID)).String(),
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data Downtime
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	path := fmt.Sprintf("/api/v0/downtimes/%s", downtimeID)
+	return requestDelete[Downtime](c, path)
 }

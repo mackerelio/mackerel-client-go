@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"strings"
 	"testing"
@@ -26,7 +27,7 @@ func TestRequest(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 
-	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
+	req, _ := http.NewRequest("GET", client.urlFor("/", nil).String(), nil)
 	_, err := client.Request(req)
 	if err != nil {
 		t.Errorf("request is error %v", err)
@@ -35,9 +36,18 @@ func TestRequest(t *testing.T) {
 
 func TestUrlFor(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", "https://example.com/with/ignored/path", false)
-	xURL := "https://example.com/some/super/endpoint"
-	if url := client.urlFor("/some/super/endpoint").String(); url != xURL {
-		t.Errorf("urlFor should be '%s' but %s", xURL, url)
+	expected := "https://example.com/some/super/endpoint"
+	if url := client.urlFor("/some/super/endpoint", nil).String(); url != expected {
+		t.Errorf("urlFor should be %q but %q", expected, url)
+	}
+
+	expected += "?test1=value1&test1=value2&test2=value2"
+	params := url.Values{}
+	params.Add("test1", "value1")
+	params.Add("test1", "value2")
+	params.Add("test2", "value2")
+	if url := client.urlFor("/some/super/endpoint", params).String(); url != expected {
+		t.Errorf("urlFor should be %q but %q", expected, url)
 	}
 }
 
@@ -50,7 +60,7 @@ func TestBuildReq(t *testing.T) {
 		"X-Revision":      []string{xRev},
 	}
 	cl.UserAgent = "mackerel-agent"
-	req, _ := http.NewRequest("GET", cl.urlFor("/").String(), nil)
+	req, _ := http.NewRequest("GET", cl.urlFor("/", nil).String(), nil)
 	req = cl.buildReq(req)
 
 	if req.Header.Get("X-Api-Key") != "dummy-key" {
@@ -76,7 +86,7 @@ func TestLogger(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, true)
 	var buf bytes.Buffer
 	client.Logger = log.New(&buf, "<api>", 0)
-	req, _ := http.NewRequest("GET", client.urlFor("/").String(), nil)
+	req, _ := http.NewRequest("GET", client.urlFor("/", nil).String(), nil)
 	_, err := client.Request(req)
 	if err != nil {
 		t.Errorf("request is error %v", err)

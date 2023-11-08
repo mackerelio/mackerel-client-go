@@ -1,10 +1,8 @@
 package mackerel
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 )
@@ -26,14 +24,13 @@ type HostMetricValue struct {
 type LatestMetricValues map[string]map[string]*MetricValue
 
 // PostHostMetricValues post host metrics
-func (c *Client) PostHostMetricValues(metricValues [](*HostMetricValue)) error {
-	resp, err := c.PostJSON("/api/v0/tsdb", metricValues)
-	defer closeResponse(resp)
+func (c *Client) PostHostMetricValues(metricValues []*HostMetricValue) error {
+	_, err := requestPost[any](c, "/api/v0/tsdb", metricValues)
 	return err
 }
 
 // PostHostMetricValuesByHostID post host metrics
-func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*MetricValue)) error {
+func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues []*MetricValue) error {
 	var hostMetricValues []*HostMetricValue
 	for _, metricValue := range metricValues {
 		hostMetricValues = append(hostMetricValues, &HostMetricValue{
@@ -44,84 +41,62 @@ func (c *Client) PostHostMetricValuesByHostID(hostID string, metricValues [](*Me
 	return c.PostHostMetricValues(hostMetricValues)
 }
 
-// PostServiceMetricValues post service metrics
-func (c *Client) PostServiceMetricValues(serviceName string, metricValues [](*MetricValue)) error {
-	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName), metricValues)
-	defer closeResponse(resp)
+// PostServiceMetricValues posts service metrics.
+func (c *Client) PostServiceMetricValues(serviceName string, metricValues []*MetricValue) error {
+	path := fmt.Sprintf("/api/v0/services/%s/tsdb", serviceName)
+	_, err := requestPost[any](c, path, metricValues)
 	return err
 }
 
-// FetchLatestMetricValues fetch latest metrics
+// FetchLatestMetricValues fetches latest metrics.
 func (c *Client) FetchLatestMetricValues(hostIDs []string, metricNames []string) (LatestMetricValues, error) {
-	v := url.Values{}
+	params := url.Values{}
 	for _, hostID := range hostIDs {
-		v.Add("hostId", hostID)
+		params.Add("hostId", hostID)
 	}
 	for _, metricName := range metricNames {
-		v.Add("name", metricName)
+		params.Add("name", metricName)
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/tsdb/latest").String(), v.Encode()), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGetWithParams[struct {
 		LatestMetricValues LatestMetricValues `json:"tsdbLatest"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/tsdb/latest", params)
 	if err != nil {
 		return nil, err
 	}
-
-	return data.LatestMetricValues, err
+	return data.LatestMetricValues, nil
 }
 
-// FetchHostMetricValues retrieves the metric values for a Host
+// FetchHostMetricValues fetches the metric values for a host.
 func (c *Client) FetchHostMetricValues(hostID string, metricName string, from int64, to int64) ([]MetricValue, error) {
 	return c.fetchMetricValues(hostID, "", metricName, from, to)
 }
 
-// FetchServiceMetricValues retrieves the metric values for a Service
+// FetchServiceMetricValues fetches the metric values for a service.
 func (c *Client) FetchServiceMetricValues(serviceName string, metricName string, from int64, to int64) ([]MetricValue, error) {
 	return c.fetchMetricValues("", serviceName, metricName, from, to)
 }
 
 func (c *Client) fetchMetricValues(hostID string, serviceName string, metricName string, from int64, to int64) ([]MetricValue, error) {
-	v := url.Values{}
-	v.Add("name", metricName)
-	v.Add("from", strconv.FormatInt(from, 10))
-	v.Add("to", strconv.FormatInt(to, 10))
+	params := url.Values{}
+	params.Add("name", metricName)
+	params.Add("from", strconv.FormatInt(from, 10))
+	params.Add("to", strconv.FormatInt(to, 10))
 
-	url := ""
+	path := ""
 	if hostID != "" {
-		url = "/api/v0/hosts/" + hostID + "/metrics"
+		path = fmt.Sprintf("/api/v0/hosts/%s/metrics", hostID)
 	} else if serviceName != "" {
-		url = "/api/v0/services/" + serviceName + "/metrics"
+		path = fmt.Sprintf("/api/v0/services/%s/metrics", serviceName)
 	} else {
 		return nil, errors.New("specify either host or service")
 	}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor(url).String(), v.Encode()), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
 
-	var data struct {
+	data, err := requestGetWithParams[struct {
 		MetricValues []MetricValue `json:"metrics"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, path, params)
 	if err != nil {
 		return nil, err
 	}
-	return data.MetricValues, err
+	return data.MetricValues, nil
 }

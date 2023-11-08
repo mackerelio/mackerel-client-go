@@ -15,9 +15,8 @@ type GraphDefsMetric struct {
 	IsStacked   bool   `json:"isStacked"`
 }
 
-// CreateGraphDefs create graph defs
-func (c *Client) CreateGraphDefs(payloads []*GraphDefsParam) error {
-	resp, err := c.PostJSON("/api/v0/graph-defs/create", payloads)
-	defer closeResponse(resp)
+// CreateGraphDefs creates graph definitions.
+func (c *Client) CreateGraphDefs(graphDefs []*GraphDefsParam) error {
+	_, err := requestPost[any](c, "/api/v0/graph-defs/create", graphDefs)
 	return err
 }

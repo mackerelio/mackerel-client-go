@@ -1,7 +1,6 @@
 package mackerel
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -18,77 +17,47 @@ type ServiceMetaDataResp struct {
 // ServiceMetaData represents service metadata body.
 type ServiceMetaData interface{}
 
-// GetServiceMetaData find service metadata.
+// GetServiceMetaData gets service metadata.
 func (c *Client) GetServiceMetaData(serviceName, namespace string) (*ServiceMetaDataResp, error) {
-	url := c.urlFor(fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace))
-	req, err := http.NewRequest("GET", url.String(), nil)
+	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
+	metadata, header, err := requestGetAndReturnHeader[HostMetaData](c, path)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
+	lastModified, err := http.ParseTime(header.Get("Last-Modified"))
 	if err != nil {
 		return nil, err
 	}
-	var data ServiceMetaDataResp
-	if err := json.NewDecoder(resp.Body).Decode(&data.ServiceMetaData); err != nil {
-		return nil, err
-	}
-	data.LastModified, err = http.ParseTime(resp.Header.Get("Last-Modified"))
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return &ServiceMetaDataResp{ServiceMetaData: *metadata, LastModified: lastModified}, nil
 }
 
 // GetServiceMetaDataNameSpaces fetches namespaces of service metadata.
 func (c *Client) GetServiceMetaDataNameSpaces(serviceName string) ([]string, error) {
-	url := c.urlFor(fmt.Sprintf("/api/v0/services/%s/metadata", serviceName))
-	req, err := http.NewRequest("GET", url.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-	var data struct {
+	data, err := requestGet[struct {
 		MetaDatas []struct {
 			NameSpace string `json:"namespace"`
 		} `json:"metadata"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	}](c, fmt.Sprintf("/api/v0/services/%s/metadata", serviceName))
+	if err != nil {
 		return nil, err
 	}
-	namespaces := make([]string, 0, len(data.MetaDatas))
-	for _, metadata := range data.MetaDatas {
-		namespaces = append(namespaces, metadata.NameSpace)
+	namespaces := make([]string, len(data.MetaDatas))
+	for i, metadata := range data.MetaDatas {
+		namespaces[i] = metadata.NameSpace
 	}
 	return namespaces, nil
 }
 
-// PutServiceMetaData put service metadata.
+// PutServiceMetaData puts a service metadata.
 func (c *Client) PutServiceMetaData(serviceName, namespace string, metadata ServiceMetaData) error {
 	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
-	resp, err := c.PutJSON(path, metadata)
-	defer closeResponse(resp)
+	_, err := requestPut[any](c, path, metadata)
 	return err
 }
 
-// DeleteServiceMetaData delete service metadata.
+// DeleteServiceMetaData deletes a service metadata.
 func (c *Client) DeleteServiceMetaData(serviceName, namespace string) error {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)).String(),
-		nil,
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
+	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
+	_, err := requestDelete[any](c, path)
 	return err
 }

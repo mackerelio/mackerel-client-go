@@ -1,10 +1,6 @@
 package mackerel
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // Channel represents a Mackerel notification channel.
 // ref. https://mackerel.io/api-docs/entry/channels
@@ -39,66 +35,24 @@ type Mentions struct {
 	Critical string `json:"critical,omitempty"`
 }
 
-// FindChannels requests the channels API and returns a list of Channel
+// FindChannels finds channels.
 func (c *Client) FindChannels() ([]*Channel, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/channels").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		Channels []*Channel `json:"channels"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/channels")
 	if err != nil {
 		return nil, err
 	}
-	return data.Channels, err
+	return data.Channels, nil
 }
 
-// CreateChannel requests the channels API with the given params to create a channel and returns the created channel.
+// CreateChannel creates a channel.
 func (c *Client) CreateChannel(param *Channel) (*Channel, error) {
-	resp, err := c.PostJSON("/api/v0/channels", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	channel := &Channel{}
-	err = json.NewDecoder(resp.Body).Decode(channel)
-	if err != nil {
-		return nil, err
-	}
-	return channel, nil
+	return requestPost[Channel](c, "/api/v0/channels", param)
 }
 
-// DeleteChannel requests the channels API with the given id to delete the specified channel, and returns the deleted channel.
-func (c *Client) DeleteChannel(id string) (*Channel, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/channels/%s", id)).String(),
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	channel := &Channel{}
-	err = json.NewDecoder(resp.Body).Decode(channel)
-	if err != nil {
-		return nil, err
-	}
-	return channel, nil
+// DeleteChannel deletes a channel.
+func (c *Client) DeleteChannel(channelID string) (*Channel, error) {
+	path := fmt.Sprintf("/api/v0/channels/%s", channelID)
+	return requestDelete[Channel](c, path)
 }

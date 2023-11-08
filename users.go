@@ -1,10 +1,6 @@
 package mackerel
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // User information
 type User struct {
@@ -19,46 +15,19 @@ type User struct {
 	JoinedAt                int64    `json:"joinedAt,omitempty"`
 }
 
-// FindUsers find users.
+// FindUsers finds users.
 func (c *Client) FindUsers() ([]*User, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/users").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		Users []*User `json:"users"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/users")
 	if err != nil {
 		return nil, err
 	}
-	return data.Users, err
+	return data.Users, nil
 }
 
-// DeleteUser delete users.
+// DeleteUser deletes a user.
 func (c *Client) DeleteUser(userID string) (*User, error) {
-	req, err := http.NewRequest("DELETE", c.urlFor(fmt.Sprintf("/api/v0/users/%s", userID)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	user := &User{}
-	err = json.NewDecoder(resp.Body).Decode(user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	path := fmt.Sprintf("/api/v0/users/%s", userID)
+	return requestDelete[User](c, path)
 }
