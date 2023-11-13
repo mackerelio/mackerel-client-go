@@ -40,14 +40,14 @@ func Test_requestInternal(t *testing.T) {
 		body                 io.Reader
 		hasContentTypeHeader bool
 	}{
-		{"GET", nil, false},
-		{"POST", nil, true},
-		{"PUT", nil, true},
-		{"DELETE", nil, true},
-		{"GET", strings.NewReader("some"), true},
-		{"POST", strings.NewReader("some"), true},
-		{"PUT", strings.NewReader("some"), true},
-		{"DELETE", strings.NewReader("some"), true},
+		{http.MethodGet, nil, false},
+		{http.MethodPost, nil, true},
+		{http.MethodPut, nil, true},
+		{http.MethodDelete, nil, true},
+		{http.MethodGet, strings.NewReader("some"), true},
+		{http.MethodPost, strings.NewReader("some"), true},
+		{http.MethodPut, strings.NewReader("some"), true},
+		{http.MethodDelete, strings.NewReader("some"), true},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%s with %v body", test.method, test.body), func(tt *testing.T) {

@@ -131,27 +131,27 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 }
 
 func requestGet[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](client, "GET", path, nil)
+	return requestNoBody[T](client, http.MethodGet, path, nil)
 }
 
 func requestGetWithParams[T any](client *Client, path string, params url.Values) (*T, error) {
-	return requestNoBody[T](client, "GET", path, params)
+	return requestNoBody[T](client, http.MethodGet, path, params)
 }
 
 func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Header, error) {
-	return requestInternal[T](client, "GET", path, nil, nil)
+	return requestInternal[T](client, http.MethodGet, path, nil, nil)
 }
 
 func requestPost[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](client, "POST", path, payload)
+	return requestJSON[T](client, http.MethodPost, path, payload)
 }
 
 func requestPut[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](client, "PUT", path, payload)
+	return requestJSON[T](client, http.MethodPut, path, payload)
 }
 
 func requestDelete[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](client, "DELETE", path, nil)
+	return requestNoBody[T](client, http.MethodDelete, path, nil)
 }
 
 func requestJSON[T any](client *Client, method, path string, payload any) (*T, error) {
