@@ -51,6 +51,7 @@ func Test_requestInternal(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%s with %v body", test.method, test.body), func(tt *testing.T) {
+			// Test server that make requests consistent with Mackerel behavior
 			ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				if !test.hasContentTypeHeader && req.Header.Get("Content-Type") == "application/json" {
 					t.Error("Content-Type header should not have application/json")
