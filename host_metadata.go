@@ -1,7 +1,6 @@
 package mackerel
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -18,77 +17,47 @@ type HostMetaDataResp struct {
 // HostMetaData represents host metadata body.
 type HostMetaData interface{}
 
-// GetHostMetaData find host metadata.
+// GetHostMetaData gets a host metadata.
 func (c *Client) GetHostMetaData(hostID, namespace string) (*HostMetaDataResp, error) {
-	url := c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace))
-	req, err := http.NewRequest("GET", url.String(), nil)
+	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
+	metadata, header, err := requestGetAndReturnHeader[HostMetaData](c, path)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
+	lastModified, err := http.ParseTime(header.Get("Last-Modified"))
 	if err != nil {
 		return nil, err
 	}
-	var data HostMetaDataResp
-	if err := json.NewDecoder(resp.Body).Decode(&data.HostMetaData); err != nil {
-		return nil, err
-	}
-	data.LastModified, err = http.ParseTime(resp.Header.Get("Last-Modified"))
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return &HostMetaDataResp{HostMetaData: *metadata, LastModified: lastModified}, nil
 }
 
 // GetHostMetaDataNameSpaces fetches namespaces of host metadata.
 func (c *Client) GetHostMetaDataNameSpaces(hostID string) ([]string, error) {
-	url := c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metadata", hostID))
-	req, err := http.NewRequest("GET", url.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-	var data struct {
+	data, err := requestGet[struct {
 		MetaDatas []struct {
 			NameSpace string `json:"namespace"`
 		} `json:"metadata"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	}](c, fmt.Sprintf("/api/v0/hosts/%s/metadata", hostID))
+	if err != nil {
 		return nil, err
 	}
-	namespaces := make([]string, 0, len(data.MetaDatas))
-	for _, metadata := range data.MetaDatas {
-		namespaces = append(namespaces, metadata.NameSpace)
+	namespaces := make([]string, len(data.MetaDatas))
+	for i, metadata := range data.MetaDatas {
+		namespaces[i] = metadata.NameSpace
 	}
 	return namespaces, nil
 }
 
-// PutHostMetaData put host metadata.
+// PutHostMetaData puts a host metadata.
 func (c *Client) PutHostMetaData(hostID, namespace string, metadata HostMetaData) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
-	resp, err := c.PutJSON(path, metadata)
-	defer closeResponse(resp)
+	_, err := requestPut[any](c, path, metadata)
 	return err
 }
 
-// DeleteHostMetaData delete host metadata.
+// DeleteHostMetaData deletes a host metadata.
 func (c *Client) DeleteHostMetaData(hostID, namespace string) error {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)).String(),
-		nil,
-	)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
+	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
+	_, err := requestDelete[any](c, path)
 	return err
 }

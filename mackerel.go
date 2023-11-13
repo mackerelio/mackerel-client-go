@@ -65,14 +65,13 @@ func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, 
 	}, nil
 }
 
-func (c *Client) urlFor(path string) *url.URL {
+func (c *Client) urlFor(path string, params url.Values) *url.URL {
 	newURL, err := url.Parse(c.BaseURL.String())
 	if err != nil {
-		panic("invalid url passed")
+		panic("invalid base url")
 	}
-
 	newURL.Path = path
-
+	newURL.RawQuery = params.Encode()
 	return newURL
 }
 
@@ -131,34 +130,67 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	return resp, nil
 }
 
-// PostJSON shortcut method for posting json
-func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
-	return c.requestJSON("POST", path, payload)
+func requestGet[T any](client *Client, path string) (*T, error) {
+	return requestNoBody[T](client, "GET", path, nil)
 }
 
-// PutJSON shortcut method for putting json
-func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
-	return c.requestJSON("PUT", path, payload)
+func requestGetWithParams[T any](client *Client, path string, params url.Values) (*T, error) {
+	return requestNoBody[T](client, "GET", path, params)
 }
 
-func (c *Client) requestJSON(method string, path string, payload interface{}) (*http.Response, error) {
+func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Header, error) {
+	return requestInternal[T](client, "GET", path, nil, nil)
+}
+
+func requestPost[T any](client *Client, path string, payload any) (*T, error) {
+	return requestJSON[T](client, "POST", path, payload)
+}
+
+func requestPut[T any](client *Client, path string, payload any) (*T, error) {
+	return requestJSON[T](client, "PUT", path, payload)
+}
+
+func requestDelete[T any](client *Client, path string) (*T, error) {
+	return requestNoBody[T](client, "DELETE", path, nil)
+}
+
+func requestJSON[T any](client *Client, method, path string, payload any) (*T, error) {
 	var body bytes.Buffer
 	err := json.NewEncoder(&body).Encode(payload)
 	if err != nil {
 		return nil, err
 	}
-
-	req, err := http.NewRequest(method, c.urlFor(path).String(), &body)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-	return c.Request(req)
+	data, _, err := requestInternal[T](client, method, path, nil, &body)
+	return data, err
 }
 
-func closeResponse(resp *http.Response) {
-	if resp != nil {
+func requestNoBody[T any](client *Client, method, path string, params url.Values) (*T, error) {
+	data, _, err := requestInternal[T](client, method, path, params, nil)
+	return data, err
+}
+
+func requestInternal[T any](client *Client, method, path string, params url.Values, body io.Reader) (*T, http.Header, error) {
+	req, err := http.NewRequest(method, client.urlFor(path, params).String(), body)
+	if err != nil {
+		return nil, nil, err
+	}
+	if body != nil {
+		req.Header.Add("Content-Type", "application/json")
+	}
+
+	resp, err := client.Request(req)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer func() {
 		io.Copy(io.Discard, resp.Body) // nolint
 		resp.Body.Close()
+	}()
+
+	var data T
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return nil, nil, err
 	}
+	return &data, resp.Header, nil
 }

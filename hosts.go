@@ -1,9 +1,7 @@
 package mackerel
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -166,220 +164,129 @@ func (h *Host) IPAddresses() map[string]string {
 	return ipAddresses
 }
 
-// FindHost finds the host
-func (c *Client) FindHost(id string) (*Host, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s", id)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+// FindHost finds the host.
+func (c *Client) FindHost(hostID string) (*Host, error) {
+	data, err := requestGet[struct {
 		Host *Host `json:"host"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, fmt.Sprintf("/api/v0/hosts/%s", hostID))
 	if err != nil {
 		return nil, err
 	}
-	return data.Host, err
+	return data.Host, nil
 }
 
-// FindHosts finds hosts
+// FindHosts finds hosts.
 func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
-	v := url.Values{}
+	params := url.Values{}
 	if param.Service != "" {
-		v.Set("service", param.Service)
+		params.Set("service", param.Service)
 	}
-	if len(param.Roles) >= 1 {
-		for _, role := range param.Roles {
-			v.Add("role", role)
-		}
+	for _, role := range param.Roles {
+		params.Add("role", role)
 	}
 	if param.Name != "" {
-		v.Set("name", param.Name)
+		params.Set("name", param.Name)
 	}
-	if len(param.Statuses) >= 1 {
-		for _, status := range param.Statuses {
-			v.Add("status", status)
-		}
+	for _, status := range param.Statuses {
+		params.Add("status", status)
 	}
 	if param.CustomIdentifier != "" {
-		v.Set("customIdentifier", param.CustomIdentifier)
+		params.Set("customIdentifier", param.CustomIdentifier)
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", c.urlFor("/api/v0/hosts").String(), v.Encode()), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGetWithParams[struct {
 		Hosts []*Host `json:"hosts"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/hosts", params)
 	if err != nil {
 		return nil, err
 	}
-
-	return data.Hosts, err
+	return data.Hosts, nil
 }
 
-// FindHostByCustomIdentifier finds host via CustomIdentifier
+// FindHostByCustomIdentifier finds a host by the custom identifier.
 func (c *Client) FindHostByCustomIdentifier(customIdentifier string, param *FindHostByCustomIdentifierParam) (*Host, error) {
-	v := url.Values{}
+	path := "/api/v0/hosts-by-custom-identifier/" + url.PathEscape(customIdentifier)
+	params := url.Values{}
 	if param.CaseInsensitive {
-		v.Set("caseInsensitive", "true")
+		params.Set("caseInsensitive", "true")
 	}
-
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s?%s", c.urlFor("/api/v0/hosts-by-custom-identifier").String(), url.PathEscape(customIdentifier), v.Encode()), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGetWithParams[struct {
 		Host *Host `json:"host"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, path, params)
 	if err != nil {
 		return nil, err
 	}
-
-	return data.Host, err
+	return data.Host, nil
 }
 
-// CreateHost creates host
+// CreateHost creates a host.
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
-	resp, err := c.PostJSON("/api/v0/hosts", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return "", err
-	}
-
-	var data struct {
+	data, err := requestPost[struct {
 		ID string `json:"id"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/hosts", param)
 	if err != nil {
 		return "", err
 	}
 	return data.ID, nil
 }
 
-// UpdateHost updates host
+// UpdateHost updates a host.
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s", hostID), param)
-	defer closeResponse(resp)
-	if err != nil {
-		return "", err
-	}
-
-	var data struct {
+	path := fmt.Sprintf("/api/v0/hosts/%s", hostID)
+	data, err := requestPut[struct {
 		ID string `json:"id"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, path, param)
 	if err != nil {
 		return "", err
 	}
-
 	return data.ID, nil
 }
 
-// UpdateHostStatus updates host status
+// UpdateHostStatus updates a host status.
 func (c *Client) UpdateHostStatus(hostID string, status string) error {
-	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/status", hostID), map[string]string{
-		"status": status,
-	})
-	defer closeResponse(resp)
-	if err != nil {
-		return err
-	}
-	return nil
+	path := fmt.Sprintf("/api/v0/hosts/%s/status", hostID)
+	_, err := requestPost[any](c, path, map[string]string{"status": status})
+	return err
 }
 
-// UpdateHostRoleFullnames updates host roles
+// UpdateHostRoleFullnames updates host roles.
 func (c *Client) UpdateHostRoleFullnames(hostID string, roleFullnames []string) error {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/hosts/%s/role-fullnames", hostID), map[string][]string{
-		"roleFullnames": roleFullnames,
-	})
-	defer closeResponse(resp)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// RetireHost retires the host
-func (c *Client) RetireHost(id string) error {
-	resp, err := c.PostJSON(fmt.Sprintf("/api/v0/hosts/%s/retire", id), "{}")
-	defer closeResponse(resp)
+	path := fmt.Sprintf("/api/v0/hosts/%s/role-fullnames", hostID)
+	_, err := requestPut[any](c, path, map[string][]string{"roleFullnames": roleFullnames})
 	return err
 }
 
-// BulkRetireHosts retires the hosts
+// RetireHost retires the host.
+func (c *Client) RetireHost(hostID string) error {
+	path := fmt.Sprintf("/api/v0/hosts/%s/retire", hostID)
+	_, err := requestPost[any](c, path, nil)
+	return err
+}
+
+// BulkRetireHosts retires the hosts.
 func (c *Client) BulkRetireHosts(ids []string) error {
-	resp, err := c.PostJSON("/api/v0/hosts/bulk-retire", map[string][]string{
-		"ids": ids,
-	})
-	defer closeResponse(resp)
+	_, err := requestPost[any](c, "/api/v0/hosts/bulk-retire", map[string][]string{"ids": ids})
 	return err
 }
 
-// ListHostMetricNames lists metric names of a host
-func (c *Client) ListHostMetricNames(id string) ([]string, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/metric-names", id)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+// ListHostMetricNames lists metric names of a host.
+func (c *Client) ListHostMetricNames(hostID string) ([]string, error) {
+	data, err := requestGet[struct {
 		Names []string `json:"names"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, fmt.Sprintf("/api/v0/hosts/%s/metric-names", hostID))
 	if err != nil {
 		return nil, err
 	}
-	return data.Names, err
+	return data.Names, nil
 }
 
-// ListMonitoredStatues lists monitored statues of a host
-func (c *Client) ListMonitoredStatues(id string) ([]MonitoredStatus, error) {
-
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/hosts/%s/monitored-statuses", id)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+// ListMonitoredStatues lists monitored statues of a host.
+func (c *Client) ListMonitoredStatues(hostID string) ([]MonitoredStatus, error) {
+	data, err := requestGet[struct {
 		MonitoredStatuses []MonitoredStatus `json:"monitoredStatuses"`
-	}
-
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, fmt.Sprintf("/api/v0/hosts/%s/monitored-statuses", hostID))
 	if err != nil {
 		return nil, err
 	}
-
 	return data.MonitoredStatuses, nil
 }

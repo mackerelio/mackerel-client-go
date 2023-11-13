@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 )
 
 /*
@@ -303,29 +302,17 @@ func (m *MonitorAnomalyDetection) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorAnomalyDetection) MonitorID() string { return m.ID }
 
-// FindMonitors find monitors
+// FindMonitors finds monitors.
 func (c *Client) FindMonitors() ([]Monitor, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/monitors").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		Monitors []json.RawMessage `json:"monitors"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/monitors")
 	if err != nil {
 		return nil, err
 	}
 	ms := make([]Monitor, 0, len(data.Monitors))
 	for _, rawmes := range data.Monitors {
 		m, err := decodeMonitor(rawmes)
-
 		var e *unknownMonitorTypeError
 		if err != nil {
 			if errors.As(err, &e) {
@@ -338,21 +325,11 @@ func (c *Client) FindMonitors() ([]Monitor, error) {
 	return ms, err
 }
 
-// GetMonitor get monitor.
+// GetMonitor gets a monitor.
 func (c *Client) GetMonitor(monitorID string) (Monitor, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-	var data struct {
+	data, err := requestGet[struct {
 		Monitor json.RawMessage `json:"monitor"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, fmt.Sprintf("/api/v0/monitors/%s", monitorID))
 	if err != nil {
 		return nil, err
 	}
@@ -363,44 +340,33 @@ func (c *Client) GetMonitor(monitorID string) (Monitor, error) {
 	return m, err
 }
 
-// CreateMonitor creating monitor
+// CreateMonitor creates a monitor.
 func (c *Client) CreateMonitor(param Monitor) (Monitor, error) {
-	resp, err := c.PostJSON("/api/v0/monitors", param)
-	defer closeResponse(resp)
+	data, err := requestPost[json.RawMessage](c, "/api/v0/monitors", param)
 	if err != nil {
 		return nil, err
 	}
-	return decodeMonitorReader(resp.Body)
+	return decodeMonitor(*data)
 }
 
-// UpdateMonitor update monitor
+// UpdateMonitor updates a monitor.
 func (c *Client) UpdateMonitor(monitorID string, param Monitor) (Monitor, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/monitors/%s", monitorID), param)
-	defer closeResponse(resp)
+	path := fmt.Sprintf("/api/v0/monitors/%s", monitorID)
+	data, err := requestPut[json.RawMessage](c, path, param)
 	if err != nil {
 		return nil, err
 	}
-	return decodeMonitorReader(resp.Body)
+	return decodeMonitor(*data)
 }
 
-// DeleteMonitor update monitor
+// DeleteMonitor updates a monitor.
 func (c *Client) DeleteMonitor(monitorID string) (Monitor, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/monitors/%s", monitorID)).String(),
-		nil,
-	)
+	path := fmt.Sprintf("/api/v0/monitors/%s", monitorID)
+	data, err := requestDelete[json.RawMessage](c, path)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-	return decodeMonitorReader(resp.Body)
+	return decodeMonitor(*data)
 }
 
 type unknownMonitorTypeError struct {

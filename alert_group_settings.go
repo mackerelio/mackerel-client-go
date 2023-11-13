@@ -1,10 +1,6 @@
 package mackerel
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // AlertGroupSetting represents a Mackerel alert group setting.
 // ref. https://mackerel.io/api-docs/entry/alert-group-settings
@@ -18,102 +14,36 @@ type AlertGroupSetting struct {
 	NotificationInterval uint64   `json:"notificationInterval,omitempty"`
 }
 
-// FindAlertGroupSettings finds alert group settings
+// FindAlertGroupSettings finds alert group settings.
 func (c *Client) FindAlertGroupSettings() ([]*AlertGroupSetting, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/alert-group-settings").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		AlertGroupSettings []*AlertGroupSetting `json:"alertGroupSettings"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	}](c, "/api/v0/alert-group-settings")
+	if err != nil {
 		return nil, err
 	}
-
 	return data.AlertGroupSettings, nil
 }
 
-// CreateAlertGroupSetting creates a alert group setting
+// CreateAlertGroupSetting creates an alert group setting.
 func (c *Client) CreateAlertGroupSetting(param *AlertGroupSetting) (*AlertGroupSetting, error) {
-	resp, err := c.PostJSON("/api/v0/alert-group-settings", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var alertGroupSetting AlertGroupSetting
-	if err := json.NewDecoder(resp.Body).Decode(&alertGroupSetting); err != nil {
-		return nil, err
-	}
-
-	return &alertGroupSetting, nil
+	return requestPost[AlertGroupSetting](c, "/api/v0/alert-group-settings", param)
 }
 
-// GetAlertGroupSetting gets alert group setting specified by ID
+// GetAlertGroupSetting gets an alert group setting.
 func (c *Client) GetAlertGroupSetting(id string) (*AlertGroupSetting, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/alert-group-settings/%s", id)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var alertGroupSetting AlertGroupSetting
-	if err := json.NewDecoder(resp.Body).Decode(&alertGroupSetting); err != nil {
-		return nil, err
-	}
-
-	return &alertGroupSetting, nil
+	path := fmt.Sprintf("/api/v0/alert-group-settings/%s", id)
+	return requestGet[AlertGroupSetting](c, path)
 }
 
-// UpdateAlertGroupSetting updates a alert group setting
+// UpdateAlertGroupSetting updates an alert group setting.
 func (c *Client) UpdateAlertGroupSetting(id string, param *AlertGroupSetting) (*AlertGroupSetting, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/alert-group-settings/%s", id), param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var alertGroupSetting AlertGroupSetting
-	if err := json.NewDecoder(resp.Body).Decode(&alertGroupSetting); err != nil {
-		return nil, err
-	}
-
-	return &alertGroupSetting, nil
+	path := fmt.Sprintf("/api/v0/alert-group-settings/%s", id)
+	return requestPut[AlertGroupSetting](c, path, param)
 }
 
-// DeleteAlertGroupSetting deletes a alert group setting specified by ID.
+// DeleteAlertGroupSetting deletes an alert group setting.
 func (c *Client) DeleteAlertGroupSetting(id string) (*AlertGroupSetting, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/alert-group-settings/%s", id)).String(),
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var alertGroupSetting AlertGroupSetting
-	if err := json.NewDecoder(resp.Body).Decode(&alertGroupSetting); err != nil {
-		return nil, err
-	}
-
-	return &alertGroupSetting, nil
+	path := fmt.Sprintf("/api/v0/alert-group-settings/%s", id)
+	return requestDelete[AlertGroupSetting](c, path)
 }

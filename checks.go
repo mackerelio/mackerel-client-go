@@ -61,9 +61,8 @@ type CheckReports struct {
 	Reports []*CheckReport `json:"reports"`
 }
 
-// PostCheckReports reports check monitoring results
-func (c *Client) PostCheckReports(crs *CheckReports) error {
-	resp, err := c.PostJSON("/api/v0/monitoring/checks/report", crs)
-	defer closeResponse(resp)
+// PostCheckReports reports check monitoring results.
+func (c *Client) PostCheckReports(checkReports *CheckReports) error {
+	_, err := requestPost[any](c, "/api/v0/monitoring/checks/report", checkReports)
 	return err
 }

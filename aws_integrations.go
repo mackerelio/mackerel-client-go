@@ -1,12 +1,8 @@
 package mackerel
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
-// AWSIntegration aws integration information
+// AWSIntegration AWS integration information
 type AWSIntegration struct {
 	ID           string                            `json:"id"`
 	Name         string                            `json:"name"`
@@ -45,143 +41,55 @@ type CreateAWSIntegrationParam struct {
 // UpdateAWSIntegrationParam parameters for UpdateAwsIntegration
 type UpdateAWSIntegrationParam CreateAWSIntegrationParam
 
-// ListAWSIntegrationExcludableMetrics List of excludeable metric names for aws integration
+// ListAWSIntegrationExcludableMetrics List of excludeable metric names for AWS integration
 type ListAWSIntegrationExcludableMetrics map[string][]string
 
-// FindAWSIntegrations finds AWS Integration Settings
+// FindAWSIntegrations finds AWS integration settings.
 func (c *Client) FindAWSIntegrations() ([]*AWSIntegration, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/aws-integrations").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		AWSIntegrations []*AWSIntegration `json:"aws_integrations"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/aws-integrations")
 	if err != nil {
 		return nil, err
 	}
-	return data.AWSIntegrations, err
+	return data.AWSIntegrations, nil
 }
 
-// FindAWSIntegration finds AWS Integration Setting
-func (c *Client) FindAWSIntegration(awsIntegrationID string) (*AWSIntegration, error) {
-	req, err := http.NewRequest("GET", c.urlFor(fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)).String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var awsIntegration *AWSIntegration
-	err = json.NewDecoder(resp.Body).Decode(&awsIntegration)
-	if err != nil {
-		return nil, err
-	}
-	return awsIntegration, err
-}
-
-// CreateAWSIntegration creates AWS Integration Setting
+// CreateAWSIntegration creates an AWS integration setting.
 func (c *Client) CreateAWSIntegration(param *CreateAWSIntegrationParam) (*AWSIntegration, error) {
-	resp, err := c.PostJSON("/api/v0/aws-integrations", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var awsIntegration *AWSIntegration
-	err = json.NewDecoder(resp.Body).Decode(&awsIntegration)
-	if err != nil {
-		return nil, err
-	}
-	return awsIntegration, err
+	return requestPost[AWSIntegration](c, "/api/v0/aws-integrations", param)
 }
 
-// UpdateAWSIntegration updates AWS Integration Setting
+// FindAWSIntegration finds an AWS integration setting.
+func (c *Client) FindAWSIntegration(awsIntegrationID string) (*AWSIntegration, error) {
+	path := fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)
+	return requestGet[AWSIntegration](c, path)
+}
+
+// UpdateAWSIntegration updates an AWS integration setting.
 func (c *Client) UpdateAWSIntegration(awsIntegrationID string, param *UpdateAWSIntegrationParam) (*AWSIntegration, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID), param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var awsIntegration *AWSIntegration
-	err = json.NewDecoder(resp.Body).Decode(&awsIntegration)
-	if err != nil {
-		return nil, err
-	}
-	return awsIntegration, err
+	path := fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)
+	return requestPut[AWSIntegration](c, path, param)
 }
 
-// DeleteAWSIntegration deletes AWS Integration Setting
+// DeleteAWSIntegration deletes an AWS integration setting.
 func (c *Client) DeleteAWSIntegration(awsIntegrationID string) (*AWSIntegration, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)).String(),
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var awsIntegration *AWSIntegration
-	err = json.NewDecoder(resp.Body).Decode(&awsIntegration)
-	if err != nil {
-		return nil, err
-	}
-	return awsIntegration, err
+	path := fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)
+	return requestDelete[AWSIntegration](c, path)
 }
 
-// CreateAWSIntegrationExternalID creates AWS Integration External ID
+// CreateAWSIntegrationExternalID creates an AWS integration External ID.
 func (c *Client) CreateAWSIntegrationExternalID() (string, error) {
-	resp, err := c.PostJSON("/api/v0/aws-integrations-external-id", nil)
-	defer closeResponse(resp)
-	if err != nil {
-		return "", err
-	}
-
-	var data struct {
+	data, err := requestPost[struct {
 		ExternalID string `json:"externalId"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	}](c, "/api/v0/aws-integrations-external-id", nil)
 	if err != nil {
 		return "", err
 	}
 	return data.ExternalID, nil
 }
 
-// ListAWSIntegrationExcludableMetrics lists excludable metrics for AWS Integration
+// ListAWSIntegrationExcludableMetrics lists excludable metrics for AWS integration.
 func (c *Client) ListAWSIntegrationExcludableMetrics() (*ListAWSIntegrationExcludableMetrics, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/aws-integrations-excludable-metrics").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var listAWSIntegrationExcludableMetrics *ListAWSIntegrationExcludableMetrics
-	err = json.NewDecoder(resp.Body).Decode(&listAWSIntegrationExcludableMetrics)
-	if err != nil {
-		return nil, err
-	}
-	return listAWSIntegrationExcludableMetrics, err
+	return requestGet[ListAWSIntegrationExcludableMetrics](c, "/api/v0/aws-integrations-excludable-metrics")
 }

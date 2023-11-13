@@ -152,8 +152,8 @@ func TestFindHosts(t *testing.T) {
 
 func TestFindHostByCustomIdentifier(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.RawPath != "/api/v0/hosts-by-custom-identifier/mydb001%2F001" {
-			t.Error("request URL.RawPath should be /api/v0/hosts-by-custom-identifier/mydb001%$2F001 but: ", req.URL.RawPath)
+		if req.URL.Path != "/api/v0/hosts-by-custom-identifier/mydb001%2F001" {
+			t.Error("request URL.Path should be /api/v0/hosts-by-custom-identifier/mydb001%$2F001 but: ", req.URL.Path)
 		}
 
 		query := req.URL.Query()

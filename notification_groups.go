@@ -1,10 +1,6 @@
 package mackerel
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
+import "fmt"
 
 // NotificationLevel represents a level of notification.
 type NotificationLevel string
@@ -38,82 +34,30 @@ type NotificationGroupService struct {
 	Name string `json:"name"`
 }
 
-// CreateNotificationGroup creates a notification group.
-func (c *Client) CreateNotificationGroup(param *NotificationGroup) (*NotificationGroup, error) {
-	resp, err := c.PostJSON("/api/v0/notification-groups", param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var notificationGroup NotificationGroup
-	if err := json.NewDecoder(resp.Body).Decode(&notificationGroup); err != nil {
-		return nil, err
-	}
-
-	return &notificationGroup, nil
-}
-
-// FindNotificationGroups finds notification groups
+// FindNotificationGroups finds notification groups.
 func (c *Client) FindNotificationGroups() ([]*NotificationGroup, error) {
-	req, err := http.NewRequest("GET", c.urlFor("/api/v0/notification-groups").String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var data struct {
+	data, err := requestGet[struct {
 		NotificationGroups []*NotificationGroup `json:"notificationGroups"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	}](c, "/api/v0/notification-groups")
+	if err != nil {
 		return nil, err
 	}
-
 	return data.NotificationGroups, nil
 }
 
-// UpdateNotificationGroup updates a notification group
-func (c *Client) UpdateNotificationGroup(id string, param *NotificationGroup) (*NotificationGroup, error) {
-	resp, err := c.PutJSON(fmt.Sprintf("/api/v0/notification-groups/%s", id), param)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var notificationGroup NotificationGroup
-	if err := json.NewDecoder(resp.Body).Decode(&notificationGroup); err != nil {
-		return nil, err
-	}
-
-	return &notificationGroup, nil
+// CreateNotificationGroup creates a notification group.
+func (c *Client) CreateNotificationGroup(param *NotificationGroup) (*NotificationGroup, error) {
+	return requestPost[NotificationGroup](c, "/api/v0/notification-groups", param)
 }
 
-// DeleteNotificationGroup deletes a notification group
+// UpdateNotificationGroup updates a notification group.
+func (c *Client) UpdateNotificationGroup(id string, param *NotificationGroup) (*NotificationGroup, error) {
+	path := fmt.Sprintf("/api/v0/notification-groups/%s", id)
+	return requestPut[NotificationGroup](c, path, param)
+}
+
+// DeleteNotificationGroup deletes a notification group.
 func (c *Client) DeleteNotificationGroup(id string) (*NotificationGroup, error) {
-	req, err := http.NewRequest(
-		"DELETE",
-		c.urlFor(fmt.Sprintf("/api/v0/notification-groups/%s", id)).String(),
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := c.Request(req)
-	defer closeResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var notificationGroup NotificationGroup
-	if err := json.NewDecoder(resp.Body).Decode(&notificationGroup); err != nil {
-		return nil, err
-	}
-	return &notificationGroup, nil
+	path := fmt.Sprintf("/api/v0/notification-groups/%s", id)
+	return requestDelete[NotificationGroup](c, path)
 }
