@@ -249,6 +249,13 @@ func (c *Client) UpdateHostStatus(hostID string, status string) error {
 	return err
 }
 
+// BulkUpdateHostStatuses updates status of the hosts.
+func (c *Client) BulkUpdateHostStatuses(ids []string, status string) error {
+	_, err := requestPost[any](c, "/api/v0/hosts/bulk-update-statuses",
+		map[string]any{"ids": ids, "status": status})
+	return err
+}
+
 // UpdateHostRoleFullnames updates host roles.
 func (c *Client) UpdateHostRoleFullnames(hostID string, roleFullnames []string) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/role-fullnames", hostID)
