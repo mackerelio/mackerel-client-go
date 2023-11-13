@@ -174,7 +174,7 @@ func requestInternal[T any](client *Client, method, path string, params url.Valu
 	if err != nil {
 		return nil, nil, err
 	}
-	if body != nil || method != "GET" {
+	if body != nil || method != http.MethodGet {
 		req.Header.Add("Content-Type", "application/json")
 	}
 
