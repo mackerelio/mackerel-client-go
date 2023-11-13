@@ -58,7 +58,7 @@ func Test_requestInternal(t *testing.T) {
 				if test.hasContentTypeHeader && req.Header.Get("Content-Type") != "application/json" {
 					t.Error("Content-Type header should have application/json")
 				}
-				res.Write([]byte(`{"success": true}`))
+				res.Write([]byte(`{"success": true}`)) // nolint
 			}))
 			defer ts.Close()
 
