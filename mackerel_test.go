@@ -34,6 +34,49 @@ func TestRequest(t *testing.T) {
 	}
 }
 
+func Test_requestInternal(t *testing.T) {
+	tests := []struct {
+		method               string
+		body                 io.Reader
+		hasContentTypeHeader bool
+	}{
+		{http.MethodGet, nil, false},
+		{http.MethodPost, nil, true},
+		{http.MethodPut, nil, true},
+		{http.MethodDelete, nil, true},
+		{http.MethodGet, strings.NewReader("some"), true},
+		{http.MethodPost, strings.NewReader("some"), true},
+		{http.MethodPut, strings.NewReader("some"), true},
+		{http.MethodDelete, strings.NewReader("some"), true},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%s with %v body", test.method, test.body), func(tt *testing.T) {
+			// Test server that make requests consistent with Mackerel behavior
+			ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				if !test.hasContentTypeHeader && req.Header.Get("Content-Type") == "application/json" {
+					t.Error("Content-Type header should not have application/json")
+				}
+				if test.hasContentTypeHeader && req.Header.Get("Content-Type") != "application/json" {
+					t.Error("Content-Type header should have application/json")
+				}
+				res.Write([]byte(`{"success": true}`)) // nolint
+			}))
+			defer ts.Close()
+
+			client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+			res, _, err := requestInternal[struct {
+				Success bool `json:"success"`
+			}](client, test.method, "/", url.Values{}, test.body)
+			if err != nil {
+				t.Errorf("request is error %v", err)
+			}
+			if !res.Success {
+				t.Errorf("response is invalid %v", res)
+			}
+		})
+	}
+}
+
 func TestUrlFor(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", "https://example.com/with/ignored/path", false)
 	expected := "https://example.com/some/super/endpoint"
