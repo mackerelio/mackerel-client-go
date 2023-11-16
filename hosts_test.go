@@ -372,6 +372,54 @@ func TestUpdateHostStatus(t *testing.T) {
 	}
 }
 
+func TestBulkUpdateHostStatuses(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts/bulk-update-statuses" {
+			t.Error("request URL should be /api/v0/hosts/bulk-update-statuses but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		body, _ := io.ReadAll(req.Body)
+
+		var data struct {
+			IDs    []string `json:"ids"`
+			Status string   `json:"status"`
+		}
+
+		err := json.Unmarshal(body, &data)
+		if err != nil {
+			t.Fatal("request body should be decoded as json", string(body))
+		}
+
+		if reflect.DeepEqual(data.IDs, []string{"123456ABCD", "789012EFGH"}) != true {
+			t.Errorf("request IDs should be []string{\"123456ABCD\", \"789012EFGH\"} but: %+v", data.IDs)
+		}
+
+		if data.Status != "maintenance" {
+			t.Error("request sends json including status but: ", data.Status)
+		}
+
+		respJSON, _ := json.Marshal(map[string]bool{
+			"success": true,
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	ids := []string{"123456ABCD", "789012EFGH"}
+	err := client.BulkUpdateHostStatuses(ids, "maintenance")
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+}
+
 func TestUpdateHostRoleFullnames(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/hosts/9rxGOHfVF8F/role-fullnames" {
