@@ -1,6 +1,9 @@
 package mackerel
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // AWSIntegration AWS integration information
 type AWSIntegration struct {
@@ -20,8 +23,47 @@ type AWSIntegration struct {
 type AWSIntegrationService struct {
 	Enable              bool     `json:"enable"`
 	Role                *string  `json:"role"`
+	IncludedMetrics     []string `json:"includedMetrics"`
 	ExcludedMetrics     []string `json:"excludedMetrics"`
 	RetireAutomatically bool     `json:"retireAutomatically,omitempty"`
+}
+
+type awsIntegrationService = AWSIntegrationService
+
+type awsIntegrationServiceWithIncludedMetrics struct {
+	Enable              bool     `json:"enable"`
+	Role                *string  `json:"role"`
+	IncludedMetrics     []string `json:"includedMetrics"`
+	RetireAutomatically bool     `json:"retireAutomatically,omitempty"`
+}
+
+type awsIntegrationServiceWithExcludedMetrics struct {
+	Enable              bool     `json:"enable"`
+	Role                *string  `json:"role"`
+	ExcludedMetrics     []string `json:"excludedMetrics"`
+	RetireAutomatically bool     `json:"retireAutomatically,omitempty"`
+}
+
+// MarshalJSON implements json.Marshaler
+func (a *AWSIntegrationService) MarshalJSON() ([]byte, error) {
+	// AWS integration create/update APIs only accept either includedMetrics or excludedMetrics
+	if a.ExcludedMetrics != nil && a.IncludedMetrics == nil {
+		return json.Marshal(awsIntegrationServiceWithExcludedMetrics{
+			Enable:              a.Enable,
+			Role:                a.Role,
+			ExcludedMetrics:     a.ExcludedMetrics,
+			RetireAutomatically: a.RetireAutomatically,
+		})
+	}
+	if a.ExcludedMetrics == nil && a.IncludedMetrics != nil {
+		return json.Marshal(awsIntegrationServiceWithIncludedMetrics{
+			Enable:              a.Enable,
+			Role:                a.Role,
+			IncludedMetrics:     a.IncludedMetrics,
+			RetireAutomatically: a.RetireAutomatically,
+		})
+	}
+	return json.Marshal(awsIntegrationService(*a))
 }
 
 // CreateAWSIntegrationParam  parameters for CreateAWSIntegration
