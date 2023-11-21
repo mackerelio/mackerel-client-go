@@ -65,18 +65,18 @@ func TestFindAWSIntegrations(t *testing.T) {
 						"EC2": {
 							"enable":              false,
 							"role":                (*string)(nil),
-							"excludedMetrics":     []string{""},
+							"includedMetrics":     []string{"ec2.cpu.used"},
 							"retireAutomatically": false,
 						},
 						"ALB": {
 							"enable":          false,
 							"role":            (*string)(nil),
-							"excludedMetrics": []string{""},
+							"includedMetrics": []string{""},
 						},
 						"RDS": {
 							"enable":          false,
 							"role":            (*string)(nil),
-							"excludedMetrics": []string{""},
+							"includedMetrics": []string{""},
 						},
 					},
 				},
@@ -101,10 +101,21 @@ func TestFindAWSIntegrations(t *testing.T) {
 	if reflect.DeepEqual(awsIntegrations[0].Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
+		IncludedMetrics:     nil,
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 		RetireAutomatically: true,
 	}) != true {
 		t.Errorf("Wrong data for aws integrations services: %v", awsIntegrations[0].Services["EC2"])
+	}
+
+	if reflect.DeepEqual(awsIntegrations[1].Services["EC2"], &AWSIntegrationService{
+		Enable:              false,
+		Role:                nil,
+		IncludedMetrics:     []string{"ec2.cpu.used"},
+		ExcludedMetrics:     nil,
+		RetireAutomatically: false,
+	}) != true {
+		t.Errorf("Wrong data for aws integrations services: %v", awsIntegrations[1].Services["EC2"])
 	}
 }
 
@@ -167,6 +178,7 @@ func TestFindAWSIntegration(t *testing.T) {
 	if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
+		IncludedMetrics:     nil,
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 		RetireAutomatically: true,
 	}) != true {
@@ -199,6 +211,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationService{
 			Enable:              true,
 			Role:                toPointer("web-group"),
+			IncludedMetrics:     nil,
 			ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 			RetireAutomatically: true,
 		}) != true {
@@ -256,17 +269,20 @@ func TestCreateAWSIntegration(t *testing.T) {
 			"EC2": {
 				Enable:              true,
 				Role:                toPointer("web-group"),
+				IncludedMetrics:     nil,
 				ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 				RetireAutomatically: true,
 			},
 			"ALB": {
 				Enable:          true,
 				Role:            toPointer("web-group"),
+				IncludedMetrics: nil,
 				ExcludedMetrics: []string{"alb.request.count"},
 			},
 			"RDS": {
 				Enable:          true,
 				Role:            toPointer("db-group"),
+				IncludedMetrics: nil,
 				ExcludedMetrics: []string{"rds.cpu.used", "rds.aurora.row_lock_time.row_lock"},
 			},
 		},
@@ -283,6 +299,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
+		IncludedMetrics:     nil,
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 		RetireAutomatically: true,
 	}) != true {
@@ -315,6 +332,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		if reflect.DeepEqual(awsIntegration.Services["EC2"], &AWSIntegrationService{
 			Enable:              true,
 			Role:                toPointer("web-group"),
+			IncludedMetrics:     nil,
 			ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 			RetireAutomatically: true,
 		}) != true {
@@ -372,17 +390,20 @@ func TestUpdateAWSIntegration(t *testing.T) {
 			"EC2": {
 				Enable:              true,
 				Role:                toPointer("web-group"),
+				IncludedMetrics:     nil,
 				ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 				RetireAutomatically: true,
 			},
 			"ALB": {
 				Enable:          true,
 				Role:            toPointer("web-group"),
+				IncludedMetrics: nil,
 				ExcludedMetrics: []string{"alb.request.count"},
 			},
 			"RDS": {
 				Enable:          true,
 				Role:            toPointer("db-group"),
+				IncludedMetrics: nil,
 				ExcludedMetrics: []string{"rds.cpu.used", "rds.aurora.row_lock_time.row_lock"},
 			},
 		},
@@ -399,6 +420,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
+		IncludedMetrics:     nil,
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 		RetireAutomatically: true,
 	}) != true {
@@ -464,6 +486,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 	if reflect.DeepEqual(awsIntegrations.Services["EC2"], &AWSIntegrationService{
 		Enable:              true,
 		Role:                toPointer("web-group"),
+		IncludedMetrics:     nil,
 		ExcludedMetrics:     []string{"ec2.cpu.used", "ec2.network.in", "ec2.network.out"},
 		RetireAutomatically: true,
 	}) != true {
@@ -546,4 +569,37 @@ func TestListAWSIntegrationExcludableMetrics(t *testing.T) {
 
 func toPointer(s string) *string {
 	return &s
+}
+
+func TestAWSIntegrationService_MarshalJSON(t *testing.T) {
+	tests := []struct {
+		caption  string
+		service  AWSIntegrationService
+		expected string
+	}{
+		{"both undefined", AWSIntegrationService{
+			IncludedMetrics: nil, ExcludedMetrics: nil,
+		}, `{"enable":false,"role":null,"includedMetrics":null,"excludedMetrics":null}`},
+		{"both defined", AWSIntegrationService{
+			IncludedMetrics: []string{}, ExcludedMetrics: []string{},
+		}, `{"enable":false,"role":null,"includedMetrics":[],"excludedMetrics":[]}`},
+		{"IncludedMetrics only defined", AWSIntegrationService{
+			IncludedMetrics: []string{},
+		}, `{"enable":false,"role":null,"includedMetrics":[]}`},
+		{"ExcludedMetrics only defined", AWSIntegrationService{
+			ExcludedMetrics: []string{},
+		}, `{"enable":false,"role":null,"excludedMetrics":[]}`},
+	}
+	for _, test := range tests {
+		t.Run(test.caption, func(tt *testing.T) {
+			bytes, err := json.Marshal(&test.service)
+			actual := string(bytes)
+			if err != nil {
+				t.Error("err should be nil but: ", err)
+			}
+			if !reflect.DeepEqual(test.expected, actual) {
+				t.Errorf("%v should be %s but got %s", test.caption, test.expected, actual)
+			}
+		})
+	}
 }
