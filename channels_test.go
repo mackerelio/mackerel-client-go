@@ -54,9 +54,10 @@ func TestFindChannels(t *testing.T) {
 					"events": []string{"alertGroup"},
 				},
 				{
-					"id":   "defabcdef",
-					"name": "line channel",
-					"type": "line",
+					"id":          "defabcdef",
+					"name":        "line channel",
+					"type":        "line",
+					"suspendedAt": 12345678,
 				},
 			},
 		})
@@ -111,6 +112,18 @@ func TestFindChannels(t *testing.T) {
 	}
 	if channels[3].Type != "line" {
 		t.Error("request has Type but: ", channels[3].Type)
+	}
+	if channels[0].SuspendedAt != nil {
+		t.Error("request has SuspendedAt but: ", channels[0].SuspendedAt)
+	}
+	if channels[1].SuspendedAt != nil {
+		t.Error("request has SuspendedAt but: ", channels[1].SuspendedAt)
+	}
+	if channels[2].SuspendedAt != nil {
+		t.Error("request has SuspendedAt but: ", channels[2].SuspendedAt)
+	}
+	if *channels[3].SuspendedAt != 12345678 {
+		t.Error("request has SuspendedAt but: ", *channels[3].SuspendedAt)
 	}
 	if reflect.DeepEqual(*(channels[0].Emails), []string{"test@example.com", "test2@example.com"}) != true {
 		t.Errorf("Wrong data for emails: %v", *(channels[0].Emails))

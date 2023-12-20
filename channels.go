@@ -11,6 +11,8 @@ type Channel struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 
+	SuspendedAt *int64 `json:"suspendedAt,omitempty"`
+
 	// Exists when the type is "email"
 	Emails  *[]string `json:"emails,omitempty"`
 	UserIDs *[]string `json:"userIds,omitempty"`
