@@ -17,7 +17,7 @@ func TestGetOrg(t *testing.T) {
 		if req.Method != "GET" {
 			t.Error("request method should be GET but: ", req.Method)
 		}
-		respJSON, _ := json.Marshal(&Org{Name: "hoge"})
+		respJSON, _ := json.Marshal(&Org{Name: "hoge", DisplayName: "fuga"})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
 		fmt.Fprint(res, string(respJSON))
@@ -32,5 +32,9 @@ func TestGetOrg(t *testing.T) {
 
 	if org.Name != "hoge" {
 		t.Error("request sends json including Name but: ", org)
+	}
+
+	if org.DisplayName != "fuga" {
+		t.Error("request sends json including DisplayName but: ", org)
 	}
 }

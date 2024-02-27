@@ -2,7 +2,8 @@ package mackerel
 
 // Org information
 type Org struct {
-	Name string `json:"name"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
 }
 
 // GetOrg gets the org.
