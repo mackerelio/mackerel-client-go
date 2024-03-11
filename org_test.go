@@ -33,4 +33,39 @@ func TestGetOrg(t *testing.T) {
 	if org.Name != "hoge" {
 		t.Error("request sends json including Name but: ", org)
 	}
+
+	if org.DisplayName != "" {
+		t.Error("request sends json not including DisplayName but: ", org)
+	}
+}
+
+func TestGetOrgWithDisplayName(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/org" {
+			t.Error("request URL should be /api/v0/org but: ", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+		respJSON, _ := json.Marshal(&Org{Name: "hoge", DisplayName: "fuga"})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	org, err := client.GetOrg()
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if org.Name != "hoge" {
+		t.Error("request sends json including Name but: ", org)
+	}
+
+	if org.DisplayName != "fuga" {
+		t.Error("request sends json including DisplayName but: ", org)
+	}
 }
