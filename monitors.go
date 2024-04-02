@@ -85,11 +85,21 @@ import (
       ],
       "maxCheckAttempts": 3,
       "warningSensitivity": "insensitive"
-    }
+    },
+    {
+      "id": "57We5nNtpZA",
+      "type": "query",
+      "isMute": false,
+      "name": "LabeldMetric - custom.access_counter",
+      "query": "custom.access_counter",
+      "operator": ">",
+	  "warning": 30.0,
+	  "critical": 300.0,
+	  "legend":""
+	}
   ]
 }
 */
-
 // Monitor represents interface to which each monitor type must confirm to.
 type Monitor interface {
 	MonitorType() string
@@ -106,6 +116,7 @@ const (
 	monitorTypeExternalHTTP     = "external"
 	monitorTypeExpression       = "expression"
 	monitorTypeAnomalyDetection = "anomalyDetection"
+	monitorTypeQuery            = "query"
 )
 
 // Ensure each monitor type conforms to the Monitor interface.
@@ -116,6 +127,7 @@ var (
 	_ Monitor = (*MonitorExternalHTTP)(nil)
 	_ Monitor = (*MonitorExpression)(nil)
 	_ Monitor = (*MonitorAnomalyDetection)(nil)
+	_ Monitor = (*MonitorQuery)(nil)
 )
 
 // Ensure only monitor types defined in this package can be assigned to the
@@ -126,6 +138,7 @@ func (m *MonitorServiceMetric) isMonitor()    {}
 func (m *MonitorExternalHTTP) isMonitor()     {}
 func (m *MonitorExpression) isMonitor()       {}
 func (m *MonitorAnomalyDetection) isMonitor() {}
+func (m *MonitorQuery) isMonitor()            {}
 
 // MonitorConnectivity represents connectivity monitor.
 type MonitorConnectivity struct {
@@ -302,6 +315,31 @@ func (m *MonitorAnomalyDetection) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorAnomalyDetection) MonitorID() string { return m.ID }
 
+// MonitorQuery represents query monitor.
+type MonitorQuery struct {
+	ID                   string `json:"id,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Memo                 string `json:"memo,omitempty"`
+	Type                 string `json:"type,omitempty"`
+	IsMute               bool   `json:"isMute,omitempty"`
+	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
+
+	Query    string   `json:"query,omitempty"`
+	Operator string   `json:"operator,omitempty"`
+	Warning  *float64 `json:"warning"`
+	Critical *float64 `json:"critical"`
+	Legend   string   `json:"legend,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorQuery) MonitorType() string { return monitorTypeQuery }
+
+// MonitorName returns monitor name.
+func (m *MonitorQuery) MonitorName() string { return m.Name }
+
+// MonitorID returns monitor id.
+func (m *MonitorQuery) MonitorID() string { return m.ID }
+
 // FindMonitors finds monitors.
 func (c *Client) FindMonitors() ([]Monitor, error) {
 	data, err := requestGet[struct {
@@ -399,6 +437,8 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 		m = &MonitorExpression{}
 	case monitorTypeAnomalyDetection:
 		m = &MonitorAnomalyDetection{}
+	case monitorTypeQuery:
+		m = &MonitorQuery{}
 	default:
 		return nil, &unknownMonitorTypeError{Type: typeData.Type}
 	}
