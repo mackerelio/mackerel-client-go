@@ -93,10 +93,10 @@ import (
       "name": "LabeldMetric - custom.access_counter",
       "query": "custom.access_counter",
       "operator": ">",
-	  "warning": 30.0,
-	  "critical": 300.0,
-	  "legend":""
-	}
+      "warning": 30.0,
+      "critical": 300.0,
+      "legend":""
+    }
   ]
 }
 */
