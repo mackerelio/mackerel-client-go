@@ -772,6 +772,30 @@ var testCases = []struct {
 			"notificationInterval": 60
 		}`,
 	},
+	{
+		"query monitor",
+		&MonitorQuery{
+			ID:                   "2cSZzK3XfmI",
+			Name:                 "query monitor",
+			Type:                 "query",
+			IsMute:               false,
+			NotificationInterval: 60,
+			Query:                "custom.counter",
+			Operator:             ">",
+			Warning:              pfloat64(10.0),
+			Critical:             nil,
+		},
+		`{
+			"id"  : "2cSZzK3XfmI",
+			"type": "query",
+			"name": "query monitor",
+			"query": "custom.counter",
+			"operator": ">",
+			"warning": 10.0,
+			"critical": null,
+			"notificationInterval": 60
+		}`,
+	},
 }
 
 func TestDecodeEncodeMonitor(t *testing.T) {
