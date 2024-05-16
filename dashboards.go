@@ -123,6 +123,8 @@ type Metric struct {
 	HostID      string `json:"hostId,omitempty"`
 	ServiceName string `json:"serviceName,omitempty"`
 	Expression  string `json:"expression,omitempty"`
+	Query       string `json:"query,omitempty"`
+	Legend      string `json:"legend,omitempty"`
 }
 
 // MarshalJSON marshals as JSON
@@ -150,6 +152,8 @@ type Graph struct {
 	IsStacked    bool   `json:"isStacked,omitempty"`
 	ServiceName  string `json:"serviceName,omitempty"`
 	Expression   string `json:"expression,omitempty"`
+	Query        string `json:"query,omitempty"`
+	Legend       string `json:"legend,omitempty"`
 }
 
 // MarshalJSON marshals as JSON
