@@ -549,3 +549,116 @@ func TestRangeMarshalJSON(t *testing.T) {
 		}
 	}
 }
+
+func TestMetricMarshalJSON(t *testing.T) {
+	tests := []struct {
+		m    Metric
+		want string
+	}{
+		{
+			m: Metric{
+				Type:   "host",
+				Name:   "loadavg5",
+				HostID: "0000",
+			},
+			want: `{"type":"host","name":"loadavg5","hostId":"0000"}`,
+		},
+		{
+			m: Metric{
+				Type:        "service",
+				Name:        "metric0",
+				ServiceName: "service0",
+			},
+			want: `{"type":"service","name":"metric0","serviceName":"service0"}`,
+		},
+		{
+			m: Metric{
+				Type:       "expression",
+				Expression: "max(role(my-service:db, loadavg5))",
+			},
+			want: `{"type":"expression","expression":"max(role(my-service:db, loadavg5))"}`,
+		},
+		{
+			m: Metric{
+				Type:   "query",
+				Query:  "up{}",
+				Legend: "",
+			},
+			want: `{"type":"query","query":"up{}","legend":""}`,
+		},
+		{
+			m:    Metric{},
+			want: "null",
+		},
+	}
+	for _, tt := range tests {
+		b, err := json.Marshal(tt.m)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if s := string(b); s != tt.want {
+			t.Errorf("MarshalJSON(%v) = %q; want %q", tt.m, s, tt.want)
+		}
+	}
+}
+
+func TestGraphMarshalJSON(t *testing.T) {
+	tests := []struct {
+		g    Graph
+		want string
+	}{
+		{
+			g: Graph{
+				Type:   "host",
+				Name:   "loadavg5",
+				HostID: "0000",
+			},
+			want: `{"type":"host","name":"loadavg5","hostId":"0000"}`,
+		},
+		{
+			g: Graph{
+				Type:         "role",
+				Name:         "loadavg5",
+				RoleFullName: "my-service:db",
+				IsStacked:    true,
+			},
+			want: `{"type":"role","name":"loadavg5","roleFullname":"my-service:db","isStacked":true}`,
+		},
+		{
+			g: Graph{
+				Type:        "service",
+				Name:        "my-metric",
+				ServiceName: "my-service",
+			},
+			want: `{"type":"service","name":"my-metric","serviceName":"my-service"}`,
+		},
+		{
+			g: Graph{
+				Type:       "expression",
+				Expression: "max(role(my-service:db, loadavg5))",
+			},
+			want: `{"type":"expression","expression":"max(role(my-service:db, loadavg5))"}`,
+		},
+		{
+			g: Graph{
+				Type:   "query",
+				Query:  "up{}",
+				Legend: "{{instance}}",
+			},
+			want: `{"type":"query","query":"up{}","legend":"{{instance}}"}`,
+		},
+		{
+			g:    Graph{},
+			want: "null",
+		},
+	}
+	for _, tt := range tests {
+		b, err := json.Marshal(tt.g)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if s := string(b); s != tt.want {
+			t.Errorf("MarshalJSON(%v) = %q; want %q", tt.g, s, tt.want)
+		}
+	}
+}

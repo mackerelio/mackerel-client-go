@@ -126,14 +126,27 @@ type Metric struct {
 	Query       string `json:"query,omitempty"`
 	Legend      string `json:"legend,omitempty"`
 }
+type metricQuery struct {
+	Type        string `json:"type"`
+	Name        string `json:"-"`
+	HostID      string `json:"-"`
+	ServiceName string `json:"-"`
+	Expression  string `json:"-"`
+	Query       string `json:"query"`
+	Legend      string `json:"legend"`
+}
 
 // MarshalJSON marshals as JSON
 func (m Metric) MarshalJSON() ([]byte, error) {
 	type Alias Metric
-	if m.Type == "" {
+	switch m.Type {
+	case "":
 		return []byte("null"), nil
+	case "query":
+		return json.Marshal(metricQuery(m))
+	default:
+		return json.Marshal(Alias(m))
 	}
-	return json.Marshal(Alias(m))
 }
 
 // FormatRule information
@@ -155,14 +168,29 @@ type Graph struct {
 	Query        string `json:"query,omitempty"`
 	Legend       string `json:"legend,omitempty"`
 }
+type graphQuery struct {
+	Type         string `json:"type"`
+	Name         string `json:"-"`
+	HostID       string `json:"-"`
+	RoleFullName string `json:"-"`
+	IsStacked    bool   `json:"-"`
+	ServiceName  string `json:"-"`
+	Expression   string `json:"-"`
+	Query        string `json:"query"`
+	Legend       string `json:"legend"`
+}
 
 // MarshalJSON marshals as JSON
 func (g Graph) MarshalJSON() ([]byte, error) {
 	type Alias Graph
-	if g.Type == "" {
+	switch g.Type {
+	case "":
 		return []byte("null"), nil
+	case "query":
+		return json.Marshal(graphQuery(g))
+	default:
+		return json.Marshal(Alias(g))
 	}
-	return json.Marshal(Alias(g))
 }
 
 // Range information
