@@ -99,3 +99,41 @@ func TestGraphDefsOmitJSON(t *testing.T) {
 		t.Errorf("json.Marshal(%#v) = %q; want %q", g, s, want)
 	}
 }
+
+func TestDeleteGraphDef(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/graph-defs/delete" {
+			t.Error("request URL should be /api/v0/graph-defs/delete but:", req.URL.Path)
+		}
+
+		if req.Method != "DELETE" {
+			t.Error("request method should be DELETE but: ", req.Method)
+		}
+		body, _ := io.ReadAll(req.Body)
+
+		var data struct {
+			Name string `json:"name"`
+		}
+
+		err := json.Unmarshal(body, &data)
+		if err != nil {
+			t.Fatal("request body should be decoded as json", string(body))
+		}
+
+		if data.Name != "mackerel" {
+			t.Errorf("request sends json including name but: %s", data.Name)
+		}
+
+		respJSON, _ := json.Marshal((map[string]bool{"success": true}))
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	err := client.DeleteGraphDef("mackerel")
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+}
