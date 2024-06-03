@@ -102,8 +102,8 @@ func TestGraphDefsOmitJSON(t *testing.T) {
 
 func TestDeleteGraphDef(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/api/v0/graph-defs/delete" {
-			t.Error("request URL should be /api/v0/graph-defs/delete but:", req.URL.Path)
+		if req.URL.Path != "/api/v0/graph-defs" {
+			t.Error("request URL should be /api/v0/graph-defs but:", req.URL.Path)
 		}
 
 		if req.Method != "DELETE" {

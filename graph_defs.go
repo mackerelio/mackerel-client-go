@@ -25,6 +25,6 @@ func (c *Client) CreateGraphDefs(graphDefs []*GraphDefsParam) error {
 
 // DeleteGraphDef deletes a graph definition.
 func (c *Client) DeleteGraphDef(name string) error {
-	_, err := requestJSON[any](c, http.MethodDelete, "/api/v0/graph-defs/delete", map[string]string{"name": name})
+	_, err := requestJSON[any](c, http.MethodDelete, "/api/v0/graph-defs", map[string]string{"name": name})
 	return err
 }
