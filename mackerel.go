@@ -194,3 +194,28 @@ func requestInternal[T any](client *Client, method, path string, params url.Valu
 	}
 	return &data, resp.Header, nil
 }
+
+func (c *Client) compatRequestJSON(method string, path string, payload interface{}) (*http.Response, error) {
+	var body bytes.Buffer
+	err := json.NewEncoder(&body).Encode(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(method, c.urlFor(path, url.Values{}).String(), &body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	return c.Request(req)
+}
+
+// Deprecated: use other prefered method.
+func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
+	return c.compatRequestJSON(http.MethodPost, path, payload)
+}
+
+// Deprecated: use other prefered method.
+func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
+	return c.compatRequestJSON(http.MethodPut, path, payload)
+}
