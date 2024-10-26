@@ -121,7 +121,7 @@ func TestPrivateTracef(t *testing.T) {
 	defer log.SetFlags(oflags)
 	log.SetFlags(0)
 
-	msg := "test\n"
+	const msg = "test\n"
 	t.Run("Logger+PrioritizedLogger", func(t *testing.T) {
 		var c Client
 		c.Logger = log.New(&logbuf, "", 0)
