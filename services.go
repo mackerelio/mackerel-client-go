@@ -47,3 +47,10 @@ func (c *Client) ListServiceMetricNames(serviceName string) ([]string, error) {
 	}
 	return data.Names, nil
 }
+
+// DeleteServiceGraphDef deletes a service metrics graph definition.
+func (c *Client) DeleteServiceGraphDef(serviceName string, graphName string) error {
+	path := fmt.Sprintf("/api/v0/services/%s/graph-defs/%s", serviceName, graphName)
+	_, err := requestDelete[any](c, path)
+	return err
+}
