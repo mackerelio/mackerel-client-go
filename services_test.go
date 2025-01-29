@@ -172,3 +172,30 @@ func TestListServiceMetricNames(t *testing.T) {
 		t.Errorf("Wrong data for metric names: %v", names)
 	}
 }
+
+func TestDeleteServiceGraphDef(t *testing.T) {
+	serviceName := "my-service"
+	graphName := "graph-name.*"
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != fmt.Sprintf("/api/v0/services/%s/graph-defs/%s", serviceName, graphName) {
+			t.Error("request URL should be /api/v0/services/<serviceName>/graph-defs/<graphName> but: ", req.URL.Path)
+		}
+
+		if req.Method != "DELETE" {
+			t.Error("request method should be DELETE but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]bool{"success": true})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	err := client.DeleteServiceGraphDef(serviceName, graphName)
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+}
