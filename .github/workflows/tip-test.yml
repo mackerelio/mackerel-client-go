@@ -1,0 +1,27 @@
+name: Test with gotip
+
+on:
+  schedule:
+    - cron: "0 1 * * 1-5"
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os-version: ["ubuntu-22.04", "windows-2022", "macos-14", "windows-2025"]
+    runs-on: ${{ matrix.os-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+      - name: Install gotip
+        shell: bash
+        run: |
+          go install golang.org/dl/gotip@latest
+          GOROOT_BOOTSTRAP="$(go env GOROOT)" gotip download
+      - name: Test
+        shell: bash
+        run: gotip test -race ./...
