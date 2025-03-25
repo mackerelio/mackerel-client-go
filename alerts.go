@@ -59,6 +59,29 @@ type UpdateAlertResponse struct {
 	Memo string `json:"memo,omitempty"`
 }
 
+// AlertLog is the log of alert
+type AlertLog struct {
+	ID           string   `json:"id"`
+	CreatedAt    int64    `json:"createdAt"`
+	Status       string   `json:"status"`
+	Trigger      string   `json:"trigger"`
+	MonitorID    *string  `json:"monitorId"`
+	TargetValue  *float64 `json:"targetValue"`
+	StatusDetail *struct {
+		Type   string `json:"type"`
+		Detail struct {
+			Message string `json:"message"`
+			Memo    string `json:"memo"`
+		} `json:"detail"`
+	} `json:"statusDetail,omitempty"`
+}
+
+// AlertLogsResp is for FindAlertLogs and FindAlertLogsByNextID
+type AlertLogsResp struct {
+	AlertLogs []*AlertLog `json:"logs"`
+	NextID    string      `json:"nextId,omitempty"`
+}
+
 func (c *Client) findAlertsWithParams(params url.Values) (*AlertsResp, error) {
 	return requestGetWithParams[AlertsResp](c, "/api/v0/alerts", params)
 }
@@ -106,4 +129,18 @@ func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s", alertID)
 	return requestPut[UpdateAlertResponse](c, path, param)
+}
+
+// FindAlertLogs gets alert logs.
+func (c *Client) FindAlertLogs(alertId string) (*AlertLogsResp, error) {
+	path := fmt.Sprintf("/api/v0/alerts/%s/logs", alertId)
+	return requestGet[AlertLogsResp](c, path)
+}
+
+// FindAlertLogsByNextID finds alert logs by next id.
+func (c *Client) FindAlertLogsByNextID(alertId, nextId string) (*AlertLogsResp, error) {
+	params := url.Values{}
+	params.Set("nextId", nextId)
+	path := fmt.Sprintf("/api/v0/alerts/%s/logs", alertId)
+	return requestGetWithParams[AlertLogsResp](c, path, params)
 }
