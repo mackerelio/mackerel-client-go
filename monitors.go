@@ -274,10 +274,11 @@ type MonitorExpression struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Expression string   `json:"expression,omitempty"`
-	Operator   string   `json:"operator,omitempty"`
-	Warning    *float64 `json:"warning"`
-	Critical   *float64 `json:"critical"`
+	Expression              string   `json:"expression,omitempty"`
+	Operator                string   `json:"operator,omitempty"`
+	Warning                 *float64 `json:"warning"`
+	Critical                *float64 `json:"critical"`
+	EvaluateBackwardMinutes *uint64  `json:"evaluateBackwardMinutes,omitempty"`
 }
 
 // MonitorType returns monitor type.
@@ -324,11 +325,12 @@ type MonitorQuery struct {
 	IsMute               bool   `json:"isMute,omitempty"`
 	NotificationInterval uint64 `json:"notificationInterval,omitempty"`
 
-	Query    string   `json:"query,omitempty"`
-	Operator string   `json:"operator,omitempty"`
-	Warning  *float64 `json:"warning"`
-	Critical *float64 `json:"critical"`
-	Legend   string   `json:"legend,omitempty"`
+	Query                   string   `json:"query,omitempty"`
+	Operator                string   `json:"operator,omitempty"`
+	Warning                 *float64 `json:"warning"`
+	Critical                *float64 `json:"critical"`
+	Legend                  string   `json:"legend,omitempty"`
+	EvaluateBackwardMinutes *uint64  `json:"evaluateBackwardMinutes,omitempty"`
 }
 
 // MonitorType returns monitor type.

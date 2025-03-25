@@ -727,15 +727,16 @@ var testCases = []struct {
 	{
 		"expression monitor",
 		&MonitorExpression{
-			ID:                   "2cSZzK3XfmE",
-			Name:                 "role average",
-			Type:                 "expression",
-			IsMute:               false,
-			NotificationInterval: 60,
-			Expression:           "avg(roleSlots(\"server:role\",\"loadavg5\"))",
-			Operator:             ">",
-			Warning:              pfloat64(5.000000),
-			Critical:             pfloat64(10.000000),
+			ID:                      "2cSZzK3XfmE",
+			Name:                    "role average",
+			Type:                    "expression",
+			IsMute:                  false,
+			NotificationInterval:    60,
+			Expression:              "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+			Operator:                ">",
+			Warning:                 pfloat64(5.000000),
+			Critical:                pfloat64(10.000000),
+			EvaluateBackwardMinutes: puint64(3),
 		},
 		`{
 			"id"  : "2cSZzK3XfmE",
@@ -745,7 +746,8 @@ var testCases = []struct {
 			"operator": ">",
 			"warning": 5.0,
 			"critical": 10.0,
-			"notificationInterval": 60
+			"notificationInterval": 60,
+			"evaluateBackwardMinutes": 3
 		}`,
 	},
 	{
