@@ -278,7 +278,7 @@ type MonitorExpression struct {
 	Operator                string   `json:"operator,omitempty"`
 	Warning                 *float64 `json:"warning"`
 	Critical                *float64 `json:"critical"`
-	EvaluateBackwardMinutes uint64   `json:"evaluateBackwardMinutes,omitzero"`
+	EvaluateBackwardMinutes *uint64  `json:"evaluateBackwardMinutes,omitempty"`
 }
 
 // MonitorType returns monitor type.
@@ -330,7 +330,7 @@ type MonitorQuery struct {
 	Warning                 *float64 `json:"warning"`
 	Critical                *float64 `json:"critical"`
 	Legend                  string   `json:"legend,omitempty"`
-	EvaluateBackwardMinutes uint64   `json:"evaluateBackwardMinutes,omitzero"`
+	EvaluateBackwardMinutes *uint64  `json:"evaluateBackwardMinutes,omitempty"`
 }
 
 // MonitorType returns monitor type.
