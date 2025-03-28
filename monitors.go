@@ -66,6 +66,7 @@ import (
       "responseTimeDuration": 5,
       "certificationExpirationCritical": 15,
       "certificationExpirationWarning": 30,
+      "expectedStatusCode": 200,
       "requestBody": "Request Body",
       "containsString": "Example",
       "skipCertificateVerification": true,
@@ -243,6 +244,7 @@ type MonitorExternalHTTP struct {
 	CertificationExpirationWarning  *uint64  `json:"certificationExpirationWarning,omitempty"`
 	SkipCertificateVerification     bool     `json:"skipCertificateVerification,omitempty"`
 	FollowRedirect                  bool     `json:"followRedirect,omitempty"`
+	ExpectedStatusCode              *int     `json:"expectedStatusCode,omitempty"`
 	// Empty list of headers and nil are different. You have to specify empty
 	// list as headers explicitly if you want to remove all headers instead of
 	// using nil.
