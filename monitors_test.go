@@ -54,6 +54,7 @@ func TestFindMonitors(t *testing.T) {
 					"containsString":                  "Foo Bar Baz",
 					"skipCertificateVerification":     true,
 					"followRedirect":                  true,
+					"expectedStatusCode":              200,
 					"headers": []map[string]interface{}{
 						{"name": "Cache-Control", "value": "no-cache"},
 					},
@@ -161,6 +162,10 @@ func TestFindMonitors(t *testing.T) {
 
 		if m.FollowRedirect != true {
 			t.Error("request sends json including followRedirect but: ", m)
+		}
+
+		if *m.ExpectedStatusCode != 200 {
+			t.Error("request sends json including expectedStatusCode but: ", m)
 		}
 
 		if !reflect.DeepEqual(m.Headers, []HeaderField{{Name: "Cache-Control", Value: "no-cache"}}) {
