@@ -428,7 +428,7 @@ func TestFindAlertLogs(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	logs, err := client.FindAlertLogs("2wpLU5fBXbG")
+	logs, err := client.FindAlertLogs("2wpLU5fBXbG", nil)
 	if err != nil {
 		t.Error("err should be nil but: ", err)
 	}
@@ -480,5 +480,70 @@ func TestFindAlertLogs(t *testing.T) {
 	if logs.AlertLogs[1].StatusDetail != nil {
 		t.Error("statusDetail should be nil but: ", logs.AlertLogs[1].StatusDetail)
 	}
+}
 
+func TestFindAlertLogsWithOption(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		url := fmt.Sprintf("/api/v0/alerts/%s/logs", "2wpLU5fBXbG")
+		if req.URL.Path != url {
+			t.Error("request URL should be /api/v0/alerts/<ID>/logs but: ", req.URL.Path)
+		}
+
+		q := req.URL.Query()
+		if q.Get("nextId") != "2fsf8jRxFG1" {
+			t.Error("request nextId should be 2fsf8jRxFG1 but: ", q.Get("nextId"))
+		}
+
+		if q.Get("limit") != "10" {
+			t.Error("request limit should be 10 but: ", q.Get("limit"))
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"logs": []map[string]interface{}{
+				{
+					"id":          "5m7fewuu5tS",
+					"createdAt":   1735290407,
+					"status":      "WARNING",
+					"trigger":     "monitoring",
+					"monitorId":   "5m72DB7s7sU",
+					"targetValue": (*float64)(nil),
+					"statusDetail": map[string]interface{}{
+						"type": "check",
+						"detail": map[string]interface{}{
+							"message": "Uptime WARNING: 0 day(s) 0 hour(s) 6 minute(s) (398 second(s))",
+							"memo":    "",
+						},
+					},
+				}, {
+					"id":           "5m7fewuu5tS",
+					"createdAt":    1735290407,
+					"status":       "WARNING",
+					"trigger":      "monitoring",
+					"monitorId":    "5m72DB7s7sU",
+					"targetValue":  (*float64)(nil),
+					"statusDetail": nil,
+				},
+			},
+			"nextId": "2fsf8jRxFG1",
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	nextId := "2fsf8jRxFG1"
+	limit := 10
+	_, err := client.FindAlertLogs("2wpLU5fBXbG", &FindAlertLogsParam{
+		NextId: &nextId,
+		Limit:  &limit,
+	})
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
 }

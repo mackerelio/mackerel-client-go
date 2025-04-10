@@ -60,6 +60,7 @@ type UpdateAlertResponse struct {
 }
 
 // AlertLog is the log of alert
+// See https://mackerel.io/api-docs/entry/alerts#logs
 type AlertLog struct {
 	ID           string   `json:"id"`
 	CreatedAt    int64    `json:"createdAt"`
@@ -76,8 +77,14 @@ type AlertLog struct {
 	} `json:"statusDetail,omitempty"`
 }
 
-// AlertLogsResp is for FindAlertLogs and FindAlertLogsByNextID
-type AlertLogsResp struct {
+// FindAlertLogsParam is the parameters for FindAlertLogs
+type FindAlertLogsParam struct {
+	NextId *string
+	Limit  *int
+}
+
+// FindAlertLogsResp is for FindAlertLogs
+type FindAlertLogsResp struct {
 	AlertLogs []*AlertLog `json:"logs"`
 	NextID    string      `json:"nextId,omitempty"`
 }
@@ -131,16 +138,22 @@ func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAle
 	return requestPut[UpdateAlertResponse](c, path, param)
 }
 
-// FindAlertLogs gets alert logs.
-func (c *Client) FindAlertLogs(alertId string) (*AlertLogsResp, error) {
-	path := fmt.Sprintf("/api/v0/alerts/%s/logs", alertId)
-	return requestGet[AlertLogsResp](c, path)
+func (p FindAlertLogsParam) toValues() url.Values {
+	values := url.Values{}
+	if p.NextId != nil {
+		values.Set("nextId", *p.NextId)
+	}
+	if p.Limit != nil {
+		values.Set("limit", fmt.Sprintf("%d", *p.Limit))
+	}
+	return values
 }
 
-// FindAlertLogsByNextID finds alert logs by next id.
-func (c *Client) FindAlertLogsByNextID(alertId, nextId string) (*AlertLogsResp, error) {
-	params := url.Values{}
-	params.Set("nextId", nextId)
+// FindAlertLogs gets alert logs.
+func (c *Client) FindAlertLogs(alertId string, params *FindAlertLogsParam) (*FindAlertLogsResp, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s/logs", alertId)
-	return requestGetWithParams[AlertLogsResp](c, path, params)
+	if params == nil {
+		return requestGet[FindAlertLogsResp](c, path)
+	}
+	return requestGetWithParams[FindAlertLogsResp](c, path, params.toValues())
 }
