@@ -537,11 +537,9 @@ func TestFindAlertLogsWithOption(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	nextId := "2fsf8jRxFG1"
-	limit := 10
 	_, err := client.FindAlertLogs("2wpLU5fBXbG", &FindAlertLogsParam{
-		NextId: &nextId,
-		Limit:  &limit,
+		NextId: ToPtr("2fsf8jRxFG1"),
+		Limit:  ToPtr(10),
 	})
 	if err != nil {
 		t.Error("err should be nil but: ", err)

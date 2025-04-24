@@ -210,6 +210,11 @@ func (c *Client) compatRequestJSON(method string, path string, payload interface
 	return c.Request(req)
 }
 
+// ToPtr returns a pointer to the given value of any type.
+func ToPtr[T any](v T) *T {
+	return &v
+}
+
 // Deprecated: use other prefered method.
 func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
 	return c.compatRequestJSON(http.MethodPost, path, payload)
