@@ -59,6 +59,36 @@ type UpdateAlertResponse struct {
 	Memo string `json:"memo,omitempty"`
 }
 
+// AlertLog is the log of alert
+// See https://mackerel.io/api-docs/entry/alerts#logs
+type AlertLog struct {
+	ID           string   `json:"id"`
+	CreatedAt    int64    `json:"createdAt"`
+	Status       string   `json:"status"`
+	Trigger      string   `json:"trigger"`
+	MonitorID    *string  `json:"monitorId"`
+	TargetValue  *float64 `json:"targetValue"`
+	StatusDetail *struct {
+		Type   string `json:"type"`
+		Detail struct {
+			Message string `json:"message"`
+			Memo    string `json:"memo"`
+		} `json:"detail"`
+	} `json:"statusDetail,omitempty"`
+}
+
+// FindAlertLogsParam is the parameters for FindAlertLogs
+type FindAlertLogsParam struct {
+	NextId *string
+	Limit  *int
+}
+
+// FindAlertLogsResp is for FindAlertLogs
+type FindAlertLogsResp struct {
+	AlertLogs []*AlertLog `json:"logs"`
+	NextID    string      `json:"nextId,omitempty"`
+}
+
 func (c *Client) findAlertsWithParams(params url.Values) (*AlertsResp, error) {
 	return requestGetWithParams[AlertsResp](c, "/api/v0/alerts", params)
 }
@@ -106,4 +136,24 @@ func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
 func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s", alertID)
 	return requestPut[UpdateAlertResponse](c, path, param)
+}
+
+func (p FindAlertLogsParam) toValues() url.Values {
+	values := url.Values{}
+	if p.NextId != nil {
+		values.Set("nextId", *p.NextId)
+	}
+	if p.Limit != nil {
+		values.Set("limit", fmt.Sprintf("%d", *p.Limit))
+	}
+	return values
+}
+
+// FindAlertLogs gets alert logs.
+func (c *Client) FindAlertLogs(alertId string, params *FindAlertLogsParam) (*FindAlertLogsResp, error) {
+	path := fmt.Sprintf("/api/v0/alerts/%s/logs", alertId)
+	if params == nil {
+		return requestGet[FindAlertLogsResp](c, path)
+	}
+	return requestGetWithParams[FindAlertLogsResp](c, path, params.toValues())
 }
