@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-version: ["ubuntu-22.04", "windows-2022", "macos-14", "windows-2025"]
+        os-version: ["ubuntu-22.04", "macos-14", "windows-2025"]
     runs-on: ${{ matrix.os-version }}
     steps:
       - uses: actions/checkout@v4
