@@ -152,8 +152,12 @@ func TestFindHosts(t *testing.T) {
 
 func TestFindHostByCustomIdentifier(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/api/v0/hosts-by-custom-identifier/mydb001%2F001" {
-			t.Error("request URL.Path should be /api/v0/hosts-by-custom-identifier/mydb001%$2F001 but: ", req.URL.Path)
+		if req.URL.Path != "/api/v0/hosts-by-custom-identifier/mydb001/001" {
+			t.Error("request URL.Path should be /api/v0/hosts-by-custom-identifier/mydb001/001 but: ", req.URL.Path)
+		}
+
+		if req.URL.RawPath != "/api/v0/hosts-by-custom-identifier/mydb001%2F001" {
+			t.Error("request URL.Path should be /api/v0/hosts-by-custom-identifier/mydb001%$2F001 but: ", req.URL.RawPath)
 		}
 
 		query := req.URL.Query()
@@ -194,6 +198,58 @@ func TestFindHostByCustomIdentifier(t *testing.T) {
 		t.Error("request sends json including ID but: ", host)
 	}
 	if host.CustomIdentifier != "mydb001/001" {
+		t.Error("request sends json including CustomIdentifier but: ", host)
+	}
+}
+
+func TestFindHostByCustomIdentifier_Simple(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/hosts-by-custom-identifier/mydb001" {
+			t.Error("request URL.Path should be /api/v0/hosts-by-custom-identifier/mydb001 but: ", req.URL.Path)
+		}
+
+		if req.URL.RawPath != "" {
+			t.Error("request URL.Path should be empty but: ", req.URL.RawPath)
+		}
+
+		query := req.URL.Query()
+		if query.Get("caseInsensitive") != "" {
+			t.Error("request query 'caseInsensitive' param should be empty but: ", query.Get("caseInsensitive"))
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
+			"host": {
+				"id":               "9rxGOHfVF8F",
+				"name":             "mydb001",
+				"status":           "working",
+				"memo":             "hello",
+				"customIdentifier": "mydb001",
+			},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON))
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	host, err := client.FindHostByCustomIdentifier("mydb001", &FindHostByCustomIdentifierParam{})
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if host.Memo != "hello" {
+		t.Error("request sends json including memo but: ", host)
+	}
+	if host.ID != "9rxGOHfVF8F" {
+		t.Error("request sends json including ID but: ", host)
+	}
+	if host.CustomIdentifier != "mydb001" {
 		t.Error("request sends json including CustomIdentifier but: ", host)
 	}
 }
