@@ -3,6 +3,7 @@ package mackerel
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -170,7 +171,9 @@ func requestNoBody[T any](client *Client, method, path string, params url.Values
 }
 
 func requestInternal[T any](client *Client, method, path string, params url.Values, body io.Reader) (*T, http.Header, error) {
-	req, err := http.NewRequest(method, client.urlFor(path, params).String(), body)
+	u := client.urlFor(path, params)
+	url := fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.RawQuery)
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
