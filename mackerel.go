@@ -172,7 +172,11 @@ func requestNoBody[T any](client *Client, method, path string, params url.Values
 
 func requestInternal[T any](client *Client, method, path string, params url.Values, body io.Reader) (*T, http.Header, error) {
 	u := client.urlFor(path, params)
-	url := fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.RawQuery)
+	var user string
+	if ui := u.User; ui != nil {
+		user = ui.String() + "@"
+	}
+	url := fmt.Sprintf("%s://%s%s%s?%s", u.Scheme, user, u.Host, u.Path, u.RawQuery)
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, nil, err
