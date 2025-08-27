@@ -77,6 +77,14 @@ func Test_requestInternal(t *testing.T) {
 	}
 }
 
+func Test_requestInternal_UrlFor(t *testing.T) {
+	client, _ := NewClientWithOptions("dummy-key", "https://user:password@example.com/with/ignored/path", false)
+	expected := "https://user:password@example.com/some/super/endpoint"
+	if url := client.urlFor("/some/super/endpoint", nil).String(); url != expected {
+		t.Errorf("urlFor should be %q but %q", expected, url)
+	}
+}
+
 func TestUrlFor(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", "https://example.com/with/ignored/path", false)
 	expected := "https://example.com/some/super/endpoint"
