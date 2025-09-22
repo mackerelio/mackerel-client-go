@@ -28,8 +28,8 @@ func TestGetTrace(t *testing.T) {
 					"traceState": "congo=xx,key=val",
 					"name":       "test-span",
 					"kind":       "internal",
-					"startTime":  "2025-07-09T14:03:02.000Z",
-					"endTime":    "2025-07-09T14:03:02.000Z",
+					"startTime":  "2025-07-09T14:03:02.123Z",
+					"endTime":    "2025-07-09T14:03:02.456Z",
 					"attributes": []map[string]interface{}{
 						{
 							"key": "http.route",
@@ -42,7 +42,7 @@ func TestGetTrace(t *testing.T) {
 					"droppedAttributesCount": 0,
 					"events": []map[string]interface{}{
 						{
-							"time":                   "2025-07-09T14:03:02.000Z",
+							"time":                   "2025-07-09T14:03:02.789Z",
 							"name":                   "event1",
 							"attributes":             []interface{}{},
 							"droppedAttributesCount": 0,
@@ -120,14 +120,14 @@ func TestGetTrace(t *testing.T) {
 		t.Error("span.TraceState should be congo=xx,key=val but: ", span.TraceState)
 	}
 
-	expectedStartTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.000Z")
+	expectedStartTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.123Z")
 	if !span.StartTime.Equal(expectedStartTime) {
-		t.Error("span.StartTime should be 2025-07-09T14:03:02.000Z but: ", span.StartTime)
+		t.Error("span.StartTime should be 2025-07-09T14:03:02.123Z but: ", span.StartTime)
 	}
 
-	expectedEndTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.000Z")
+	expectedEndTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.456Z")
 	if !span.EndTime.Equal(expectedEndTime) {
-		t.Error("span.EndTime should be 2025-07-09T14:03:02.000Z but: ", span.EndTime)
+		t.Error("span.EndTime should be 2025-07-09T14:03:02.456Z but: ", span.EndTime)
 	}
 
 	if len(span.Attributes) != 1 {
@@ -152,9 +152,9 @@ func TestGetTrace(t *testing.T) {
 		if event.Name != "event1" {
 			t.Error("event name should be event1 but: ", event.Name)
 		}
-		expectedTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.000Z")
+		expectedTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.789Z")
 		if !event.Time.Equal(expectedTime) {
-			t.Error("event time should be 2025-07-09T14:03:02.000Z but: ", event.Time)
+			t.Error("event time should be 2025-07-09T14:03:02.789Z but: ", event.Time)
 		}
 	}
 
@@ -208,8 +208,8 @@ func TestGetTrace_AnyValueTypes(t *testing.T) {
 					"traceState": "",
 					"name":       "test-span",
 					"kind":       "internal",
-					"startTime":  "2025-07-09T14:03:02.000Z",
-					"endTime":    "2025-07-09T14:03:02.000Z",
+					"startTime":  "2025-07-09T14:03:02.999Z",
+					"endTime":    "2025-07-09T14:03:03.001Z",
 					"attributes": []map[string]interface{}{
 						{
 							"key": "string.attr",
