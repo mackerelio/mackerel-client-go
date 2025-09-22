@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestGetTrace(t *testing.T) {
@@ -119,6 +120,16 @@ func TestGetTrace(t *testing.T) {
 		t.Error("span.TraceState should be congo=xx,key=val but: ", span.TraceState)
 	}
 
+	expectedStartTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.000Z")
+	if !span.StartTime.Equal(expectedStartTime) {
+		t.Error("span.StartTime should be 2025-07-09T14:03:02.000Z but: ", span.StartTime)
+	}
+
+	expectedEndTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.000Z")
+	if !span.EndTime.Equal(expectedEndTime) {
+		t.Error("span.EndTime should be 2025-07-09T14:03:02.000Z but: ", span.EndTime)
+	}
+
 	if len(span.Attributes) != 1 {
 		t.Error("span should have 1 attribute but: ", len(span.Attributes))
 	} else {
@@ -141,7 +152,8 @@ func TestGetTrace(t *testing.T) {
 		if event.Name != "event1" {
 			t.Error("event name should be event1 but: ", event.Name)
 		}
-		if event.Time != "2025-07-09T14:03:02.000Z" {
+		expectedTime, _ := time.Parse(time.RFC3339, "2025-07-09T14:03:02.000Z")
+		if !event.Time.Equal(expectedTime) {
 			t.Error("event time should be 2025-07-09T14:03:02.000Z but: ", event.Time)
 		}
 	}

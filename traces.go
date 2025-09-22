@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"fmt"
+	"time"
 )
 
 // TraceResponse represents the response structure from the traces API
@@ -23,8 +24,8 @@ type Span struct {
 	ParentSpanID           string       `json:"parentSpanId,omitempty"`
 	Name                   string       `json:"name"`
 	Kind                   SpanKind     `json:"kind"`
-	StartTime              string       `json:"startTime"`
-	EndTime                string       `json:"endTime"`
+	StartTime              time.Time    `json:"startTime"`
+	EndTime                time.Time    `json:"endTime"`
 	Attributes             []*Attribute `json:"attributes"`
 	DroppedAttributesCount int          `json:"droppedAttributesCount"`
 	Events                 []*Event     `json:"events"`
@@ -56,7 +57,7 @@ type AttributeValue struct {
 
 // Event represents a span event
 type Event struct {
-	Time                   string       `json:"time"`
+	Time                   time.Time    `json:"time"`
 	Name                   string       `json:"name"`
 	Attributes             []*Attribute `json:"attributes"`
 	DroppedAttributesCount int          `json:"droppedAttributesCount"`
