@@ -7,7 +7,15 @@ updates:
     time: "01:00"
     timezone: Asia/Tokyo
   open-pull-requests-limit: 10
+  cooldown:
+    default-days: 5
+    include:
+      - "*"
 - package-ecosystem: github-actions
   directory: /
   schedule:
-    interval: weekly
+    interval: daily
+  cooldown:
+    default-days: 5
+    include:
+      - "*"
