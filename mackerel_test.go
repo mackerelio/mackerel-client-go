@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -66,7 +67,7 @@ func Test_requestInternal(t *testing.T) {
 			client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 			res, _, err := requestInternal[struct {
 				Success bool `json:"success"`
-			}](client, test.method, "/", url.Values{}, test.body)
+			}](context.TODO(), client, test.method, "/", url.Values{}, test.body)
 			if err != nil {
 				t.Errorf("request is error %v", err)
 			}
