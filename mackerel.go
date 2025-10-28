@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -131,53 +132,58 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	return resp, nil
 }
 
+// TODO: requestGet without context will be deleted.
 func requestGet[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](client, http.MethodGet, path, nil)
+	return requestNoBody[T](context.TODO(), client, http.MethodGet, path, nil)
+}
+
+func requestGetContext[T any](ctx context.Context, client *Client, path string) (*T, error) {
+	return requestNoBody[T](ctx, client, http.MethodGet, path, nil)
 }
 
 func requestGetWithParams[T any](client *Client, path string, params url.Values) (*T, error) {
-	return requestNoBody[T](client, http.MethodGet, path, params)
+	return requestNoBody[T](context.TODO(), client, http.MethodGet, path, params)
 }
 
 func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Header, error) {
-	return requestInternal[T](client, http.MethodGet, path, nil, nil)
+	return requestInternal[T](context.TODO(), client, http.MethodGet, path, nil, nil)
 }
 
 func requestPost[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](client, http.MethodPost, path, payload)
+	return requestJSON[T](context.TODO(), client, http.MethodPost, path, payload)
 }
 
 func requestPut[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](client, http.MethodPut, path, payload)
+	return requestJSON[T](context.TODO(), client, http.MethodPut, path, payload)
 }
 
 func requestDelete[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](client, http.MethodDelete, path, nil)
+	return requestNoBody[T](context.TODO(), client, http.MethodDelete, path, nil)
 }
 
-func requestJSON[T any](client *Client, method, path string, payload any) (*T, error) {
+func requestJSON[T any](ctx context.Context, client *Client, method, path string, payload any) (*T, error) {
 	var body bytes.Buffer
 	err := json.NewEncoder(&body).Encode(payload)
 	if err != nil {
 		return nil, err
 	}
-	data, _, err := requestInternal[T](client, method, path, nil, &body)
+	data, _, err := requestInternal[T](ctx, client, method, path, nil, &body)
 	return data, err
 }
 
-func requestNoBody[T any](client *Client, method, path string, params url.Values) (*T, error) {
-	data, _, err := requestInternal[T](client, method, path, params, nil)
+func requestNoBody[T any](ctx context.Context, client *Client, method, path string, params url.Values) (*T, error) {
+	data, _, err := requestInternal[T](ctx, client, method, path, params, nil)
 	return data, err
 }
 
-func requestInternal[T any](client *Client, method, path string, params url.Values, body io.Reader) (*T, http.Header, error) {
+func requestInternal[T any](ctx context.Context, client *Client, method, path string, params url.Values, body io.Reader) (*T, http.Header, error) {
 	u := client.urlFor(path, params)
 	var user string
 	if ui := u.User; ui != nil {
 		user = ui.String() + "@"
 	}
 	url := fmt.Sprintf("%s://%s%s%s?%s", u.Scheme, user, u.Host, u.Path, u.RawQuery)
-	req, err := http.NewRequest(method, url, body)
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return nil, nil, err
 	}

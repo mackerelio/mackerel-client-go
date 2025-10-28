@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -123,5 +124,10 @@ const (
 
 // GetTrace gets detailed trace information for the specified trace ID
 func (c *Client) GetTrace(traceID string) (*TraceResponse, error) {
-	return requestGet[TraceResponse](c, fmt.Sprintf("/api/v0/traces/%s", traceID))
+	return requestGetContext[TraceResponse](context.Background(), c, fmt.Sprintf("/api/v0/traces/%s", traceID))
+}
+
+// GetTraceContext is like [GetTrace].
+func (c *Client) GetTraceContext(ctx context.Context, traceID string) (*TraceResponse, error) {
+	return requestGetContext[TraceResponse](ctx, c, fmt.Sprintf("/api/v0/traces/%s", traceID))
 }
