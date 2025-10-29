@@ -34,7 +34,7 @@ func TestFindUsers(t *testing.T) {
 			},
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -103,7 +103,7 @@ func TestDeleteUser(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 

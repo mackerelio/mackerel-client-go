@@ -154,7 +154,7 @@ type fakeLogger struct {
 }
 
 func (p *fakeLogger) Tracef(format string, v ...interface{}) {
-	fmt.Fprintf(p.w, format, v...)
+	fmt.Fprintf(p.w, format, v...) // nolint
 }
 func (p *fakeLogger) Debugf(format string, v ...interface{})   {}
 func (p *fakeLogger) Infof(format string, v ...interface{})    {}

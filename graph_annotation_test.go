@@ -61,7 +61,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 			"description": "Deployed my blog",
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -138,7 +138,7 @@ func TestFindGraphAnnotations(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -193,7 +193,7 @@ func TestUpdateGraphAnnotations(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -256,7 +256,7 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -307,7 +307,7 @@ func TestDeleteGraphAnnotations_NotFound(t *testing.T) {
 
 		res.Header()["Content-Type"] = []string{"application/json"}
 		res.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
