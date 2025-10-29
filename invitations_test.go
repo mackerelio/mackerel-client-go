@@ -30,7 +30,7 @@ func TestFindInvitation(t *testing.T) {
 			},
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -76,7 +76,7 @@ func TestCreateInvitation(t *testing.T) {
 			"expiresAt": 1560000000,
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 

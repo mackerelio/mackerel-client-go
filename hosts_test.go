@@ -57,7 +57,7 @@ func TestFindHost(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -124,7 +124,7 @@ func TestFindHosts(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -180,7 +180,7 @@ func TestFindHostByCustomIdentifier(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -232,7 +232,7 @@ func TestFindHostByCustomIdentifier_Simple(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -297,7 +297,7 @@ func TestCreateHost(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -363,7 +363,7 @@ func TestUpdateHost(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -416,7 +416,7 @@ func TestUpdateHostStatus(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -463,7 +463,7 @@ func TestBulkUpdateHostStatuses(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -502,7 +502,7 @@ func TestUpdateHostRoleFullnames(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -537,7 +537,7 @@ func TestRetireHost(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -565,7 +565,7 @@ func TestRetireHost_NotFound(t *testing.T) {
 
 		res.Header()["Content-Type"] = []string{"application/json"}
 		res.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -613,7 +613,7 @@ func TestBulkRetireHosts(t *testing.T) {
 
 		res.Header()["Content-Type"] = []string{"application/json"}
 		res.WriteHeader(http.StatusOK)
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -653,7 +653,7 @@ func TestBulkRetireHosts_NotFound(t *testing.T) {
 
 		res.Header()["Content-Type"] = []string{"application/json"}
 		res.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -692,7 +692,7 @@ func TestListHostMetricNames(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -732,7 +732,7 @@ func TestListMonitoredStatues(t *testing.T) {
 			}})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 

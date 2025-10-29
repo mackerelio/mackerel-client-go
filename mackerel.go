@@ -123,7 +123,7 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		message, err := extractErrorMessage(resp.Body)
-		defer resp.Body.Close()
+		defer resp.Body.Close() // nolint
 		if err != nil {
 			return nil, &APIError{StatusCode: resp.StatusCode, Message: resp.Status}
 		}
@@ -197,7 +197,7 @@ func requestInternal[T any](ctx context.Context, client *Client, method, path st
 	}
 	defer func() {
 		io.Copy(io.Discard, resp.Body) // nolint
-		resp.Body.Close()
+		resp.Body.Close()              // nolint
 	}()
 
 	var data T

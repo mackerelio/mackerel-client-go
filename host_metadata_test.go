@@ -29,7 +29,7 @@ func TestGetHostMetaData(t *testing.T) {
 		respJSON := `{"type":12345,"region":"jp","env":"staging","instance_type":"c4.xlarge"}`
 		res.Header()["Content-Type"] = []string{"application/json"}
 		res.Header()["Last-Modified"] = []string{lastModified.Format(http.TimeFormat)}
-		fmt.Fprint(res, respJSON)
+		fmt.Fprint(res, respJSON) // nolint
 	}))
 	defer ts.Close()
 
@@ -73,7 +73,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 
 		respJSON := `{"metadata":[{"namespace":"testing1"}, {"namespace":"testing2"}]}`
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, respJSON)
+		fmt.Fprint(res, respJSON) // nolint
 	}))
 	defer ts.Close()
 
@@ -110,7 +110,7 @@ func TestPutHostMetaData(t *testing.T) {
 		}
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, `{"success":true}`)
+		fmt.Fprint(res, `{"success":true}`) // nolint
 	}))
 	defer ts.Close()
 
@@ -143,7 +143,7 @@ func TestDeleteHostMetaData(t *testing.T) {
 		}
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, `{"success":true}`)
+		fmt.Fprint(res, `{"success":true}`) // nolint
 	}))
 	defer ts.Close()
 

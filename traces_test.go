@@ -78,7 +78,7 @@ func TestGetTrace(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -298,7 +298,7 @@ func TestGetTrace_AnyValueTypes(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -366,7 +366,7 @@ func TestGetTrace_AnyValueTypes(t *testing.T) {
 func TestGetTrace_Error(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(404)
-		fmt.Fprint(res, `{"error": {"message": "trace not found"}}`)
+		fmt.Fprint(res, `{"error": {"message": "trace not found"}}`) // nolint
 	}))
 	defer ts.Close()
 

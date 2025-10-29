@@ -54,7 +54,7 @@ func TestCreateGraphDefs(t *testing.T) {
 			"result": "OK",
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -126,7 +126,7 @@ func TestDeleteGraphDef(t *testing.T) {
 
 		respJSON, _ := json.Marshal((map[string]bool{"success": true}))
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
