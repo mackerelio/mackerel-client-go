@@ -65,7 +65,7 @@ func TestFindDowntimes(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -157,7 +157,7 @@ func TestCreateDowntime(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -233,7 +233,7 @@ func TestUpdateDowntime(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -299,7 +299,7 @@ func TestDeleteDowntime(t *testing.T) {
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 

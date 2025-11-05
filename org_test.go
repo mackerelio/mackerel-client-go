@@ -20,7 +20,7 @@ func TestGetOrg(t *testing.T) {
 		respJSON, _ := json.Marshal(&Org{Name: "hoge"})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
@@ -51,7 +51,7 @@ func TestGetOrgWithDisplayName(t *testing.T) {
 		respJSON, _ := json.Marshal(&Org{Name: "hoge", DisplayName: "fuga"})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON))
+		fmt.Fprint(res, string(respJSON)) // nolint
 	}))
 	defer ts.Close()
 
