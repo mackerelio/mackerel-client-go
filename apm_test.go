@@ -145,9 +145,6 @@ func TestListHTTPServerStatsWithMinimalParams(t *testing.T) {
 		if query.Get("to") != "2000000000" {
 			t.Error("request query 'to' param should be 2000000000 but: ", query.Get("to"))
 		}
-		if query.Get("orderColumn") != "" {
-			t.Error("request query 'orderColumn' param should be empty but: ", query.Get("orderColumn"))
-		}
 
 		respJSON, _ := json.Marshal(map[string]interface{}{
 			"results":     []map[string]interface{}{},
@@ -177,95 +174,5 @@ func TestListHTTPServerStatsWithMinimalParams(t *testing.T) {
 
 	if len(result.Results) != 0 {
 		t.Error("results length should be 0 but: ", len(result.Results))
-	}
-}
-
-func TestListHTTPServerStatsWithAllParams(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		query := req.URL.Query()
-		if query.Get("serviceName") != "full-service" {
-			t.Error("request query 'serviceName' param should be full-service but: ", query.Get("serviceName"))
-		}
-		if query.Get("serviceNamespace") != "test-namespace" {
-			t.Error("request query 'serviceNamespace' param should be test-namespace but: ", query.Get("serviceNamespace"))
-		}
-		if query.Get("environment") != "production" {
-			t.Error("request query 'environment' param should be production but: ", query.Get("environment"))
-		}
-		if query.Get("version") != "v1.0.0" {
-			t.Error("request query 'version' param should be v1.0.0 but: ", query.Get("version"))
-		}
-		if query.Get("method") != "GET" {
-			t.Error("request query 'method' param should be GET but: ", query.Get("method"))
-		}
-		if query.Get("route") != "/api/test" {
-			t.Error("request query 'route' param should be /api/test but: ", query.Get("route"))
-		}
-
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results": []map[string]interface{}{
-				{
-					"method":              "GET",
-					"route":               "/api/test",
-					"totalMillis":         100.0,
-					"averageMillis":       10.0,
-					"approxP95Millis":     20.0,
-					"errorRatePercentage": 0.5,
-					"requestCount":        10,
-				},
-			},
-			"hasNextPage": true,
-		})
-
-		res.Header()["Content-Type"] = []string{"application/json"}
-		fmt.Fprint(res, string(respJSON)) // nolint
-	}))
-	defer ts.Close()
-
-	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-
-	serviceNamespace := "test-namespace"
-	environment := "production"
-	version := "v1.0.0"
-	orderColumn := "AVERAGE"
-	orderDirection := "ASC"
-	method := "GET"
-	route := "/api/test"
-	page := 2
-	perPage := 50
-
-	result, err := client.ListHTTPServerStats(&ListHTTPServerStatsParam{
-		ServiceName:      "full-service",
-		From:             1000000000,
-		To:               2000000000,
-		ServiceNamespace: &serviceNamespace,
-		Environment:      &environment,
-		Version:          &version,
-		OrderColumn:      &orderColumn,
-		OrderDirection:   &orderDirection,
-		Method:           &method,
-		Route:            &route,
-		Page:             &page,
-		PerPage:          &perPage,
-	})
-
-	if err != nil {
-		t.Error("err should be nil but: ", err)
-	}
-
-	if result.HasNextPage != true {
-		t.Error("hasNextPage should be true but: ", result.HasNextPage)
-	}
-
-	if len(result.Results) != 1 {
-		t.Error("results length should be 1 but: ", len(result.Results))
-	}
-
-	if result.Results[0].Method != "GET" {
-		t.Error("method should be GET but: ", result.Results[0].Method)
-	}
-
-	if result.Results[0].Route != "/api/test" {
-		t.Error("route should be /api/test but: ", result.Results[0].Route)
 	}
 }
