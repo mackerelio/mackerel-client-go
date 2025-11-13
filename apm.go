@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"net/url"
 	"strconv"
 )
@@ -40,6 +41,11 @@ type ListHTTPServerStatsParam struct {
 
 // ListHTTPServerStats retrieves HTTP server statistics
 func (c *Client) ListHTTPServerStats(param *ListHTTPServerStatsParam) (*HTTPServerStatsPageConnection, error) {
+	return c.ListHTTPServerStatsContext(context.Background(), param)
+}
+
+// ListHTTPServerStatsContext is like [ListHTTPServerStats].
+func (c *Client) ListHTTPServerStatsContext(ctx context.Context, param *ListHTTPServerStatsParam) (*HTTPServerStatsPageConnection, error) {
 	params := url.Values{}
 	params.Set("serviceName", param.ServiceName)
 	params.Set("from", strconv.FormatInt(param.From, 10))
@@ -73,5 +79,5 @@ func (c *Client) ListHTTPServerStats(param *ListHTTPServerStatsParam) (*HTTPServ
 		params.Set("perPage", strconv.Itoa(*param.PerPage))
 	}
 
-	return requestGetWithParams[HTTPServerStatsPageConnection](c, "/api/v0/apm/http-server-stats", params)
+	return requestGetWithParamsContext[HTTPServerStatsPageConnection](ctx, c, "/api/v0/apm/http-server-stats", params)
 }

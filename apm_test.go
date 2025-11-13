@@ -1,12 +1,14 @@
 package mackerel
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestListHTTPServerStats(t *testing.T) {
@@ -174,5 +176,141 @@ func TestListHTTPServerStatsWithMinimalParams(t *testing.T) {
 
 	if len(result.Results) != 0 {
 		t.Error("results length should be 0 but: ", len(result.Results))
+	}
+}
+
+func TestListHTTPServerStatsContext(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/apm/http-server-stats" {
+			t.Error("request URL should be /api/v0/apm/http-server-stats but: ", req.URL.Path)
+		}
+
+		if req.Method != "GET" {
+			t.Error("request method should be GET but: ", req.Method)
+		}
+
+		query := req.URL.Query()
+		if query.Get("serviceName") != "test-service" {
+			t.Error("request query 'serviceName' param should be test-service but: ", query.Get("serviceName"))
+		}
+		if query.Get("from") != "1234567890" {
+			t.Error("request query 'from' param should be 1234567890 but: ", query.Get("from"))
+		}
+		if query.Get("to") != "1234567900" {
+			t.Error("request query 'to' param should be 1234567900 but: ", query.Get("to"))
+		}
+
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"results": []map[string]interface{}{
+				{
+					"method":              "GET",
+					"route":               "/api/users",
+					"totalMillis":         837.0,
+					"averageMillis":       9.01,
+					"approxP95Millis":     19.89,
+					"errorRatePercentage": 0.0,
+					"requestCount":        93,
+				},
+			},
+			"hasNextPage": true,
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON)) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	ctx := context.Background()
+	result, err := client.ListHTTPServerStatsContext(ctx, &ListHTTPServerStatsParam{
+		ServiceName: "test-service",
+		From:        1234567890,
+		To:          1234567900,
+	})
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if result.HasNextPage != true {
+		t.Error("hasNextPage should be true but: ", result.HasNextPage)
+	}
+
+	if len(result.Results) != 1 {
+		t.Error("results length should be 1 but: ", len(result.Results))
+	}
+
+	expected := &HTTPServerStats{
+		Method:              "GET",
+		Route:               "/api/users",
+		TotalMillis:         837.0,
+		AverageMillis:       9.01,
+		ApproxP95Millis:     19.89,
+		ErrorRatePercentage: 0.0,
+		RequestCount:        93,
+	}
+
+	if !reflect.DeepEqual(result.Results[0], expected) {
+		t.Errorf("result should be %v but: %v", expected, result.Results[0])
+	}
+}
+
+func TestListHTTPServerStatsContextWithTimeout(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		time.Sleep(100 * time.Millisecond)
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"results":     []map[string]interface{}{},
+			"hasNextPage": false,
+		})
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON)) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	_, err := client.ListHTTPServerStatsContext(ctx, &ListHTTPServerStatsParam{
+		ServiceName: "test-service",
+		From:        1234567890,
+		To:          1234567900,
+	})
+
+	if err == nil {
+		t.Error("err should not be nil for timeout")
+	}
+}
+
+func TestListHTTPServerStatsContextWithCancel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		time.Sleep(100 * time.Millisecond)
+		respJSON, _ := json.Marshal(map[string]interface{}{
+			"results":     []map[string]interface{}{},
+			"hasNextPage": false,
+		})
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON)) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		time.Sleep(10 * time.Millisecond)
+		cancel()
+	}()
+
+	_, err := client.ListHTTPServerStatsContext(ctx, &ListHTTPServerStatsParam{
+		ServiceName: "test-service",
+		From:        1234567890,
+		To:          1234567900,
+	})
+
+	if err == nil {
+		t.Error("err should not be nil for canceled context")
 	}
 }
