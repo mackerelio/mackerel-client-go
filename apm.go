@@ -81,3 +81,73 @@ func (c *Client) ListHTTPServerStatsContext(ctx context.Context, param *ListHTTP
 
 	return requestGetWithParamsContext[HTTPServerStatsPageConnection](ctx, c, "/api/v0/apm/http-server-stats", params)
 }
+
+// DbQueryStats represents database query statistics
+type DbQueryStats struct {
+	Query            string  `json:"query"`
+	ExecutionCount   int64   `json:"executionCount"`
+	TotalMillis      float64 `json:"totalMillis"`
+	AverageMillis    float64 `json:"averageMillis"`
+	ApproxP95Millis  float64 `json:"approxP95Millis"`
+}
+
+// DbQueryStatsPageConnection represents a paginated response of database query statistics
+type DbQueryStatsPageConnection struct {
+	Results     []*DbQueryStats `json:"results"`
+	HasNextPage bool            `json:"hasNextPage"`
+}
+
+// ListDbQueryStatsParam represents parameters for listing database query statistics
+type ListDbQueryStatsParam struct {
+	ServiceName      string
+	From             int64
+	To               int64
+	ServiceNamespace *string
+	Environment      *string
+	Version          *string
+	Query            *string
+	OrderColumn      *string
+	OrderDirection   *string
+	Page             *int
+	PerPage          *int
+}
+
+// ListDbQueryStats retrieves database query statistics
+func (c *Client) ListDbQueryStats(param *ListDbQueryStatsParam) (*DbQueryStatsPageConnection, error) {
+	return c.ListDbQueryStatsContext(context.Background(), param)
+}
+
+// ListDbQueryStatsContext is like [ListDbQueryStats].
+func (c *Client) ListDbQueryStatsContext(ctx context.Context, param *ListDbQueryStatsParam) (*DbQueryStatsPageConnection, error) {
+	params := url.Values{}
+	params.Set("serviceName", param.ServiceName)
+	params.Set("from", strconv.FormatInt(param.From, 10))
+	params.Set("to", strconv.FormatInt(param.To, 10))
+
+	if param.ServiceNamespace != nil {
+		params.Set("serviceNamespace", *param.ServiceNamespace)
+	}
+	if param.Environment != nil {
+		params.Set("environment", *param.Environment)
+	}
+	if param.Version != nil {
+		params.Set("version", *param.Version)
+	}
+	if param.Query != nil {
+		params.Set("query", *param.Query)
+	}
+	if param.OrderColumn != nil {
+		params.Set("orderColumn", *param.OrderColumn)
+	}
+	if param.OrderDirection != nil {
+		params.Set("orderDirection", *param.OrderDirection)
+	}
+	if param.Page != nil {
+		params.Set("page", strconv.Itoa(*param.Page))
+	}
+	if param.PerPage != nil {
+		params.Set("perPage", strconv.Itoa(*param.PerPage))
+	}
+
+	return requestGetWithParamsContext[DbQueryStatsPageConnection](ctx, c, "/api/v0/apm/db-query-stats", params)
+}
