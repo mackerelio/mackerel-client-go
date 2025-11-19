@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -58,6 +59,13 @@ func (c *Client) PutRoleMetaData(serviceName, roleName, namespace string, metada
 // DeleteRoleMetaData deletes a role metadata.
 func (c *Client) DeleteRoleMetaData(serviceName, roleName, namespace string) error {
 	path := fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace)
-	_, err := requestDelete[any](c, path)
+	_, err := requestDeleteContext[any](context.Background(), c, path)
+	return err
+}
+
+// DeleteRoleMetaDataContext is like [DeleteRoleMetaData].
+func (c *Client) DeleteRoleMetaDataContext(ctx context.Context, serviceName, roleName, namespace string) error {
+	path := fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace)
+	_, err := requestDeleteContext[any](ctx, c, path)
 	return err
 }
