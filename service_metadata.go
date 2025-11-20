@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -58,6 +59,13 @@ func (c *Client) PutServiceMetaData(serviceName, namespace string, metadata Serv
 // DeleteServiceMetaData deletes a service metadata.
 func (c *Client) DeleteServiceMetaData(serviceName, namespace string) error {
 	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
-	_, err := requestDelete[any](c, path)
+	_, err := requestDeleteContext[any](context.Background(), c, path)
+	return err
+}
+
+// DeleteServiceMetaDataContext is like [DeleteServiceMetaData].
+func (c *Client) DeleteServiceMetaDataContext(ctx context.Context, serviceName, namespace string) error {
+	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
+	_, err := requestDeleteContext[any](ctx, c, path)
 	return err
 }

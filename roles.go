@@ -1,6 +1,9 @@
 package mackerel
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // Role represents Mackerel "role".
 type Role struct {
@@ -31,5 +34,11 @@ func (c *Client) CreateRole(serviceName string, param *CreateRoleParam) (*Role, 
 // DeleteRole deletes a role.
 func (c *Client) DeleteRole(serviceName, roleName string) (*Role, error) {
 	path := fmt.Sprintf("/api/v0/services/%s/roles/%s", serviceName, roleName)
-	return requestDelete[Role](c, path)
+	return requestDeleteContext[Role](context.Background(), c, path)
+}
+
+// DeleteRoleContext is like [DeleteRole].
+func (c *Client) DeleteRoleContext(ctx context.Context, serviceName, roleName string) (*Role, error) {
+	path := fmt.Sprintf("/api/v0/services/%s/roles/%s", serviceName, roleName)
+	return requestDeleteContext[Role](ctx, c, path)
 }

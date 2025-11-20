@@ -1,6 +1,9 @@
 package mackerel
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // User information
 type User struct {
@@ -29,5 +32,11 @@ func (c *Client) FindUsers() ([]*User, error) {
 // DeleteUser deletes a user.
 func (c *Client) DeleteUser(userID string) (*User, error) {
 	path := fmt.Sprintf("/api/v0/users/%s", userID)
-	return requestDelete[User](c, path)
+	return requestDeleteContext[User](context.Background(), c, path)
+}
+
+// DeleteUserContext is like [DeleteUser].
+func (c *Client) DeleteUserContext(ctx context.Context, userID string) (*User, error) {
+	path := fmt.Sprintf("/api/v0/users/%s", userID)
+	return requestDeleteContext[User](ctx, c, path)
 }
