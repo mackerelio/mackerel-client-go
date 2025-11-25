@@ -6,6 +6,99 @@ import (
 	"time"
 )
 
+type ListTracesParam struct {
+	ServiceName        string                 `json:"serviceName"`
+	ServiceNamespace   *string                `json:"serviceNamespace,omitzero"`
+	From               int64                  `json:"from"`
+	To                 int64                  `json:"to"`
+	Environment        *string                `json:"environment,omitzero"`
+	TraceID            *string                `json:"traceId,omitzero"`
+	SpanName           *string                `json:"spanName,omitzero"`
+	Version            *string                `json:"version,omitzero"`
+	IssueFingerprint   *string                `json:"issueFingerprint,omitzero"`
+	MinLatencyMillis   *int64                 `json:"minLatencyMillis,omitzero"`
+	MaxLatencyMillis   *int64                 `json:"maxLatencyMillis,omitzero"`
+	Attributes         []TraceAttributeFilter `json:"attributes,omitzero"`
+	ResourceAttributes []TraceAttributeFilter `json:"resourceAttributes,omitzero"`
+	Page               *int                   `json:"page,omitzero"`
+	PerPage            *int                   `json:"perPage,omitzero"`
+	Order              TraceOrder             `json:"order,omitzero"`
+}
+
+type TraceAttributeFilter struct {
+	Key      string                  `json:"key"`
+	Value    string                  `json:"value"`
+	Operator TraceAttributeOperator  `json:"operator"`
+	Type     TraceAttributeValueType `json:"type"`
+}
+
+type TraceAttributeOperator string
+
+const (
+	TraceAttributeOperatorEQ         TraceAttributeOperator = "EQ"
+	TraceAttributeOperatorNEQ        TraceAttributeOperator = "NEQ"
+	TraceAttributeOperatorGT         TraceAttributeOperator = "GT"
+	TraceAttributeOperatorGTE        TraceAttributeOperator = "GTE"
+	TraceAttributeOperatorLT         TraceAttributeOperator = "LT"
+	TraceAttributeOperatorLTE        TraceAttributeOperator = "LTE"
+	TraceAttributeOperatorSTARTSWITH TraceAttributeOperator = "STARTS_WITH"
+)
+
+type TraceAttributeValueType string
+
+const (
+	TraceAttributeValueTypeString TraceAttributeValueType = "string"
+	TraceAttributeValueTypeInt    TraceAttributeValueType = "int"
+	TraceAttributeValueTypeDouble TraceAttributeValueType = "double"
+	TraceAttributeValueTypeBool   TraceAttributeValueType = "bool"
+)
+
+type TraceOrder struct {
+	Column    *TraceOrderColumn `json:"column"`
+	Direction *OrderDirection   `json:"direction"`
+}
+
+type TraceOrderColumn string
+
+const (
+	TraceOrderColumnLATENCY TraceOrderColumn = "LATENCY"
+	TraceOrderColumnSTARTAT TraceOrderColumn = "START_AT"
+)
+
+type OrderDirection string
+
+const (
+	OrderDirectionASC  OrderDirection = "ASC"
+	OrderDirectionDESC OrderDirection = "DESC"
+)
+
+type ListTracesResponse struct {
+	Results     []*ListTracesResult `json:"results"`
+	HasNextPage bool                `json:"hasNextPage"`
+}
+
+type ListTracesResult struct {
+	TraceID              string `json:"traceId"`
+	ServiceName          string `json:"serviceName"`
+	ServiceNamespace     string `json:"serviceNamespace"`
+	Environment          string `json:"environment"`
+	Title                string `json:"title"`
+	TraceStartAt         int64  `json:"traceStartAt"`
+	TraceLatencyMillis   int64  `json:"traceLatencyMillis"`
+	ServiceStartAt       int64  `json:"serviceStartAt"`
+	ServiceLatencyMillis int64  `json:"serviceLatencyMillis"`
+}
+
+// ListTraces searches traces
+func (c *Client) ListTraces(params *ListTracesParam) (*ListTracesResponse, error) {
+	return requestPostContext[ListTracesResponse](context.Background(), c, "/api/v0/traces", params)
+}
+
+// ListTracesContext is like [ListTraces].
+func (c *Client) ListTracesContext(ctx context.Context, params *ListTracesParam) (*ListTracesResponse, error) {
+	return requestPostContext[ListTracesResponse](ctx, c, "/api/v0/traces", params)
+}
+
 // TraceResponse represents the response structure from the traces API
 type TraceResponse struct {
 	Spans []*Span `json:"spans"`
