@@ -73,6 +73,74 @@ func TestListTraces(t *testing.T) {
 	}
 }
 
+func TestListTracesSeq(t *testing.T) {
+	pages := []*ListTracesResponse{
+		{
+			Results: []*ListTracesResult{
+				{
+					TraceID:              "550e8400e29b41d4a716446655440000",
+					ServiceName:          "shoppingcart",
+					Title:                "GET /api/users",
+					TraceStartAt:         1718802000,
+					TraceLatencyMillis:   1234,
+					ServiceStartAt:       1718802100,
+					ServiceLatencyMillis: 567,
+				},
+			},
+			HasNextPage: true,
+		},
+		{
+			Results: []*ListTracesResult{
+				{
+					TraceID:              "550e8400e29b41d4a716446655440000",
+					ServiceName:          "authserver",
+					Title:                "GET /api/users",
+					TraceStartAt:         1718802010,
+					TraceLatencyMillis:   1234,
+					ServiceStartAt:       1718802120,
+					ServiceLatencyMillis: 567,
+				},
+			},
+			HasNextPage: false,
+		},
+	}
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		var r ListTracesParam
+		if err := json.NewDecoder(req.Body).Decode(&r); err != nil {
+			t.Fatal(err)
+		}
+		page := 1
+		if r.Page != nil {
+			page = *r.Page
+		}
+		respJSON, _ := json.Marshal(pages[page-1])
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(respJSON) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	traces := client.ListTracesSeq(t.Context(), &ListTracesParam{
+		ServiceName: "shoppingcart",
+		From:        1718801900,
+		To:          1718802200,
+	})
+	var got []*ListTracesResult
+	for r, err := range traces {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, r)
+	}
+	var want []*ListTracesResult
+	for _, p := range pages {
+		want = append(want, p.Results...)
+	}
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("the response should equal to %v", want)
+	}
+}
+
 func TestGetTrace(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/traces/0123456789abcdef0123456789abcdef" {
