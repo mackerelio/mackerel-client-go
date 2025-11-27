@@ -166,6 +166,10 @@ func requestPut[T any](client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](context.TODO(), client, http.MethodPut, path, payload)
 }
 
+func requestPutWithContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
+	return requestJSON[T](ctx, client, http.MethodPut, path, payload)
+}
+
 // TODO: requestDelete without context will be deleted.
 func requestDelete[T any](client *Client, path string) (*T, error) {
 	return requestNoBody[T](context.TODO(), client, http.MethodDelete, path, nil)

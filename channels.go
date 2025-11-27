@@ -1,6 +1,9 @@
 package mackerel
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // Channel represents a Mackerel notification channel.
 // ref. https://mackerel.io/api-docs/entry/channels
@@ -51,6 +54,20 @@ func (c *Client) FindChannels() ([]*Channel, error) {
 // CreateChannel creates a channel.
 func (c *Client) CreateChannel(param *Channel) (*Channel, error) {
 	return requestPost[Channel](c, "/api/v0/channels", param)
+}
+
+// UpdateChannel updates a specific channel
+func (c *Client) UpdateChannel(channelId string, param *Channel) (*Channel, error) {
+	return c.UpdateChannelContext(context.TODO(), channelId, param)
+}
+
+// UpdateChannelContext is like [UpdateChannel]
+func (c *Client) UpdateChannelContext(ctx context.Context, channelID string, param *Channel) (*Channel, error) {
+	data, err := requestPutWithContext[Channel](ctx, c, fmt.Sprintf("/api/v0/channels/%s", channelID), param)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 // DeleteChannel deletes a channel.

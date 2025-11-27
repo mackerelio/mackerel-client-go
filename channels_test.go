@@ -265,6 +265,72 @@ func TestCreateChannel(t *testing.T) {
 	}
 }
 
+func TestUpdateChannel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/channels/9rxGOHfVF8F" {
+			t.Error("request URL should be /api/v0/channels/9rxGOHfVF8F but: ", req.URL.Path)
+		}
+
+		if req.Method != "PUT" {
+			t.Error("request method should be PUT but: ", req.Method)
+		}
+
+		respJSON, _ := json.Marshal(map[string]any{
+			"id":   "abcdefabc",
+			"name": "slack channel",
+			"type": "slack",
+			"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
+			"mentions": map[string]any{
+				"ok":      "ok message",
+				"warning": "warning message",
+			},
+			"enabledGraphImage": true,
+			"events":            []string{"alert"},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON)) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	channel, err := client.UpdateChannel("9rxGOHfVF8F", &Channel{
+		Name: "slack channel",
+		Type: "slack",
+		URL:  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
+		Mentions: Mentions{
+			OK:      "ok message",
+			Warning: "warning message",
+		},
+		EnabledGraphImage: boolPointer(true),
+		Events:            &[]string{"alert"},
+	})
+
+	if err != nil {
+		t.Error("err should be nil but: ", err)
+	}
+
+	if channel.ID != "abcdefabc" {
+		t.Error("request sends json including ID but: ", channel.ID)
+	}
+	if channel.Name != "slack channel" {
+		t.Error("request sends json including name but: ", channel.Name)
+	}
+	if channel.URL != "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX" {
+		t.Error("request sends json including URL but: ", channel.URL)
+	}
+	if reflect.DeepEqual(channel.Mentions, Mentions{OK: "ok message", Warning: "warning message"}) != true {
+		t.Errorf("Wrong data for mentions: %v", channel.Mentions)
+	}
+	if !*channel.EnabledGraphImage {
+		t.Error("request sends json including enabledGraphImage but: ", *channel.EnabledGraphImage)
+	}
+	if reflect.DeepEqual(*(channel.Events), []string{"alert"}) != true {
+		t.Errorf("Wrong data for events: %v", *(channel.Events))
+	}
+}
+
 func TestDeleteChannel(t *testing.T) {
 	channelID := "abcdefabc"
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
