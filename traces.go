@@ -3,6 +3,7 @@ package mackerel
 import (
 	"context"
 	"fmt"
+	"iter"
 	"time"
 )
 
@@ -97,6 +98,51 @@ func (c *Client) ListTraces(params *ListTracesParam) (*ListTracesResponse, error
 // ListTracesContext is like [ListTraces].
 func (c *Client) ListTracesContext(ctx context.Context, params *ListTracesParam) (*ListTracesResponse, error) {
 	return requestPostContext[ListTracesResponse](ctx, c, "/api/v0/traces", params)
+}
+
+// ListTracesSeq returns an iterator over traces that are selecting by params.
+// When it reaches the end of the traces in a request, it automatically fetches
+// subsequent pages from the API using the same params except [ListTracesParams.Page],
+// then the iterator continues its results.
+// Errors returned from the API are reported to the consumer via the second parameter of the iterator.
+//
+// If an error occurs, the iterator will retry the request with the exact same params
+// on subsequent calls until a successful response is received.
+// Note that the iterator does not include a delay between retries.
+// Therefore, the consumer should wait for sufficient period before each retry.
+func (c *Client) ListTracesSeq(ctx context.Context, params *ListTracesParam) iter.Seq2[*ListTracesResult, error] {
+	return func(yield func(*ListTracesResult, error) bool) {
+		page := 1
+		if params.Page != nil {
+			page = *params.Page
+		}
+		n := 20
+		if params.PerPage != nil {
+			n = *params.PerPage
+		}
+		params := *params
+		params.Page = &page
+		params.PerPage = &n
+		for {
+			res, err := c.ListTracesContext(ctx, &params)
+			if err != nil {
+				if !yield(nil, err) {
+					return
+				}
+				continue
+			}
+			for _, r := range res.Results {
+				if !yield(r, nil) {
+					return
+				}
+			}
+			if !res.HasNextPage {
+				break
+			}
+			nextPage := *params.Page + 1
+			params.Page = &nextPage
+		}
+	}
 }
 
 // TraceResponse represents the response structure from the traces API
