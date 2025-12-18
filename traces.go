@@ -8,23 +8,31 @@ import (
 )
 
 type ListTracesParam struct {
-	ServiceName        string                 `json:"serviceName"`
-	ServiceNamespace   *string                `json:"serviceNamespace,omitzero"`
-	From               int64                  `json:"from"`
-	To                 int64                  `json:"to"`
-	Environment        *string                `json:"environment,omitzero"`
-	TraceID            *string                `json:"traceId,omitzero"`
-	SpanName           *string                `json:"spanName,omitzero"`
-	Version            *string                `json:"version,omitzero"`
-	IssueFingerprint   *string                `json:"issueFingerprint,omitzero"`
-	MinLatencyMillis   *int64                 `json:"minLatencyMillis,omitzero"`
-	MaxLatencyMillis   *int64                 `json:"maxLatencyMillis,omitzero"`
-	Attributes         []TraceAttributeFilter `json:"attributes,omitzero"`
-	ResourceAttributes []TraceAttributeFilter `json:"resourceAttributes,omitzero"`
-	Page               *int                   `json:"page,omitzero"`
-	PerPage            *int                   `json:"perPage,omitzero"`
-	Order              TraceOrder             `json:"order,omitzero"`
+	ServiceName        string                     `json:"serviceName"`
+	ServiceNamespace   *string                    `json:"serviceNamespace,omitzero"`
+	From               int64                      `json:"from"`
+	To                 int64                      `json:"to"`
+	Environment        *string                    `json:"environment,omitzero"`
+	TraceID            *string                    `json:"traceId,omitzero"`
+	SpanName           *string                    `json:"spanName,omitzero"`
+	Version            *string                    `json:"version,omitzero"`
+	IssueFingerprint   *string                    `json:"issueFingerprint,omitzero"`
+	StatusCode         *ListTracesParamStatusCode `json:"statusCode,omitzero"`
+	MinLatencyMillis   *int64                     `json:"minLatencyMillis,omitzero"`
+	MaxLatencyMillis   *int64                     `json:"maxLatencyMillis,omitzero"`
+	Attributes         []TraceAttributeFilter     `json:"attributes,omitzero"`
+	ResourceAttributes []TraceAttributeFilter     `json:"resourceAttributes,omitzero"`
+	Page               *int                       `json:"page,omitzero"`
+	PerPage            *int                       `json:"perPage,omitzero"`
+	Order              TraceOrder                 `json:"order,omitzero"`
 }
+
+type ListTracesParamStatusCode string
+
+const (
+	ListTracesParamStatusCodeOk    ListTracesParamStatusCode = "OK"
+	ListTracesParamStatusCodeError ListTracesParamStatusCode = "ERROR"
+)
 
 type TraceAttributeFilter struct {
 	Key      string                  `json:"key"`
