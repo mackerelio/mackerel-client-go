@@ -141,10 +141,6 @@ func requestGetContext[T any](ctx context.Context, client *Client, path string) 
 	return requestNoBody[T](ctx, client, http.MethodGet, path, nil)
 }
 
-func requestGetWithParams[T any](client *Client, path string, params url.Values) (*T, error) {
-	return requestNoBody[T](context.TODO(), client, http.MethodGet, path, params)
-}
-
 func requestGetWithParamsContext[T any](ctx context.Context, client *Client, path string, params url.Values) (*T, error) {
 	return requestNoBody[T](ctx, client, http.MethodGet, path, params)
 }
