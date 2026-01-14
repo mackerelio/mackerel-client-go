@@ -20,9 +20,14 @@ type User struct {
 
 // FindUsers finds users.
 func (c *Client) FindUsers() ([]*User, error) {
-	data, err := requestGet[struct {
+	return c.FindUsersContext(context.Background())
+}
+
+// FindUsersContext finds users.
+func (c *Client) FindUsersContext(ctx context.Context) ([]*User, error) {
+	data, err := requestGetContext[struct {
 		Users []*User `json:"users"`
-	}](c, "/api/v0/users")
+	}](ctx, c, "/api/v0/users")
 	if err != nil {
 		return nil, err
 	}

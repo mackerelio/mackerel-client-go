@@ -226,14 +226,14 @@ func requestInternal[T any](ctx context.Context, client *Client, method, path st
 	return &data, resp.Header, nil
 }
 
-func (c *Client) compatRequestJSON(method string, path string, payload interface{}) (*http.Response, error) {
+func (c *Client) compatRequestJSON(ctx context.Context, method string, path string, payload interface{}) (*http.Response, error) {
 	var body bytes.Buffer
 	err := json.NewEncoder(&body).Encode(payload)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, c.urlFor(path, url.Values{}).String(), &body)
+	req, err := http.NewRequestWithContext(ctx, method, c.urlFor(path, url.Values{}).String(), &body)
 	if err != nil {
 		return nil, err
 	}
@@ -248,10 +248,20 @@ func ToPtr[T any](v T) *T {
 
 // Deprecated: use other prefered method.
 func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
-	return c.compatRequestJSON(http.MethodPost, path, payload)
+	return c.compatRequestJSON(context.Background(), http.MethodPost, path, payload)
+}
+
+// Deprecated: use other prefered method.
+func (c *Client) PostJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
+	return c.compatRequestJSON(ctx, http.MethodPost, path, payload)
 }
 
 // Deprecated: use other prefered method.
 func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
-	return c.compatRequestJSON(http.MethodPut, path, payload)
+	return c.compatRequestJSON(context.Background(), http.MethodPut, path, payload)
+}
+
+// Deprecated: use other prefered method.
+func (c *Client) PutJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
+	return c.compatRequestJSON(ctx, http.MethodPut, path, payload)
 }

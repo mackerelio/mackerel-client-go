@@ -20,9 +20,14 @@ type CreateServiceParam struct {
 
 // FindServices finds services.
 func (c *Client) FindServices() ([]*Service, error) {
-	data, err := requestGet[struct {
+	return c.FindServicesContext(context.Background())
+}
+
+// FindServicesContext finds services.
+func (c *Client) FindServicesContext(ctx context.Context) ([]*Service, error) {
+	data, err := requestGetContext[struct {
 		Services []*Service `json:"services"`
-	}](c, "/api/v0/services")
+	}](ctx, c, "/api/v0/services")
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +36,12 @@ func (c *Client) FindServices() ([]*Service, error) {
 
 // CreateService creates a service.
 func (c *Client) CreateService(param *CreateServiceParam) (*Service, error) {
-	return requestPost[Service](c, "/api/v0/services", param)
+	return c.CreateServiceContext(context.Background(), param)
+}
+
+// CreateServiceContext creates a service.
+func (c *Client) CreateServiceContext(ctx context.Context, param *CreateServiceParam) (*Service, error) {
+	return requestPostContext[Service](ctx, c, "/api/v0/services", param)
 }
 
 // DeleteService deletes a service.
@@ -48,9 +58,14 @@ func (c *Client) DeleteServiceContext(ctx context.Context, serviceName string) (
 
 // ListServiceMetricNames lists metric names of a service.
 func (c *Client) ListServiceMetricNames(serviceName string) ([]string, error) {
-	data, err := requestGet[struct {
+	return c.ListServiceMetricNamesContext(context.Background(), serviceName)
+}
+
+// ListServiceMetricNamesContext lists metric names of a service.
+func (c *Client) ListServiceMetricNamesContext(ctx context.Context, serviceName string) ([]string, error) {
+	data, err := requestGetContext[struct {
 		Names []string `json:"names"`
-	}](c, fmt.Sprintf("/api/v0/services/%s/metric-names", serviceName))
+	}](ctx, c, fmt.Sprintf("/api/v0/services/%s/metric-names", serviceName))
 	if err != nil {
 		return nil, err
 	}
