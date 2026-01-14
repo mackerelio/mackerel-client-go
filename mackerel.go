@@ -132,11 +132,6 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	return resp, nil
 }
 
-// TODO: requestGet without context will be deleted.
-func requestGet[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](context.TODO(), client, http.MethodGet, path, nil)
-}
-
 func requestGetContext[T any](ctx context.Context, client *Client, path string) (*T, error) {
 	return requestNoBody[T](ctx, client, http.MethodGet, path, nil)
 }
@@ -145,34 +140,16 @@ func requestGetWithParamsContext[T any](ctx context.Context, client *Client, pat
 	return requestNoBody[T](ctx, client, http.MethodGet, path, params)
 }
 
-func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Header, error) {
-	return requestInternal[T](context.TODO(), client, http.MethodGet, path, nil, nil)
-}
-
 func requestGetAndReturnHeaderContext[T any](ctx context.Context, client *Client, path string) (*T, http.Header, error) {
 	return requestInternal[T](ctx, client, http.MethodGet, path, nil, nil)
-}
-
-// TODO: requestPost without context will be deleted.
-func requestPost[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](context.TODO(), client, http.MethodPost, path, payload)
 }
 
 func requestPostContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](ctx, client, http.MethodPost, path, payload)
 }
 
-func requestPut[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](context.TODO(), client, http.MethodPut, path, payload)
-}
-
 func requestPutWithContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](ctx, client, http.MethodPut, path, payload)
-}
-
-// TODO: requestDelete without context will be deleted.
-func requestDelete[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](context.TODO(), client, http.MethodDelete, path, nil)
 }
 
 func requestDeleteContext[T any](ctx context.Context, client *Client, path string) (*T, error) {
