@@ -1,5 +1,7 @@
 package mackerel
 
+import "context"
+
 // CheckStatus represents check monitoring status
 type CheckStatus string
 
@@ -63,6 +65,11 @@ type CheckReports struct {
 
 // PostCheckReports reports check monitoring results.
 func (c *Client) PostCheckReports(checkReports *CheckReports) error {
-	_, err := requestPost[any](c, "/api/v0/monitoring/checks/report", checkReports)
+	return c.PostCheckReportsContext(context.Background(), checkReports)
+}
+
+// PostCheckReportsContext reports check monitoring results.
+func (c *Client) PostCheckReportsContext(ctx context.Context, checkReports *CheckReports) error {
+	_, err := requestPostContext[any](ctx, c, "/api/v0/monitoring/checks/report", checkReports)
 	return err
 }
