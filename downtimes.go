@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -129,9 +130,14 @@ func (w DowntimeWeekday) String() string {
 
 // FindDowntimes finds downtimes.
 func (c *Client) FindDowntimes() ([]*Downtime, error) {
-	data, err := requestGet[struct {
+	return c.FindDowntimesContext(context.Background())
+}
+
+// FindDowntimesContext finds downtimes.
+func (c *Client) FindDowntimesContext(ctx context.Context) ([]*Downtime, error) {
+	data, err := requestGetContext[struct {
 		Downtimes []*Downtime `json:"downtimes"`
-	}](c, "/api/v0/downtimes")
+	}](ctx, c, "/api/v0/downtimes")
 	if err != nil {
 		return nil, err
 	}
@@ -140,17 +146,32 @@ func (c *Client) FindDowntimes() ([]*Downtime, error) {
 
 // CreateDowntime creates a downtime.
 func (c *Client) CreateDowntime(param *Downtime) (*Downtime, error) {
-	return requestPost[Downtime](c, "/api/v0/downtimes", param)
+	return c.CreateDowntimeContext(context.Background(), param)
+}
+
+// CreateDowntimeContext creates a downtime.
+func (c *Client) CreateDowntimeContext(ctx context.Context, param *Downtime) (*Downtime, error) {
+	return requestPostContext[Downtime](ctx, c, "/api/v0/downtimes", param)
 }
 
 // UpdateDowntime updates a downtime.
 func (c *Client) UpdateDowntime(downtimeID string, param *Downtime) (*Downtime, error) {
+	return c.UpdateDowntimeContext(context.Background(), downtimeID, param)
+}
+
+// UpdateDowntimeContext updates a downtime.
+func (c *Client) UpdateDowntimeContext(ctx context.Context, downtimeID string, param *Downtime) (*Downtime, error) {
 	path := fmt.Sprintf("/api/v0/downtimes/%s", downtimeID)
-	return requestPut[Downtime](c, path, param)
+	return requestPutWithContext[Downtime](ctx, c, path, param)
 }
 
 // DeleteDowntime deletes a downtime.
 func (c *Client) DeleteDowntime(downtimeID string) (*Downtime, error) {
+	return c.DeleteDowntimeContext(context.Background(), downtimeID)
+}
+
+// DeleteDowntimeContext deletes a downtime.
+func (c *Client) DeleteDowntimeContext(ctx context.Context, downtimeID string) (*Downtime, error) {
 	path := fmt.Sprintf("/api/v0/downtimes/%s", downtimeID)
-	return requestDelete[Downtime](c, path)
+	return requestDeleteContext[Downtime](ctx, c, path)
 }

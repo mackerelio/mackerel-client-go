@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -19,8 +20,13 @@ type HostMetaData interface{}
 
 // GetHostMetaData gets a host metadata.
 func (c *Client) GetHostMetaData(hostID, namespace string) (*HostMetaDataResp, error) {
+	return c.GetHostMetaDataContext(context.Background(), hostID, namespace)
+}
+
+// GetHostMetaDataContext gets a host metadata.
+func (c *Client) GetHostMetaDataContext(ctx context.Context, hostID, namespace string) (*HostMetaDataResp, error) {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
-	metadata, header, err := requestGetAndReturnHeader[HostMetaData](c, path)
+	metadata, header, err := requestGetAndReturnHeaderContext[HostMetaData](ctx, c, path)
 	if err != nil {
 		return nil, err
 	}
@@ -33,11 +39,16 @@ func (c *Client) GetHostMetaData(hostID, namespace string) (*HostMetaDataResp, e
 
 // GetHostMetaDataNameSpaces fetches namespaces of host metadata.
 func (c *Client) GetHostMetaDataNameSpaces(hostID string) ([]string, error) {
-	data, err := requestGet[struct {
+	return c.GetHostMetaDataNameSpacesContext(context.Background(), hostID)
+}
+
+// GetHostMetaDataNameSpacesContext fetches namespaces of host metadata.
+func (c *Client) GetHostMetaDataNameSpacesContext(ctx context.Context, hostID string) ([]string, error) {
+	data, err := requestGetContext[struct {
 		MetaDatas []struct {
 			NameSpace string `json:"namespace"`
 		} `json:"metadata"`
-	}](c, fmt.Sprintf("/api/v0/hosts/%s/metadata", hostID))
+	}](ctx, c, fmt.Sprintf("/api/v0/hosts/%s/metadata", hostID))
 	if err != nil {
 		return nil, err
 	}
@@ -50,14 +61,24 @@ func (c *Client) GetHostMetaDataNameSpaces(hostID string) ([]string, error) {
 
 // PutHostMetaData puts a host metadata.
 func (c *Client) PutHostMetaData(hostID, namespace string, metadata HostMetaData) error {
+	return c.PutHostMetaDataContext(context.Background(), hostID, namespace, metadata)
+}
+
+// PutHostMetaDataContext puts a host metadata.
+func (c *Client) PutHostMetaDataContext(ctx context.Context, hostID, namespace string, metadata HostMetaData) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
-	_, err := requestPut[any](c, path, metadata)
+	_, err := requestPutWithContext[any](ctx, c, path, metadata)
 	return err
 }
 
 // DeleteHostMetaData deletes a host metadata.
 func (c *Client) DeleteHostMetaData(hostID, namespace string) error {
+	return c.DeleteHostMetaDataContext(context.Background(), hostID, namespace)
+}
+
+// DeleteHostMetaDataContext deletes a host metadata.
+func (c *Client) DeleteHostMetaDataContext(ctx context.Context, hostID, namespace string) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
-	_, err := requestDelete[any](c, path)
+	_, err := requestDeleteContext[any](ctx, c, path)
 	return err
 }

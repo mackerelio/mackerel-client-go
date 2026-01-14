@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
@@ -166,9 +167,14 @@ func (h *Host) IPAddresses() map[string]string {
 
 // FindHost finds the host.
 func (c *Client) FindHost(hostID string) (*Host, error) {
-	data, err := requestGet[struct {
+	return c.FindHostContext(context.Background(), hostID)
+}
+
+// FindHostContext finds the host.
+func (c *Client) FindHostContext(ctx context.Context, hostID string) (*Host, error) {
+	data, err := requestGetContext[struct {
 		Host *Host `json:"host"`
-	}](c, fmt.Sprintf("/api/v0/hosts/%s", hostID))
+	}](ctx, c, fmt.Sprintf("/api/v0/hosts/%s", hostID))
 	if err != nil {
 		return nil, err
 	}
@@ -177,6 +183,11 @@ func (c *Client) FindHost(hostID string) (*Host, error) {
 
 // FindHosts finds hosts.
 func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
+	return c.FindHostsContext(context.Background(), param)
+}
+
+// FindHostsContext finds hosts.
+func (c *Client) FindHostsContext(ctx context.Context, param *FindHostsParam) ([]*Host, error) {
 	params := url.Values{}
 	if param.Service != "" {
 		params.Set("service", param.Service)
@@ -194,9 +205,9 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 		params.Set("customIdentifier", param.CustomIdentifier)
 	}
 
-	data, err := requestGetWithParams[struct {
+	data, err := requestGetWithParamsContext[struct {
 		Hosts []*Host `json:"hosts"`
-	}](c, "/api/v0/hosts", params)
+	}](ctx, c, "/api/v0/hosts", params)
 	if err != nil {
 		return nil, err
 	}
@@ -205,14 +216,19 @@ func (c *Client) FindHosts(param *FindHostsParam) ([]*Host, error) {
 
 // FindHostByCustomIdentifier finds a host by the custom identifier.
 func (c *Client) FindHostByCustomIdentifier(customIdentifier string, param *FindHostByCustomIdentifierParam) (*Host, error) {
+	return c.FindHostByCustomIdentifierContext(context.Background(), customIdentifier, param)
+}
+
+// FindHostByCustomIdentifierContext finds a host by the custom identifier.
+func (c *Client) FindHostByCustomIdentifierContext(ctx context.Context, customIdentifier string, param *FindHostByCustomIdentifierParam) (*Host, error) {
 	path := "/api/v0/hosts-by-custom-identifier/" + url.PathEscape(customIdentifier)
 	params := url.Values{}
 	if param.CaseInsensitive {
 		params.Set("caseInsensitive", "true")
 	}
-	data, err := requestGetWithParams[struct {
+	data, err := requestGetWithParamsContext[struct {
 		Host *Host `json:"host"`
-	}](c, path, params)
+	}](ctx, c, path, params)
 	if err != nil {
 		return nil, err
 	}
@@ -221,9 +237,14 @@ func (c *Client) FindHostByCustomIdentifier(customIdentifier string, param *Find
 
 // CreateHost creates a host.
 func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
-	data, err := requestPost[struct {
+	return c.CreateHostContext(context.Background(), param)
+}
+
+// CreateHostContext creates a host.
+func (c *Client) CreateHostContext(ctx context.Context, param *CreateHostParam) (string, error) {
+	data, err := requestPostContext[struct {
 		ID string `json:"id"`
-	}](c, "/api/v0/hosts", param)
+	}](ctx, c, "/api/v0/hosts", param)
 	if err != nil {
 		return "", err
 	}
@@ -232,10 +253,15 @@ func (c *Client) CreateHost(param *CreateHostParam) (string, error) {
 
 // UpdateHost updates a host.
 func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, error) {
+	return c.UpdateHostContext(context.Background(), hostID, param)
+}
+
+// UpdateHostContext updates a host.
+func (c *Client) UpdateHostContext(ctx context.Context, hostID string, param *UpdateHostParam) (string, error) {
 	path := fmt.Sprintf("/api/v0/hosts/%s", hostID)
-	data, err := requestPut[struct {
+	data, err := requestPutWithContext[struct {
 		ID string `json:"id"`
-	}](c, path, param)
+	}](ctx, c, path, param)
 	if err != nil {
 		return "", err
 	}
@@ -244,43 +270,73 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 
 // UpdateHostStatus updates a host status.
 func (c *Client) UpdateHostStatus(hostID string, status string) error {
+	return c.UpdateHostStatusContext(context.Background(), hostID, status)
+}
+
+// UpdateHostStatusContext updates a host status.
+func (c *Client) UpdateHostStatusContext(ctx context.Context, hostID string, status string) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/status", hostID)
-	_, err := requestPost[any](c, path, map[string]string{"status": status})
+	_, err := requestPostContext[any](ctx, c, path, map[string]string{"status": status})
 	return err
 }
 
 // BulkUpdateHostStatuses updates status of the hosts.
 func (c *Client) BulkUpdateHostStatuses(ids []string, status string) error {
-	_, err := requestPost[any](c, "/api/v0/hosts/bulk-update-statuses",
+	return c.BulkUpdateHostStatusesContext(context.Background(), ids, status)
+}
+
+// BulkUpdateHostStatusesContext updates status of the hosts.
+func (c *Client) BulkUpdateHostStatusesContext(ctx context.Context, ids []string, status string) error {
+	_, err := requestPostContext[any](ctx, c, "/api/v0/hosts/bulk-update-statuses",
 		map[string]any{"ids": ids, "status": status})
 	return err
 }
 
 // UpdateHostRoleFullnames updates host roles.
 func (c *Client) UpdateHostRoleFullnames(hostID string, roleFullnames []string) error {
+	return c.UpdateHostRoleFullnamesContext(context.Background(), hostID, roleFullnames)
+}
+
+// UpdateHostRoleFullnamesContext updates host roles.
+func (c *Client) UpdateHostRoleFullnamesContext(ctx context.Context, hostID string, roleFullnames []string) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/role-fullnames", hostID)
-	_, err := requestPut[any](c, path, map[string][]string{"roleFullnames": roleFullnames})
+	_, err := requestPutWithContext[any](ctx, c, path, map[string][]string{"roleFullnames": roleFullnames})
 	return err
 }
 
 // RetireHost retires the host.
 func (c *Client) RetireHost(hostID string) error {
+	return c.RetireHostContext(context.Background(), hostID)
+}
+
+// RetireHostContext retires the host.
+func (c *Client) RetireHostContext(ctx context.Context, hostID string) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/retire", hostID)
-	_, err := requestPost[any](c, path, nil)
+	_, err := requestPostContext[any](ctx, c, path, nil)
 	return err
 }
 
 // BulkRetireHosts retires the hosts.
 func (c *Client) BulkRetireHosts(ids []string) error {
-	_, err := requestPost[any](c, "/api/v0/hosts/bulk-retire", map[string][]string{"ids": ids})
+	return c.BulkRetireHostsContext(context.Background(), ids)
+}
+
+// BulkRetireHostsContext retires the hosts.
+func (c *Client) BulkRetireHostsContext(ctx context.Context, ids []string) error {
+	_, err := requestPostContext[any](ctx, c, "/api/v0/hosts/bulk-retire", map[string][]string{"ids": ids})
 	return err
 }
 
 // ListHostMetricNames lists metric names of a host.
 func (c *Client) ListHostMetricNames(hostID string) ([]string, error) {
-	data, err := requestGet[struct {
+	return c.ListHostMetricNamesContext(context.Background(), hostID)
+}
+
+// ListHostMetricNamesContext lists metric names of a host.
+func (c *Client) ListHostMetricNamesContext(ctx context.Context, hostID string) ([]string, error) {
+	data, err := requestGetContext[struct {
 		Names []string `json:"names"`
-	}](c, fmt.Sprintf("/api/v0/hosts/%s/metric-names", hostID))
+	}](ctx, c, fmt.Sprintf("/api/v0/hosts/%s/metric-names", hostID))
 	if err != nil {
 		return nil, err
 	}
@@ -289,9 +345,14 @@ func (c *Client) ListHostMetricNames(hostID string) ([]string, error) {
 
 // ListMonitoredStatues lists monitored statues of a host.
 func (c *Client) ListMonitoredStatues(hostID string) ([]MonitoredStatus, error) {
-	data, err := requestGet[struct {
+	return c.ListMonitoredStatuesContext(context.Background(), hostID)
+}
+
+// ListMonitoredStatuesContext lists monitored statues of a host.
+func (c *Client) ListMonitoredStatuesContext(ctx context.Context, hostID string) ([]MonitoredStatus, error) {
+	data, err := requestGetContext[struct {
 		MonitoredStatuses []MonitoredStatus `json:"monitoredStatuses"`
-	}](c, fmt.Sprintf("/api/v0/hosts/%s/monitored-statuses", hostID))
+	}](ctx, c, fmt.Sprintf("/api/v0/hosts/%s/monitored-statuses", hostID))
 	if err != nil {
 		return nil, err
 	}

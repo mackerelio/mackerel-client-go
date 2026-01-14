@@ -153,6 +153,10 @@ func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Hea
 	return requestInternal[T](context.TODO(), client, http.MethodGet, path, nil, nil)
 }
 
+func requestGetAndReturnHeaderContext[T any](ctx context.Context, client *Client, path string) (*T, http.Header, error) {
+	return requestInternal[T](ctx, client, http.MethodGet, path, nil, nil)
+}
+
 // TODO: requestPost without context will be deleted.
 func requestPost[T any](client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](context.TODO(), client, http.MethodPost, path, payload)

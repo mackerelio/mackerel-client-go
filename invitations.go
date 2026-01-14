@@ -1,5 +1,7 @@
 package mackerel
 
+import "context"
+
 // Invitation information
 type Invitation struct {
 	Email     string `json:"email,omitempty"`
@@ -9,9 +11,14 @@ type Invitation struct {
 
 // FindInvitations finds invitations.
 func (c *Client) FindInvitations() ([]*Invitation, error) {
-	data, err := requestGet[struct {
+	return c.FindInvitationsContext(context.Background())
+}
+
+// FindInvitationsContext finds invitations.
+func (c *Client) FindInvitationsContext(ctx context.Context) ([]*Invitation, error) {
+	data, err := requestGetContext[struct {
 		Invitations []*Invitation `json:"invitations"`
-	}](c, "/api/v0/invitations")
+	}](ctx, c, "/api/v0/invitations")
 	if err != nil {
 		return nil, err
 	}
@@ -20,5 +27,10 @@ func (c *Client) FindInvitations() ([]*Invitation, error) {
 
 // CreateInvitation creates a invitation.
 func (c *Client) CreateInvitation(param *Invitation) (*Invitation, error) {
-	return requestPost[Invitation](c, "/api/v0/invitations", param)
+	return c.CreateInvitationContext(context.Background(), param)
+}
+
+// CreateInvitationContext creates a invitation.
+func (c *Client) CreateInvitationContext(ctx context.Context, param *Invitation) (*Invitation, error) {
+	return requestPostContext[Invitation](ctx, c, "/api/v0/invitations", param)
 }
