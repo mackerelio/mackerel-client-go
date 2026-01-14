@@ -148,7 +148,7 @@ func requestPostContext[T any](ctx context.Context, client *Client, path string,
 	return requestJSON[T](ctx, client, http.MethodPost, path, payload)
 }
 
-func requestPutWithContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
+func requestPutContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](ctx, client, http.MethodPut, path, payload)
 }
 

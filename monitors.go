@@ -415,7 +415,7 @@ func (c *Client) UpdateMonitor(monitorID string, param Monitor) (Monitor, error)
 // UpdateMonitorContext updates a monitor.
 func (c *Client) UpdateMonitorContext(ctx context.Context, monitorID string, param Monitor) (Monitor, error) {
 	path := fmt.Sprintf("/api/v0/monitors/%s", monitorID)
-	data, err := requestPutWithContext[json.RawMessage](ctx, c, path, param)
+	data, err := requestPutContext[json.RawMessage](ctx, c, path, param)
 	if err != nil {
 		return nil, err
 	}

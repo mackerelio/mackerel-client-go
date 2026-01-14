@@ -71,7 +71,7 @@ func (c *Client) UpdateNotificationGroup(id string, param *NotificationGroup) (*
 // UpdateNotificationGroupContext updates a notification group.
 func (c *Client) UpdateNotificationGroupContext(ctx context.Context, id string, param *NotificationGroup) (*NotificationGroup, error) {
 	path := fmt.Sprintf("/api/v0/notification-groups/%s", id)
-	return requestPutWithContext[NotificationGroup](ctx, c, path, param)
+	return requestPutContext[NotificationGroup](ctx, c, path, param)
 }
 
 // DeleteNotificationGroup deletes a notification group.

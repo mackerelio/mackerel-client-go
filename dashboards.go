@@ -290,7 +290,7 @@ func (c *Client) UpdateDashboard(dashboardID string, param *Dashboard) (*Dashboa
 // UpdateDashboardContext updates a dashboard.
 func (c *Client) UpdateDashboardContext(ctx context.Context, dashboardID string, param *Dashboard) (*Dashboard, error) {
 	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
-	return requestPutWithContext[Dashboard](ctx, c, path, param)
+	return requestPutContext[Dashboard](ctx, c, path, param)
 }
 
 // DeleteDashboard deletes a dashboard.

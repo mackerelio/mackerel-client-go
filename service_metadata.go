@@ -67,7 +67,7 @@ func (c *Client) PutServiceMetaData(serviceName, namespace string, metadata Serv
 // v puts a service metadata.
 func (c *Client) PutServiceMetaDataContext(ctx context.Context, serviceName, namespace string, metadata ServiceMetaData) error {
 	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
-	_, err := requestPutWithContext[any](ctx, c, path, metadata)
+	_, err := requestPutContext[any](ctx, c, path, metadata)
 	return err
 }
 

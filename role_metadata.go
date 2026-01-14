@@ -67,7 +67,7 @@ func (c *Client) PutRoleMetaData(serviceName, roleName, namespace string, metada
 // PutRoleMetaDataContext puts a role metadata.
 func (c *Client) PutRoleMetaDataContext(ctx context.Context, serviceName, roleName, namespace string, metadata RoleMetaData) error {
 	path := fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace)
-	_, err := requestPutWithContext[any](ctx, c, path, metadata)
+	_, err := requestPutContext[any](ctx, c, path, metadata)
 	return err
 }
 
