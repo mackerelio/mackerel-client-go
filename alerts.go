@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -89,53 +90,88 @@ type FindAlertLogsResp struct {
 	NextID    string      `json:"nextId,omitempty"`
 }
 
-func (c *Client) findAlertsWithParams(params url.Values) (*AlertsResp, error) {
-	return requestGetWithParams[AlertsResp](c, "/api/v0/alerts", params)
+func (c *Client) findAlertsWithParams(ctx context.Context, params url.Values) (*AlertsResp, error) {
+	return requestGetWithParamsContext[AlertsResp](ctx, c, "/api/v0/alerts", params)
 }
 
 // FindAlerts finds open alerts.
 func (c *Client) FindAlerts() (*AlertsResp, error) {
-	return c.findAlertsWithParams(nil)
+	return c.FindAlertsContext(context.Background())
+}
+
+// FindAlertsContext finds open alerts.
+func (c *Client) FindAlertsContext(ctx context.Context) (*AlertsResp, error) {
+	return c.findAlertsWithParams(ctx, nil)
 }
 
 // FindAlertsByNextID finds next open alerts by next id.
 func (c *Client) FindAlertsByNextID(nextID string) (*AlertsResp, error) {
+	return c.FindAlertsByNextIDContext(context.Background(), nextID)
+}
+
+// FindAlertsByNextIDContext finds next open alerts by next id.
+func (c *Client) FindAlertsByNextIDContext(ctx context.Context, nextID string) (*AlertsResp, error) {
 	params := url.Values{}
 	params.Set("nextId", nextID)
-	return c.findAlertsWithParams(params)
+	return c.findAlertsWithParams(ctx, params)
 }
 
 // FindWithClosedAlerts finds open and close alerts.
 func (c *Client) FindWithClosedAlerts() (*AlertsResp, error) {
+	return c.FindWithClosedAlertsContext(context.Background())
+}
+
+// FindWithClosedAlertsContext finds open and close alerts.
+func (c *Client) FindWithClosedAlertsContext(ctx context.Context) (*AlertsResp, error) {
 	params := url.Values{}
 	params.Set("withClosed", "true")
-	return c.findAlertsWithParams(params)
+	return c.findAlertsWithParams(ctx, params)
 }
 
 // FindWithClosedAlertsByNextID finds open and close alerts by next id.
 func (c *Client) FindWithClosedAlertsByNextID(nextID string) (*AlertsResp, error) {
+	return c.FindWithClosedAlertsByNextIDContext(context.Background(), nextID)
+}
+
+// FindWithClosedAlertsByNextIDContext finds open and close alerts by next id.
+func (c *Client) FindWithClosedAlertsByNextIDContext(ctx context.Context, nextID string) (*AlertsResp, error) {
 	params := url.Values{}
 	params.Set("nextId", nextID)
 	params.Set("withClosed", "true")
-	return c.findAlertsWithParams(params)
+	return c.findAlertsWithParams(ctx, params)
 }
 
 // GetAlert gets an alert.
 func (c *Client) GetAlert(alertID string) (*Alert, error) {
+	return c.GetAlertContext(context.Background(), alertID)
+}
+
+// GetAlertContext gets an alert.
+func (c *Client) GetAlertContext(ctx context.Context, alertID string) (*Alert, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s", alertID)
-	return requestGet[Alert](c, path)
+	return requestGetContext[Alert](ctx, c, path)
 }
 
 // CloseAlert closes an alert.
 func (c *Client) CloseAlert(alertID string, reason string) (*Alert, error) {
+	return c.CloseAlertContext(context.Background(), alertID, reason)
+}
+
+// CloseAlertContext closes an alert.
+func (c *Client) CloseAlertContext(ctx context.Context, alertID string, reason string) (*Alert, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s/close", alertID)
-	return requestPost[Alert](c, path, map[string]string{"reason": reason})
+	return requestPostContext[Alert](ctx, c, path, map[string]string{"reason": reason})
 }
 
 // UpdateAlert updates an alert.
 func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
+	return c.UpdateAlertContext(context.Background(), alertID, param)
+}
+
+// UpdateAlertContext updates an alert.
+func (c *Client) UpdateAlertContext(ctx context.Context, alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s", alertID)
-	return requestPut[UpdateAlertResponse](c, path, param)
+	return requestPutWithContext[UpdateAlertResponse](ctx, c, path, param)
 }
 
 func (p FindAlertLogsParam) toValues() url.Values {
@@ -151,9 +187,14 @@ func (p FindAlertLogsParam) toValues() url.Values {
 
 // FindAlertLogs gets alert logs.
 func (c *Client) FindAlertLogs(alertId string, params *FindAlertLogsParam) (*FindAlertLogsResp, error) {
+	return c.FindAlertLogsContext(context.Background(), alertId, params)
+}
+
+// FindAlertLogsContext gets alert logs.
+func (c *Client) FindAlertLogsContext(ctx context.Context, alertId string, params *FindAlertLogsParam) (*FindAlertLogsResp, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s/logs", alertId)
 	if params == nil {
-		return requestGet[FindAlertLogsResp](c, path)
+		return requestGetContext[FindAlertLogsResp](ctx, c, path)
 	}
-	return requestGetWithParams[FindAlertLogsResp](c, path, params.toValues())
+	return requestGetWithParamsContext[FindAlertLogsResp](ctx, c, path, params.toValues())
 }

@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -246,9 +247,14 @@ type Layout struct {
 
 // FindDashboards finds dashboards.
 func (c *Client) FindDashboards() ([]*Dashboard, error) {
-	data, err := requestGet[struct {
+	return c.FindDashboardsContext(context.Background())
+}
+
+// FindDashboardsContext finds dashboards.
+func (c *Client) FindDashboardsContext(ctx context.Context) ([]*Dashboard, error) {
+	data, err := requestGetContext[struct {
 		Dashboards []*Dashboard `json:"dashboards"`
-	}](c, "/api/v0/dashboards")
+	}](ctx, c, "/api/v0/dashboards")
 	if err != nil {
 		return nil, err
 	}
@@ -257,23 +263,43 @@ func (c *Client) FindDashboards() ([]*Dashboard, error) {
 
 // CreateDashboard creates a dashboard.
 func (c *Client) CreateDashboard(param *Dashboard) (*Dashboard, error) {
-	return requestPost[Dashboard](c, "/api/v0/dashboards", param)
+	return c.CreateDashboardContext(context.Background(), param)
+}
+
+// CreateDashboardContext creates a dashboard.
+func (c *Client) CreateDashboardContext(ctx context.Context, param *Dashboard) (*Dashboard, error) {
+	return requestPostContext[Dashboard](ctx, c, "/api/v0/dashboards", param)
 }
 
 // FindDashboard finds a dashboard.
 func (c *Client) FindDashboard(dashboardID string) (*Dashboard, error) {
+	return c.FindDashboardContext(context.Background(), dashboardID)
+}
+
+// FindDashboardContext finds a dashboard.
+func (c *Client) FindDashboardContext(ctx context.Context, dashboardID string) (*Dashboard, error) {
 	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
-	return requestGet[Dashboard](c, path)
+	return requestGetContext[Dashboard](ctx, c, path)
 }
 
 // UpdateDashboard updates a dashboard.
 func (c *Client) UpdateDashboard(dashboardID string, param *Dashboard) (*Dashboard, error) {
+	return c.UpdateDashboardContext(context.Background(), dashboardID, param)
+}
+
+// UpdateDashboardContext updates a dashboard.
+func (c *Client) UpdateDashboardContext(ctx context.Context, dashboardID string, param *Dashboard) (*Dashboard, error) {
 	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
-	return requestPut[Dashboard](c, path, param)
+	return requestPutWithContext[Dashboard](ctx, c, path, param)
 }
 
 // DeleteDashboard deletes a dashboard.
 func (c *Client) DeleteDashboard(dashboardID string) (*Dashboard, error) {
+	return c.DeleteDashboardContext(context.Background(), dashboardID)
+}
+
+// DeleteDashboardContext deletes a dashboard.
+func (c *Client) DeleteDashboardContext(ctx context.Context, dashboardID string) (*Dashboard, error) {
 	path := fmt.Sprintf("/api/v0/dashboards/%s", dashboardID)
-	return requestDelete[Dashboard](c, path)
+	return requestDeleteContext[Dashboard](ctx, c, path)
 }

@@ -42,9 +42,14 @@ type Mentions struct {
 
 // FindChannels finds channels.
 func (c *Client) FindChannels() ([]*Channel, error) {
-	data, err := requestGet[struct {
+	return c.FindChannelsContext(context.Background())
+}
+
+// FindChannelsContext finds channels.
+func (c *Client) FindChannelsContext(ctx context.Context) ([]*Channel, error) {
+	data, err := requestGetContext[struct {
 		Channels []*Channel `json:"channels"`
-	}](c, "/api/v0/channels")
+	}](ctx, c, "/api/v0/channels")
 	if err != nil {
 		return nil, err
 	}
@@ -53,12 +58,17 @@ func (c *Client) FindChannels() ([]*Channel, error) {
 
 // CreateChannel creates a channel.
 func (c *Client) CreateChannel(param *Channel) (*Channel, error) {
-	return requestPost[Channel](c, "/api/v0/channels", param)
+	return c.CreateChannelContext(context.Background(), param)
+}
+
+// CreateChannelContext creates a channel.
+func (c *Client) CreateChannelContext(ctx context.Context, param *Channel) (*Channel, error) {
+	return requestPostContext[Channel](ctx, c, "/api/v0/channels", param)
 }
 
 // UpdateChannel updates a specific channel
 func (c *Client) UpdateChannel(channelId string, param *Channel) (*Channel, error) {
-	return c.UpdateChannelContext(context.TODO(), channelId, param)
+	return c.UpdateChannelContext(context.Background(), channelId, param)
 }
 
 // UpdateChannelContext is like [UpdateChannel]
@@ -72,6 +82,11 @@ func (c *Client) UpdateChannelContext(ctx context.Context, channelID string, par
 
 // DeleteChannel deletes a channel.
 func (c *Client) DeleteChannel(channelID string) (*Channel, error) {
+	return c.DeleteChannelContext(context.Background(), channelID)
+}
+
+// DeleteChannelContext deletes a channel.
+func (c *Client) DeleteChannelContext(ctx context.Context, channelID string) (*Channel, error) {
 	path := fmt.Sprintf("/api/v0/channels/%s", channelID)
-	return requestDelete[Channel](c, path)
+	return requestDeleteContext[Channel](ctx, c, path)
 }
