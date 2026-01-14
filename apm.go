@@ -84,11 +84,11 @@ func (c *Client) ListHTTPServerStatsContext(ctx context.Context, param *ListHTTP
 
 // DbQueryStats represents database query statistics
 type DbQueryStats struct {
-	Query            string  `json:"query"`
-	ExecutionCount   int64   `json:"executionCount"`
-	TotalMillis      float64 `json:"totalMillis"`
-	AverageMillis    float64 `json:"averageMillis"`
-	ApproxP95Millis  float64 `json:"approxP95Millis"`
+	Query           string  `json:"query"`
+	ExecutionCount  int64   `json:"executionCount"`
+	TotalMillis     float64 `json:"totalMillis"`
+	AverageMillis   float64 `json:"averageMillis"`
+	ApproxP95Millis float64 `json:"approxP95Millis"`
 }
 
 // DbQueryStatsPageConnection represents a paginated response of database query statistics

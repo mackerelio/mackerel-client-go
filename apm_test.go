@@ -351,17 +351,17 @@ func TestListDbQueryStats(t *testing.T) {
 		respJSON, _ := json.Marshal(map[string]interface{}{
 			"results": []map[string]interface{}{
 				{
-					"query":          "SELECT * FROM users WHERE id = ?",
-					"executionCount": 1250,
-					"totalMillis":    11262.5,
-					"averageMillis":  9.01,
+					"query":           "SELECT * FROM users WHERE id = ?",
+					"executionCount":  1250,
+					"totalMillis":     11262.5,
+					"averageMillis":   9.01,
 					"approxP95Millis": 19.89,
 				},
 				{
-					"query":          "SELECT * FROM posts WHERE user_id = ?",
-					"executionCount": 3500,
-					"totalMillis":    28000.0,
-					"averageMillis":  8.0,
+					"query":           "SELECT * FROM posts WHERE user_id = ?",
+					"executionCount":  3500,
+					"totalMillis":     28000.0,
+					"averageMillis":   8.0,
 					"approxP95Millis": 15.5,
 				},
 			},
@@ -403,10 +403,10 @@ func TestListDbQueryStats(t *testing.T) {
 	}
 
 	expectedFirst := &DbQueryStats{
-		Query:          "SELECT * FROM users WHERE id = ?",
-		ExecutionCount: 1250,
-		TotalMillis:    11262.5,
-		AverageMillis:  9.01,
+		Query:           "SELECT * FROM users WHERE id = ?",
+		ExecutionCount:  1250,
+		TotalMillis:     11262.5,
+		AverageMillis:   9.01,
 		ApproxP95Millis: 19.89,
 	}
 
@@ -415,10 +415,10 @@ func TestListDbQueryStats(t *testing.T) {
 	}
 
 	expectedSecond := &DbQueryStats{
-		Query:          "SELECT * FROM posts WHERE user_id = ?",
-		ExecutionCount: 3500,
-		TotalMillis:    28000.0,
-		AverageMillis:  8.0,
+		Query:           "SELECT * FROM posts WHERE user_id = ?",
+		ExecutionCount:  3500,
+		TotalMillis:     28000.0,
+		AverageMillis:   8.0,
 		ApproxP95Millis: 15.5,
 	}
 
@@ -499,10 +499,10 @@ func TestListDbQueryStatsContext(t *testing.T) {
 		respJSON, _ := json.Marshal(map[string]interface{}{
 			"results": []map[string]interface{}{
 				{
-					"query":          "SELECT * FROM users WHERE id = ?",
-					"executionCount": 1250,
-					"totalMillis":    11262.5,
-					"averageMillis":  9.01,
+					"query":           "SELECT * FROM users WHERE id = ?",
+					"executionCount":  1250,
+					"totalMillis":     11262.5,
+					"averageMillis":   9.01,
 					"approxP95Millis": 19.89,
 				},
 			},
@@ -536,10 +536,10 @@ func TestListDbQueryStatsContext(t *testing.T) {
 	}
 
 	expected := &DbQueryStats{
-		Query:          "SELECT * FROM users WHERE id = ?",
-		ExecutionCount: 1250,
-		TotalMillis:    11262.5,
-		AverageMillis:  9.01,
+		Query:           "SELECT * FROM users WHERE id = ?",
+		ExecutionCount:  1250,
+		TotalMillis:     11262.5,
+		AverageMillis:   9.01,
 		ApproxP95Millis: 19.89,
 	}
 
