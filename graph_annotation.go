@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -19,14 +20,19 @@ type GraphAnnotation struct {
 
 // FindGraphAnnotations fetches graph annotations.
 func (c *Client) FindGraphAnnotations(service string, from int64, to int64) ([]*GraphAnnotation, error) {
+	return c.FindGraphAnnotationsContext(context.Background(), service, from, to)
+}
+
+// FindGraphAnnotationsContext fetches graph annotations.
+func (c *Client) FindGraphAnnotationsContext(ctx context.Context, service string, from int64, to int64) ([]*GraphAnnotation, error) {
 	params := url.Values{}
 	params.Add("service", service)
 	params.Add("from", strconv.FormatInt(from, 10))
 	params.Add("to", strconv.FormatInt(to, 10))
 
-	data, err := requestGetWithParams[struct {
+	data, err := requestGetWithParamsContext[struct {
 		GraphAnnotations []*GraphAnnotation `json:"graphAnnotations"`
-	}](c, "/api/v0/graph-annotations", params)
+	}](ctx, c, "/api/v0/graph-annotations", params)
 	if err != nil {
 		return nil, err
 	}
@@ -35,17 +41,32 @@ func (c *Client) FindGraphAnnotations(service string, from int64, to int64) ([]*
 
 // CreateGraphAnnotation creates a graph annotation.
 func (c *Client) CreateGraphAnnotation(annotation *GraphAnnotation) (*GraphAnnotation, error) {
-	return requestPost[GraphAnnotation](c, "/api/v0/graph-annotations", annotation)
+	return c.CreateGraphAnnotationContext(context.Background(), annotation)
+}
+
+// CreateGraphAnnotationContext creates a graph annotation.
+func (c *Client) CreateGraphAnnotationContext(ctx context.Context, annotation *GraphAnnotation) (*GraphAnnotation, error) {
+	return requestPostContext[GraphAnnotation](ctx, c, "/api/v0/graph-annotations", annotation)
 }
 
 // UpdateGraphAnnotation updates a graph annotation.
 func (c *Client) UpdateGraphAnnotation(annotationID string, annotation *GraphAnnotation) (*GraphAnnotation, error) {
+	return c.UpdateGraphAnnotationContext(context.Background(), annotationID, annotation)
+}
+
+// UpdateGraphAnnotationContext updates a graph annotation.
+func (c *Client) UpdateGraphAnnotationContext(ctx context.Context, annotationID string, annotation *GraphAnnotation) (*GraphAnnotation, error) {
 	path := fmt.Sprintf("/api/v0/graph-annotations/%s", annotationID)
-	return requestPut[GraphAnnotation](c, path, annotation)
+	return requestPutWithContext[GraphAnnotation](ctx, c, path, annotation)
 }
 
 // DeleteGraphAnnotation deletes a graph annotation.
 func (c *Client) DeleteGraphAnnotation(annotationID string) (*GraphAnnotation, error) {
+	return c.DeleteGraphAnnotationContext(context.Background(), annotationID)
+}
+
+// DeleteGraphAnnotationContext deletes a graph annotation.
+func (c *Client) DeleteGraphAnnotationContext(ctx context.Context, annotationID string) (*GraphAnnotation, error) {
 	path := fmt.Sprintf("/api/v0/graph-annotations/%s", annotationID)
-	return requestDelete[GraphAnnotation](c, path)
+	return requestDeleteContext[GraphAnnotation](ctx, c, path)
 }

@@ -1,6 +1,7 @@
 package mackerel
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -346,9 +347,14 @@ func (m *MonitorQuery) MonitorID() string { return m.ID }
 
 // FindMonitors finds monitors.
 func (c *Client) FindMonitors() ([]Monitor, error) {
-	data, err := requestGet[struct {
+	return c.FindMonitorsContext(context.Background())
+}
+
+// FindMonitorsContext finds monitors.
+func (c *Client) FindMonitorsContext(ctx context.Context) ([]Monitor, error) {
+	data, err := requestGetContext[struct {
 		Monitors []json.RawMessage `json:"monitors"`
-	}](c, "/api/v0/monitors")
+	}](ctx, c, "/api/v0/monitors")
 	if err != nil {
 		return nil, err
 	}
@@ -369,9 +375,14 @@ func (c *Client) FindMonitors() ([]Monitor, error) {
 
 // GetMonitor gets a monitor.
 func (c *Client) GetMonitor(monitorID string) (Monitor, error) {
-	data, err := requestGet[struct {
+	return c.GetMonitorContext(context.Background(), monitorID)
+}
+
+// GetMonitorContext gets a monitor.
+func (c *Client) GetMonitorContext(ctx context.Context, monitorID string) (Monitor, error) {
+	data, err := requestGetContext[struct {
 		Monitor json.RawMessage `json:"monitor"`
-	}](c, fmt.Sprintf("/api/v0/monitors/%s", monitorID))
+	}](ctx, c, fmt.Sprintf("/api/v0/monitors/%s", monitorID))
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +395,12 @@ func (c *Client) GetMonitor(monitorID string) (Monitor, error) {
 
 // CreateMonitor creates a monitor.
 func (c *Client) CreateMonitor(param Monitor) (Monitor, error) {
-	data, err := requestPost[json.RawMessage](c, "/api/v0/monitors", param)
+	return c.CreateMonitorContext(context.Background(), param)
+}
+
+// CreateMonitorContext creates a monitor.
+func (c *Client) CreateMonitorContext(ctx context.Context, param Monitor) (Monitor, error) {
+	data, err := requestPostContext[json.RawMessage](ctx, c, "/api/v0/monitors", param)
 	if err != nil {
 		return nil, err
 	}
@@ -393,8 +409,13 @@ func (c *Client) CreateMonitor(param Monitor) (Monitor, error) {
 
 // UpdateMonitor updates a monitor.
 func (c *Client) UpdateMonitor(monitorID string, param Monitor) (Monitor, error) {
+	return c.UpdateMonitorContext(context.Background(), monitorID, param)
+}
+
+// UpdateMonitorContext updates a monitor.
+func (c *Client) UpdateMonitorContext(ctx context.Context, monitorID string, param Monitor) (Monitor, error) {
 	path := fmt.Sprintf("/api/v0/monitors/%s", monitorID)
-	data, err := requestPut[json.RawMessage](c, path, param)
+	data, err := requestPutWithContext[json.RawMessage](ctx, c, path, param)
 	if err != nil {
 		return nil, err
 	}
@@ -403,8 +424,13 @@ func (c *Client) UpdateMonitor(monitorID string, param Monitor) (Monitor, error)
 
 // DeleteMonitor updates a monitor.
 func (c *Client) DeleteMonitor(monitorID string) (Monitor, error) {
+	return c.DeleteMonitorContext(context.Background(), monitorID)
+}
+
+// DeleteMonitorContext updates a monitor.
+func (c *Client) DeleteMonitorContext(ctx context.Context, monitorID string) (Monitor, error) {
 	path := fmt.Sprintf("/api/v0/monitors/%s", monitorID)
-	data, err := requestDelete[json.RawMessage](c, path)
+	data, err := requestDeleteContext[json.RawMessage](ctx, c, path)
 	if err != nil {
 		return nil, err
 	}

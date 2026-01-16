@@ -141,16 +141,16 @@ func requestGetContext[T any](ctx context.Context, client *Client, path string) 
 	return requestNoBody[T](ctx, client, http.MethodGet, path, nil)
 }
 
-func requestGetWithParams[T any](client *Client, path string, params url.Values) (*T, error) {
-	return requestNoBody[T](context.TODO(), client, http.MethodGet, path, params)
-}
-
 func requestGetWithParamsContext[T any](ctx context.Context, client *Client, path string, params url.Values) (*T, error) {
 	return requestNoBody[T](ctx, client, http.MethodGet, path, params)
 }
 
 func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Header, error) {
 	return requestInternal[T](context.TODO(), client, http.MethodGet, path, nil, nil)
+}
+
+func requestGetAndReturnHeaderContext[T any](ctx context.Context, client *Client, path string) (*T, http.Header, error) {
+	return requestInternal[T](ctx, client, http.MethodGet, path, nil, nil)
 }
 
 // TODO: requestPost without context will be deleted.

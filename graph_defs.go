@@ -22,12 +22,22 @@ type GraphDefsMetric struct {
 
 // CreateGraphDefs creates graph definitions.
 func (c *Client) CreateGraphDefs(graphDefs []*GraphDefsParam) error {
-	_, err := requestPost[any](c, "/api/v0/graph-defs/create", graphDefs)
+	return c.CreateGraphDefsContext(context.Background(), graphDefs)
+}
+
+// CreateGraphDefsContext creates graph definitions.
+func (c *Client) CreateGraphDefsContext(ctx context.Context, graphDefs []*GraphDefsParam) error {
+	_, err := requestPostContext[any](ctx, c, "/api/v0/graph-defs/create", graphDefs)
 	return err
 }
 
 // DeleteGraphDef deletes a graph definition.
 func (c *Client) DeleteGraphDef(name string) error {
-	_, err := requestJSON[any](context.TODO(), c, http.MethodDelete, "/api/v0/graph-defs", map[string]string{"name": name})
+	return c.DeleteGraphDefContext(context.Background(), name)
+}
+
+// DeleteGraphDefContext deletes a graph definition.
+func (c *Client) DeleteGraphDefContext(ctx context.Context, name string) error {
+	_, err := requestJSON[any](ctx, c, http.MethodDelete, "/api/v0/graph-defs", map[string]string{"name": name})
 	return err
 }
