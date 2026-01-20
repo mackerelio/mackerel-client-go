@@ -228,7 +228,7 @@ func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, err
 	return c.compatRequestJSON(context.Background(), http.MethodPost, path, payload)
 }
 
-// Deprecated: use other prefered method.
+// PostJSONContext shortcut method for posting json
 func (c *Client) PostJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
 	return c.compatRequestJSON(ctx, http.MethodPost, path, payload)
 }
@@ -238,7 +238,7 @@ func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, erro
 	return c.compatRequestJSON(context.Background(), http.MethodPut, path, payload)
 }
 
-// Deprecated: use other prefered method.
+// PutJSONContext shortcut method for putting json
 func (c *Client) PutJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
 	return c.compatRequestJSON(ctx, http.MethodPut, path, payload)
 }
