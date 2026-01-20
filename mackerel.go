@@ -132,11 +132,6 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 	return resp, nil
 }
 
-// TODO: requestGet without context will be deleted.
-func requestGet[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](context.TODO(), client, http.MethodGet, path, nil)
-}
-
 func requestGetContext[T any](ctx context.Context, client *Client, path string) (*T, error) {
 	return requestNoBody[T](ctx, client, http.MethodGet, path, nil)
 }
@@ -145,34 +140,16 @@ func requestGetWithParamsContext[T any](ctx context.Context, client *Client, pat
 	return requestNoBody[T](ctx, client, http.MethodGet, path, params)
 }
 
-func requestGetAndReturnHeader[T any](client *Client, path string) (*T, http.Header, error) {
-	return requestInternal[T](context.TODO(), client, http.MethodGet, path, nil, nil)
-}
-
 func requestGetAndReturnHeaderContext[T any](ctx context.Context, client *Client, path string) (*T, http.Header, error) {
 	return requestInternal[T](ctx, client, http.MethodGet, path, nil, nil)
-}
-
-// TODO: requestPost without context will be deleted.
-func requestPost[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](context.TODO(), client, http.MethodPost, path, payload)
 }
 
 func requestPostContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](ctx, client, http.MethodPost, path, payload)
 }
 
-func requestPut[T any](client *Client, path string, payload any) (*T, error) {
-	return requestJSON[T](context.TODO(), client, http.MethodPut, path, payload)
-}
-
-func requestPutWithContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
+func requestPutContext[T any](ctx context.Context, client *Client, path string, payload any) (*T, error) {
 	return requestJSON[T](ctx, client, http.MethodPut, path, payload)
-}
-
-// TODO: requestDelete without context will be deleted.
-func requestDelete[T any](client *Client, path string) (*T, error) {
-	return requestNoBody[T](context.TODO(), client, http.MethodDelete, path, nil)
 }
 
 func requestDeleteContext[T any](ctx context.Context, client *Client, path string) (*T, error) {
@@ -226,14 +203,14 @@ func requestInternal[T any](ctx context.Context, client *Client, method, path st
 	return &data, resp.Header, nil
 }
 
-func (c *Client) compatRequestJSON(method string, path string, payload interface{}) (*http.Response, error) {
+func (c *Client) compatRequestJSON(ctx context.Context, method string, path string, payload interface{}) (*http.Response, error) {
 	var body bytes.Buffer
 	err := json.NewEncoder(&body).Encode(payload)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, c.urlFor(path, url.Values{}).String(), &body)
+	req, err := http.NewRequestWithContext(ctx, method, c.urlFor(path, url.Values{}).String(), &body)
 	if err != nil {
 		return nil, err
 	}
@@ -248,10 +225,20 @@ func ToPtr[T any](v T) *T {
 
 // Deprecated: use other prefered method.
 func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
-	return c.compatRequestJSON(http.MethodPost, path, payload)
+	return c.compatRequestJSON(context.Background(), http.MethodPost, path, payload)
+}
+
+// PostJSONContext shortcut method for posting json
+func (c *Client) PostJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
+	return c.compatRequestJSON(ctx, http.MethodPost, path, payload)
 }
 
 // Deprecated: use other prefered method.
 func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
-	return c.compatRequestJSON(http.MethodPut, path, payload)
+	return c.compatRequestJSON(context.Background(), http.MethodPut, path, payload)
+}
+
+// PutJSONContext shortcut method for putting json
+func (c *Client) PutJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
+	return c.compatRequestJSON(ctx, http.MethodPut, path, payload)
 }

@@ -171,7 +171,7 @@ func (c *Client) UpdateAlert(alertID string, param UpdateAlertParam) (*UpdateAle
 // UpdateAlertContext updates an alert.
 func (c *Client) UpdateAlertContext(ctx context.Context, alertID string, param UpdateAlertParam) (*UpdateAlertResponse, error) {
 	path := fmt.Sprintf("/api/v0/alerts/%s", alertID)
-	return requestPutWithContext[UpdateAlertResponse](ctx, c, path, param)
+	return requestPutContext[UpdateAlertResponse](ctx, c, path, param)
 }
 
 func (p FindAlertLogsParam) toValues() url.Values {

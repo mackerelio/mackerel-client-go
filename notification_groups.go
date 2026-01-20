@@ -1,6 +1,9 @@
 package mackerel
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // NotificationLevel represents a level of notification.
 type NotificationLevel string
@@ -36,9 +39,14 @@ type NotificationGroupService struct {
 
 // FindNotificationGroups finds notification groups.
 func (c *Client) FindNotificationGroups() ([]*NotificationGroup, error) {
-	data, err := requestGet[struct {
+	return c.FindNotificationGroupsContext(context.Background())
+}
+
+// FindNotificationGroupsContext finds notification groups.
+func (c *Client) FindNotificationGroupsContext(ctx context.Context) ([]*NotificationGroup, error) {
+	data, err := requestGetContext[struct {
 		NotificationGroups []*NotificationGroup `json:"notificationGroups"`
-	}](c, "/api/v0/notification-groups")
+	}](ctx, c, "/api/v0/notification-groups")
 	if err != nil {
 		return nil, err
 	}
@@ -47,17 +55,32 @@ func (c *Client) FindNotificationGroups() ([]*NotificationGroup, error) {
 
 // CreateNotificationGroup creates a notification group.
 func (c *Client) CreateNotificationGroup(param *NotificationGroup) (*NotificationGroup, error) {
-	return requestPost[NotificationGroup](c, "/api/v0/notification-groups", param)
+	return c.CreateNotificationGroupContext(context.Background(), param)
+}
+
+// CreateNotificationGroupContext creates a notification group.
+func (c *Client) CreateNotificationGroupContext(ctx context.Context, param *NotificationGroup) (*NotificationGroup, error) {
+	return requestPostContext[NotificationGroup](ctx, c, "/api/v0/notification-groups", param)
 }
 
 // UpdateNotificationGroup updates a notification group.
 func (c *Client) UpdateNotificationGroup(id string, param *NotificationGroup) (*NotificationGroup, error) {
+	return c.UpdateNotificationGroupContext(context.Background(), id, param)
+}
+
+// UpdateNotificationGroupContext updates a notification group.
+func (c *Client) UpdateNotificationGroupContext(ctx context.Context, id string, param *NotificationGroup) (*NotificationGroup, error) {
 	path := fmt.Sprintf("/api/v0/notification-groups/%s", id)
-	return requestPut[NotificationGroup](c, path, param)
+	return requestPutContext[NotificationGroup](ctx, c, path, param)
 }
 
 // DeleteNotificationGroup deletes a notification group.
 func (c *Client) DeleteNotificationGroup(id string) (*NotificationGroup, error) {
+	return c.DeleteNotificationGroupContext(context.Background(), id)
+}
+
+// DeleteNotificationGroupContext deletes a notification group.
+func (c *Client) DeleteNotificationGroupContext(ctx context.Context, id string) (*NotificationGroup, error) {
 	path := fmt.Sprintf("/api/v0/notification-groups/%s", id)
-	return requestDelete[NotificationGroup](c, path)
+	return requestDeleteContext[NotificationGroup](ctx, c, path)
 }

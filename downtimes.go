@@ -162,7 +162,7 @@ func (c *Client) UpdateDowntime(downtimeID string, param *Downtime) (*Downtime, 
 // UpdateDowntimeContext updates a downtime.
 func (c *Client) UpdateDowntimeContext(ctx context.Context, downtimeID string, param *Downtime) (*Downtime, error) {
 	path := fmt.Sprintf("/api/v0/downtimes/%s", downtimeID)
-	return requestPutWithContext[Downtime](ctx, c, path, param)
+	return requestPutContext[Downtime](ctx, c, path, param)
 }
 
 // DeleteDowntime deletes a downtime.

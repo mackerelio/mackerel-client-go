@@ -16,9 +16,14 @@ type CreateRoleParam Role
 
 // FindRoles finds roles.
 func (c *Client) FindRoles(serviceName string) ([]*Role, error) {
-	data, err := requestGet[struct {
+	return c.FindRolesContext(context.Background(), serviceName)
+}
+
+// FindRolesContext finds roles.
+func (c *Client) FindRolesContext(ctx context.Context, serviceName string) ([]*Role, error) {
+	data, err := requestGetContext[struct {
 		Roles []*Role `json:"roles"`
-	}](c, fmt.Sprintf("/api/v0/services/%s/roles", serviceName))
+	}](ctx, c, fmt.Sprintf("/api/v0/services/%s/roles", serviceName))
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +32,13 @@ func (c *Client) FindRoles(serviceName string) ([]*Role, error) {
 
 // CreateRole creates a role.
 func (c *Client) CreateRole(serviceName string, param *CreateRoleParam) (*Role, error) {
+	return c.CreateRoleContext(context.Background(), serviceName, param)
+}
+
+// CreateRoleContext creates a role.
+func (c *Client) CreateRoleContext(ctx context.Context, serviceName string, param *CreateRoleParam) (*Role, error) {
 	path := fmt.Sprintf("/api/v0/services/%s/roles", serviceName)
-	return requestPost[Role](c, path, param)
+	return requestPostContext[Role](ctx, c, path, param)
 }
 
 // DeleteRole deletes a role.

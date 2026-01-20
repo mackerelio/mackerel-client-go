@@ -62,7 +62,7 @@ func (c *Client) UpdateAlertGroupSetting(id string, param *AlertGroupSetting) (*
 // UpdateAlertGroupSettingContext updates an alert group setting.
 func (c *Client) UpdateAlertGroupSettingContext(ctx context.Context, id string, param *AlertGroupSetting) (*AlertGroupSetting, error) {
 	path := fmt.Sprintf("/api/v0/alert-group-settings/%s", id)
-	return requestPutWithContext[AlertGroupSetting](ctx, c, path, param)
+	return requestPutContext[AlertGroupSetting](ctx, c, path, param)
 }
 
 // DeleteAlertGroupSetting deletes an alert group setting.

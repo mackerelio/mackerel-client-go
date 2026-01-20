@@ -57,7 +57,7 @@ func (c *Client) UpdateGraphAnnotation(annotationID string, annotation *GraphAnn
 // UpdateGraphAnnotationContext updates a graph annotation.
 func (c *Client) UpdateGraphAnnotationContext(ctx context.Context, annotationID string, annotation *GraphAnnotation) (*GraphAnnotation, error) {
 	path := fmt.Sprintf("/api/v0/graph-annotations/%s", annotationID)
-	return requestPutWithContext[GraphAnnotation](ctx, c, path, annotation)
+	return requestPutContext[GraphAnnotation](ctx, c, path, annotation)
 }
 
 // DeleteGraphAnnotation deletes a graph annotation.

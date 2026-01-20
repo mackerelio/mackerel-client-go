@@ -132,7 +132,7 @@ func (c *Client) UpdateAWSIntegration(awsIntegrationID string, param *UpdateAWSI
 // UpdateAWSIntegrationContext updates an AWS integration setting.
 func (c *Client) UpdateAWSIntegrationContext(ctx context.Context, awsIntegrationID string, param *UpdateAWSIntegrationParam) (*AWSIntegration, error) {
 	path := fmt.Sprintf("/api/v0/aws-integrations/%s", awsIntegrationID)
-	return requestPutWithContext[AWSIntegration](ctx, c, path, param)
+	return requestPutContext[AWSIntegration](ctx, c, path, param)
 }
 
 // DeleteAWSIntegration deletes an AWS integration setting.

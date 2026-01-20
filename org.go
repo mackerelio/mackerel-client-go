@@ -1,5 +1,7 @@
 package mackerel
 
+import "context"
+
 // Org information
 type Org struct {
 	Name        string `json:"name"`
@@ -8,5 +10,10 @@ type Org struct {
 
 // GetOrg gets the org.
 func (c *Client) GetOrg() (*Org, error) {
-	return requestGet[Org](c, "/api/v0/org")
+	return c.GetOrgContext(context.Background())
+}
+
+// GetOrgContext gets the org.
+func (c *Client) GetOrgContext(ctx context.Context) (*Org, error) {
+	return requestGetContext[Org](ctx, c, "/api/v0/org")
 }

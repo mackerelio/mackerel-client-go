@@ -73,7 +73,7 @@ func (c *Client) UpdateChannel(channelId string, param *Channel) (*Channel, erro
 
 // UpdateChannelContext is like [UpdateChannel]
 func (c *Client) UpdateChannelContext(ctx context.Context, channelID string, param *Channel) (*Channel, error) {
-	data, err := requestPutWithContext[Channel](ctx, c, fmt.Sprintf("/api/v0/channels/%s", channelID), param)
+	data, err := requestPutContext[Channel](ctx, c, fmt.Sprintf("/api/v0/channels/%s", channelID), param)
 	if err != nil {
 		return nil, err
 	}

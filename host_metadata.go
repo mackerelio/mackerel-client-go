@@ -67,7 +67,7 @@ func (c *Client) PutHostMetaData(hostID, namespace string, metadata HostMetaData
 // PutHostMetaDataContext puts a host metadata.
 func (c *Client) PutHostMetaDataContext(ctx context.Context, hostID, namespace string, metadata HostMetaData) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace)
-	_, err := requestPutWithContext[any](ctx, c, path, metadata)
+	_, err := requestPutContext[any](ctx, c, path, metadata)
 	return err
 }
 

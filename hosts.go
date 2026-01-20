@@ -259,7 +259,7 @@ func (c *Client) UpdateHost(hostID string, param *UpdateHostParam) (string, erro
 // UpdateHostContext updates a host.
 func (c *Client) UpdateHostContext(ctx context.Context, hostID string, param *UpdateHostParam) (string, error) {
 	path := fmt.Sprintf("/api/v0/hosts/%s", hostID)
-	data, err := requestPutWithContext[struct {
+	data, err := requestPutContext[struct {
 		ID string `json:"id"`
 	}](ctx, c, path, param)
 	if err != nil {
@@ -300,7 +300,7 @@ func (c *Client) UpdateHostRoleFullnames(hostID string, roleFullnames []string) 
 // UpdateHostRoleFullnamesContext updates host roles.
 func (c *Client) UpdateHostRoleFullnamesContext(ctx context.Context, hostID string, roleFullnames []string) error {
 	path := fmt.Sprintf("/api/v0/hosts/%s/role-fullnames", hostID)
-	_, err := requestPutWithContext[any](ctx, c, path, map[string][]string{"roleFullnames": roleFullnames})
+	_, err := requestPutContext[any](ctx, c, path, map[string][]string{"roleFullnames": roleFullnames})
 	return err
 }
 
