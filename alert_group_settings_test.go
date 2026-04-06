@@ -21,7 +21,7 @@ func TestFindAlertGroupSettings(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"alertGroupSettings": {
 				{
 					"id":   "xxxxxxxxxxx",
@@ -88,7 +88,7 @@ func TestCreateAlertGroupSetting(t *testing.T) {
 			t.Fatal("request body should be decoded as json ", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                   "xxxxxxxxxxx",
 			"name":                 alertGroupSetting.Name,
 			"memo":                 alertGroupSetting.Memo,
@@ -136,7 +136,7 @@ func TestGetAlertGroupSetting(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                   "xxxxxxxxxxx",
 			"name":                 "alert group setting",
 			"memo":                 "lorem ipsum...",
@@ -190,7 +190,7 @@ func TestUpdateAlertGroupSetting(t *testing.T) {
 			t.Fatal("request body should be decoded as json ", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                   id,
 			"name":                 alertGroupSetting.Name,
 			"memo":                 "lorem ipsum...",
@@ -241,7 +241,7 @@ func TestDeleteAlertGroupSetting(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                   id,
 			"name":                 "alert group setting",
 			"memo":                 "lorem ipsum...",

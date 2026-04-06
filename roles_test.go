@@ -21,7 +21,7 @@ func TestFindRoles(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"roles": {
 				{
 					"name": "My-Role",
@@ -80,7 +80,7 @@ func TestCreateRole(t *testing.T) {
 			t.Error("memo (in request json parameter) should be ", testRoleMemo, "but: ", reqBody.Memo)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"name": testRoleName,
 			"memo": testRoleMemo,
 		})
@@ -126,7 +126,7 @@ func TestDeleteRole(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"name": testRoleName,
 			"memo": testRoleMemo,
 		})

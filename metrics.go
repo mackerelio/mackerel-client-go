@@ -10,9 +10,9 @@ import (
 
 // MetricValue metric value
 type MetricValue struct {
-	Name  string      `json:"name,omitempty"`
-	Time  int64       `json:"time,omitempty"`
-	Value interface{} `json:"value,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Time  int64  `json:"time,omitempty"`
+	Value any    `json:"value,omitempty"`
 }
 
 // HostMetricValue host metric value

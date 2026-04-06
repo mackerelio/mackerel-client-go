@@ -153,13 +153,13 @@ type fakeLogger struct {
 	w io.Writer
 }
 
-func (p *fakeLogger) Tracef(format string, v ...interface{}) {
+func (p *fakeLogger) Tracef(format string, v ...any) {
 	fmt.Fprintf(p.w, format, v...) // nolint
 }
-func (p *fakeLogger) Debugf(format string, v ...interface{})   {}
-func (p *fakeLogger) Infof(format string, v ...interface{})    {}
-func (p *fakeLogger) Warningf(format string, v ...interface{}) {}
-func (p *fakeLogger) Errorf(format string, v ...interface{})   {}
+func (p *fakeLogger) Debugf(format string, v ...any)   {}
+func (p *fakeLogger) Infof(format string, v ...any)    {}
+func (p *fakeLogger) Warningf(format string, v ...any) {}
+func (p *fakeLogger) Errorf(format string, v ...any)   {}
 
 func TestPrivateTracef(t *testing.T) {
 	var (

@@ -27,7 +27,7 @@ func TestCreateNotificationGroup(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                        "3JwREyrZGQ9",
 			"name":                      notificationGroup.Name,
 			"notificationLevel":         notificationGroup.NotificationLevel,
@@ -88,7 +88,7 @@ func TestFindNotificationGroups(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"notificationGroups": {
 				{
 					"id":                        "3Ja3HG3bTwq",
@@ -110,7 +110,7 @@ func TestFindNotificationGroups(t *testing.T) {
 					"notificationLevel":         "critical",
 					"childNotificationGroupIds": []string{},
 					"childChannelIds":           []string{},
-					"monitors": []map[string]interface{}{
+					"monitors": []map[string]any{
 						{"id": "3Ja3HG5Mngw", "skipDefault": false},
 					},
 					"services": []map[string]string{
@@ -184,7 +184,7 @@ func TestUpdateNotificationGroup(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                        id,
 			"name":                      notificationGroup.Name,
 			"notificationLevel":         notificationGroup.NotificationLevel,
@@ -246,13 +246,13 @@ func TestDeleteNotificationGroup(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                        id,
 			"name":                      "My Notification Group",
 			"notificationLevel":         "all",
 			"childNotificationGroupIds": []string{},
 			"childChannelIds":           []string{},
-			"monitors": []map[string]interface{}{
+			"monitors": []map[string]any{
 				{"id": "2CRrhj1SFwG", "skipDefault": true},
 			},
 			"services": []map[string]string{

@@ -24,7 +24,7 @@ func TestFindChannels(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"channels": {
 				{
 					"id":      "abcdefabc",
@@ -39,7 +39,7 @@ func TestFindChannels(t *testing.T) {
 					"name": "slack channel",
 					"type": "slack",
 					"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
-					"mentions": map[string]interface{}{
+					"mentions": map[string]any{
 						"ok":      "ok message",
 						"warning": "warning message",
 					},
@@ -209,12 +209,12 @@ func TestCreateChannel(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":   "abcdefabc",
 			"name": "slack channel",
 			"type": "slack",
 			"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
-			"mentions": map[string]interface{}{
+			"mentions": map[string]any{
 				"ok":      "ok message",
 				"warning": "warning message",
 			},
@@ -342,12 +342,12 @@ func TestDeleteChannel(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":   channelID,
 			"name": "slack channel",
 			"type": "slack",
 			"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
-			"mentions": map[string]interface{}{
+			"mentions": map[string]any{
 				"ok":      "ok message",
 				"warning": "warning message",
 			},

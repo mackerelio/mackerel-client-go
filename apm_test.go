@@ -44,8 +44,8 @@ func TestListHTTPServerStats(t *testing.T) {
 			t.Error("request query 'perPage' param should be 20 but: ", query.Get("perPage"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"results": []map[string]any{
 				{
 					"method":              "GET",
 					"route":               "/api/users",
@@ -148,8 +148,8 @@ func TestListHTTPServerStatsWithMinimalParams(t *testing.T) {
 			t.Error("request query 'to' param should be 2000000000 but: ", query.Get("to"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results":     []map[string]interface{}{},
+		respJSON, _ := json.Marshal(map[string]any{
+			"results":     []map[string]any{},
 			"hasNextPage": false,
 		})
 
@@ -200,8 +200,8 @@ func TestListHTTPServerStatsContext(t *testing.T) {
 			t.Error("request query 'to' param should be 1234567900 but: ", query.Get("to"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"results": []map[string]any{
 				{
 					"method":              "GET",
 					"route":               "/api/users",
@@ -259,8 +259,8 @@ func TestListHTTPServerStatsContext(t *testing.T) {
 func TestListHTTPServerStatsContextWithTimeout(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		time.Sleep(100 * time.Millisecond)
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results":     []map[string]interface{}{},
+		respJSON, _ := json.Marshal(map[string]any{
+			"results":     []map[string]any{},
 			"hasNextPage": false,
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -287,8 +287,8 @@ func TestListHTTPServerStatsContextWithTimeout(t *testing.T) {
 func TestListHTTPServerStatsContextWithCancel(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		time.Sleep(100 * time.Millisecond)
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results":     []map[string]interface{}{},
+		respJSON, _ := json.Marshal(map[string]any{
+			"results":     []map[string]any{},
 			"hasNextPage": false,
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -348,8 +348,8 @@ func TestListDbQueryStats(t *testing.T) {
 			t.Error("request query 'perPage' param should be 20 but: ", query.Get("perPage"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"results": []map[string]any{
 				{
 					"query":           "SELECT * FROM users WHERE id = ?",
 					"executionCount":  1250,
@@ -444,8 +444,8 @@ func TestListDbQueryStatsWithMinimalParams(t *testing.T) {
 			t.Error("request query 'to' param should be 2000000000 but: ", query.Get("to"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results":     []map[string]interface{}{},
+		respJSON, _ := json.Marshal(map[string]any{
+			"results":     []map[string]any{},
 			"hasNextPage": false,
 		})
 
@@ -496,8 +496,8 @@ func TestListDbQueryStatsContext(t *testing.T) {
 			t.Error("request query 'to' param should be 1234567900 but: ", query.Get("to"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"results": []map[string]any{
 				{
 					"query":           "SELECT * FROM users WHERE id = ?",
 					"executionCount":  1250,
@@ -551,8 +551,8 @@ func TestListDbQueryStatsContext(t *testing.T) {
 func TestListDbQueryStatsContextWithTimeout(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		time.Sleep(100 * time.Millisecond)
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results":     []map[string]interface{}{},
+		respJSON, _ := json.Marshal(map[string]any{
+			"results":     []map[string]any{},
 			"hasNextPage": false,
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -579,8 +579,8 @@ func TestListDbQueryStatsContextWithTimeout(t *testing.T) {
 func TestListDbQueryStatsContextWithCancel(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		time.Sleep(100 * time.Millisecond)
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"results":     []map[string]interface{}{},
+		respJSON, _ := json.Marshal(map[string]any{
+			"results":     []map[string]any{},
 			"hasNextPage": false,
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}

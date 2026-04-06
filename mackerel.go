@@ -21,11 +21,11 @@ const (
 
 // PrioritizedLogger is the interface that groups prioritized logging methods.
 type PrioritizedLogger interface {
-	Tracef(format string, v ...interface{})
-	Debugf(format string, v ...interface{})
-	Infof(format string, v ...interface{})
-	Warningf(format string, v ...interface{})
-	Errorf(format string, v ...interface{})
+	Tracef(format string, v ...any)
+	Debugf(format string, v ...any)
+	Infof(format string, v ...any)
+	Warningf(format string, v ...any)
+	Errorf(format string, v ...any)
 }
 
 // Client api client for mackerel
@@ -88,7 +88,7 @@ func (c *Client) buildReq(req *http.Request) *http.Request {
 	return req
 }
 
-func (c *Client) tracef(format string, v ...interface{}) {
+func (c *Client) tracef(format string, v ...any) {
 	if c.PrioritizedLogger != nil {
 		c.PrioritizedLogger.Tracef(format, v...)
 	}
@@ -203,7 +203,7 @@ func requestInternal[T any](ctx context.Context, client *Client, method, path st
 	return &data, resp.Header, nil
 }
 
-func (c *Client) compatRequestJSON(ctx context.Context, method string, path string, payload interface{}) (*http.Response, error) {
+func (c *Client) compatRequestJSON(ctx context.Context, method string, path string, payload any) (*http.Response, error) {
 	var body bytes.Buffer
 	err := json.NewEncoder(&body).Encode(payload)
 	if err != nil {
@@ -224,21 +224,21 @@ func ToPtr[T any](v T) *T {
 }
 
 // Deprecated: use other prefered method.
-func (c *Client) PostJSON(path string, payload interface{}) (*http.Response, error) {
+func (c *Client) PostJSON(path string, payload any) (*http.Response, error) {
 	return c.compatRequestJSON(context.Background(), http.MethodPost, path, payload)
 }
 
 // PostJSONContext shortcut method for posting json
-func (c *Client) PostJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
+func (c *Client) PostJSONContext(ctx context.Context, path string, payload any) (*http.Response, error) {
 	return c.compatRequestJSON(ctx, http.MethodPost, path, payload)
 }
 
 // Deprecated: use other prefered method.
-func (c *Client) PutJSON(path string, payload interface{}) (*http.Response, error) {
+func (c *Client) PutJSON(path string, payload any) (*http.Response, error) {
 	return c.compatRequestJSON(context.Background(), http.MethodPut, path, payload)
 }
 
 // PutJSONContext shortcut method for putting json
-func (c *Client) PutJSONContext(ctx context.Context, path string, payload interface{}) (*http.Response, error) {
+func (c *Client) PutJSONContext(ctx context.Context, path string, payload any) (*http.Response, error) {
 	return c.compatRequestJSON(ctx, http.MethodPut, path, payload)
 }

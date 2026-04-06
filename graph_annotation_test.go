@@ -52,7 +52,7 @@ func TestCreateGraphAnnotation(t *testing.T) {
 		if data.Description != "Deployed my blog" {
 			t.Errorf("request sends json including Description but: %s", data.Description)
 		}
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"service":     "My-Blog",
 			"roles":       []string{"Role1", "Role2"},
 			"from":        1485675275,
@@ -124,7 +124,7 @@ func TestFindGraphAnnotations(t *testing.T) {
 			t.Error("request query 'from' param should be 1485675299 but: ", query.Get("from"))
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"graphAnnotations": {
 				{
 					"service":     "My-Blog",
@@ -183,7 +183,7 @@ func TestUpdateGraphAnnotations(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"service":     "My-Blog",
 			"roles":       []string{"Role1", "Role2"},
 			"from":        1485675275,
@@ -246,7 +246,7 @@ func TestDeleteGraphAnnotations(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"service":     "My-Blog",
 			"roles":       []string{"Role1", "Role2"},
 			"from":        1485675275,

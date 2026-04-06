@@ -16,7 +16,7 @@ type ServiceMetaDataResp struct {
 }
 
 // ServiceMetaData represents service metadata body.
-type ServiceMetaData interface{}
+type ServiceMetaData any
 
 // GetServiceMetaData gets service metadata.
 func (c *Client) GetServiceMetaData(serviceName, namespace string) (*ServiceMetaDataResp, error) {

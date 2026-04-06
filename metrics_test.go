@@ -23,10 +23,10 @@ func TestPostHostMetricValues(t *testing.T) {
 		body, _ := io.ReadAll(req.Body)
 
 		var values []struct {
-			HostID string      `json:"hostId"`
-			Name   string      `json:"name"`
-			Time   float64     `json:"time"`
-			Value  interface{} `json:"value"`
+			HostID string  `json:"hostId"`
+			Name   string  `json:"name"`
+			Time   float64 `json:"time"`
+			Value  any     `json:"value"`
 		}
 
 		err := json.Unmarshal(body, &values)
@@ -86,9 +86,9 @@ func TestPostServiceMetricValues(t *testing.T) {
 		body, _ := io.ReadAll(req.Body)
 
 		var values []struct {
-			Name  string      `json:"name"`
-			Time  float64     `json:"time"`
-			Value interface{} `json:"value"`
+			Name  string  `json:"name"`
+			Time  float64 `json:"time"`
+			Value any     `json:"value"`
 		}
 
 		err := json.Unmarshal(body, &values)

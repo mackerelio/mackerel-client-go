@@ -41,17 +41,17 @@ func TestGetRoleMetaData(t *testing.T) {
 	}
 
 	metadata := metadataResp.RoleMetaData
-	if metadata.(map[string]interface{})["type"].(float64) != 12345 {
-		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["type"], 12345)
+	if metadata.(map[string]any)["type"].(float64) != 12345 {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]any)["type"], 12345)
 	}
-	if metadata.(map[string]interface{})["region"] != "jp" {
-		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["region"], "jp")
+	if metadata.(map[string]any)["region"] != "jp" {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]any)["region"], "jp")
 	}
-	if metadata.(map[string]interface{})["env"] != "staging" {
-		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["env"], "staging")
+	if metadata.(map[string]any)["env"] != "staging" {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]any)["env"], "staging")
 	}
-	if metadata.(map[string]interface{})["instance_type"] != "c4.xlarge" {
-		t.Errorf("got: %v, want: %v", metadata.(map[string]interface{})["instance_type"], "c4.xlarge")
+	if metadata.(map[string]any)["instance_type"] != "c4.xlarge" {
+		t.Errorf("got: %v, want: %v", metadata.(map[string]any)["instance_type"], "c4.xlarge")
 	}
 	if !metadataResp.LastModified.Equal(lastModified) {
 		t.Errorf("got: %v, want: %v", metadataResp.LastModified, lastModified)
@@ -118,7 +118,7 @@ func TestPutRoleMetaData(t *testing.T) {
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
-	metadata := map[string]interface{}{
+	metadata := map[string]any{
 		"type":          12345,
 		"region":        "jp",
 		"env":           "staging",

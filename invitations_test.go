@@ -20,7 +20,7 @@ func TestFindInvitation(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"invitations": {
 				{
 					"email":     "test@example.com",
@@ -70,7 +70,7 @@ func TestCreateInvitation(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"email":     "test@example.com",
 			"authority": "viewer",
 			"expiresAt": 1560000000,

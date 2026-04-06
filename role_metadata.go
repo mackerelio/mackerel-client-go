@@ -16,7 +16,7 @@ type RoleMetaDataResp struct {
 }
 
 // RoleMetaData represents role metadata body.
-type RoleMetaData interface{}
+type RoleMetaData any
 
 // GetRoleMetaData gets a role metadata.
 func (c *Client) GetRoleMetaData(serviceName, roleName, namespace string) (*RoleMetaDataResp, error) {

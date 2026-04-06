@@ -16,7 +16,7 @@ type HostMetaDataResp struct {
 }
 
 // HostMetaData represents host metadata body.
-type HostMetaData interface{}
+type HostMetaData any
 
 // GetHostMetaData gets a host metadata.
 func (c *Client) GetHostMetaData(hostID, namespace string) (*HostMetaDataResp, error) {

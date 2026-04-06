@@ -19,22 +19,22 @@ func TestFindDowntimes(t *testing.T) {
 			t.Error("request URL should be /api/v0/downtimes but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"downtimes": []interface{}{
-				map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"downtimes": []any{
+				map[string]any{
 					"id":       "abcde0",
 					"name":     "Maintenance #0",
 					"memo":     "Memo #0",
 					"start":    1563600000,
 					"duration": 120,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"id":       "abcde1",
 					"name":     "Maintenance #1",
 					"memo":     "Memo #1",
 					"start":    1563700000,
 					"duration": 60,
-					"recurrence": map[string]interface{}{
+					"recurrence": map[string]any{
 						"interval": 3,
 						"type":     "weekly",
 						"weekdays": []string{
@@ -143,13 +143,13 @@ func TestCreateDowntime(t *testing.T) {
 			t.Fatal("request body should be decoded as downtime", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":       "abcde",
 			"name":     "My maintenance",
 			"memo":     "This is a memo",
 			"start":    1563700000,
 			"duration": 30,
-			"recurrence": map[string]interface{}{
+			"recurrence": map[string]any{
 				"type":     "daily",
 				"interval": 2,
 				"until":    1573700000,
@@ -216,7 +216,7 @@ func TestUpdateDowntime(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":       "abcde",
 			"name":     "Updated maintenance",
 			"memo":     "This is a memo",
@@ -290,7 +290,7 @@ func TestDeleteDowntime(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":       "abcde",
 			"name":     "My maintenance",
 			"memo":     "This is a memo",

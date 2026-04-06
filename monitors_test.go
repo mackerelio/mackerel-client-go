@@ -27,7 +27,7 @@ func TestFindMonitors(t *testing.T) {
 			t.Error("request URL should be /api/v0/monitors but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"monitors": {
 				{
 					"id":            "2cSZzK3XfmG",
@@ -55,7 +55,7 @@ func TestFindMonitors(t *testing.T) {
 					"skipCertificateVerification":     true,
 					"followRedirect":                  true,
 					"expectedStatusCode":              200,
-					"headers": []map[string]interface{}{
+					"headers": []map[string]any{
 						{"name": "Cache-Control", "value": "no-cache"},
 					},
 				},
@@ -213,7 +213,7 @@ func TestGetMonitor(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]map[string]any{
 			"monitor": {
 				"id":            monitorID,
 				"type":          "connectivity",
@@ -255,7 +255,7 @@ func TestCreateMonitor(t *testing.T) {
 			t.Errorf("request method should be POST but got: %s", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":            monitorID,
 			"type":          "connectivity",
 			"memo":          "connectivity monitor",
@@ -301,7 +301,7 @@ func TestUpdateMonitor(t *testing.T) {
 			t.Error("request method should be PUT but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":            monitorID,
 			"type":          "connectivity",
 			"memo":          "connectivity monitor",
@@ -347,7 +347,7 @@ func TestDeleteMonitor(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":            monitorID,
 			"type":          "connectivity",
 			"memo":          "connectivity monitor",
@@ -846,7 +846,7 @@ func TestDecodeUnknownMonitor(t *testing.T) {
 }
 
 func equalJSON(x, y string) bool {
-	var xval, yval interface{}
+	var xval, yval any
 	json.Unmarshal([]byte(x), &xval) //nolint
 	json.Unmarshal([]byte(y), &yval) //nolint
 	return reflect.DeepEqual(xval, yval)

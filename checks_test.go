@@ -57,7 +57,7 @@ func TestClient_PostCheckReports(t *testing.T) {
 
 		var values struct {
 			Reports []struct {
-				Source     interface{} `json:"source"`
+				Source     any         `json:"source"`
 				Name       string      `json:"name"`
 				Status     CheckStatus `json:"status"`
 				Message    string      `json:"message"`
