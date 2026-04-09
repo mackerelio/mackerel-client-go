@@ -152,8 +152,8 @@ func TestGetTrace(t *testing.T) {
 		}
 
 		// Sample response based on API documentation
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"spans": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"spans": []map[string]any{
 				{
 					"traceId":    "0123456789abcdef0123456789abcdef",
 					"spanId":     "0123456789abcdef",
@@ -162,47 +162,47 @@ func TestGetTrace(t *testing.T) {
 					"kind":       "internal",
 					"startTime":  "2025-07-09T14:03:02.123Z",
 					"endTime":    "2025-07-09T14:03:02.456Z",
-					"attributes": []map[string]interface{}{
+					"attributes": []map[string]any{
 						{
 							"key": "http.route",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType":   "string",
 								"stringValue": "/",
 							},
 						},
 					},
 					"droppedAttributesCount": 0,
-					"events": []map[string]interface{}{
+					"events": []map[string]any{
 						{
 							"time":                   "2025-07-09T14:03:02.789Z",
 							"name":                   "event1",
-							"attributes":             []interface{}{},
+							"attributes":             []any{},
 							"droppedAttributesCount": 0,
 						},
 					},
 					"droppedEventsCount": 0,
-					"links": []map[string]interface{}{
+					"links": []map[string]any{
 						{
 							"traceId":                "abcdef0123456789abcdef0123456789",
 							"spanId":                 "abcdefabcdef0102",
 							"traceState":             "",
-							"attributes":             []interface{}{},
+							"attributes":             []any{},
 							"droppedAttributesCount": 0,
 						},
 					},
 					"droppedLinksCount": 0,
-					"status": map[string]interface{}{
+					"status": map[string]any{
 						"message": "status message",
 						"code":    "ok",
 					},
-					"resource": map[string]interface{}{
-						"attributes":             []interface{}{},
+					"resource": map[string]any{
+						"attributes":             []any{},
 						"droppedAttributesCount": 0,
 					},
-					"scope": map[string]interface{}{
+					"scope": map[string]any{
 						"name":                   "my-library",
 						"version":                "1.0.0",
-						"attributes":             []interface{}{},
+						"attributes":             []any{},
 						"droppedAttributesCount": 0,
 					},
 				},
@@ -332,8 +332,8 @@ func TestGetTrace(t *testing.T) {
 func TestGetTrace_AnyValueTypes(t *testing.T) {
 	// Test different AnyValue types
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"spans": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"spans": []map[string]any{
 				{
 					"traceId":    "0123456789abcdef0123456789abcdef",
 					"spanId":     "0123456789abcdef",
@@ -342,40 +342,40 @@ func TestGetTrace_AnyValueTypes(t *testing.T) {
 					"kind":       "internal",
 					"startTime":  "2025-07-09T14:03:02.999Z",
 					"endTime":    "2025-07-09T14:03:03.001Z",
-					"attributes": []map[string]interface{}{
+					"attributes": []map[string]any{
 						{
 							"key": "string.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType":   "string",
 								"stringValue": "test",
 							},
 						},
 						{
 							"key": "bool.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType": "bool",
 								"boolValue": true,
 							},
 						},
 						{
 							"key": "int.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType": "int",
 								"intValue":  42,
 							},
 						},
 						{
 							"key": "double.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType":   "double",
 								"doubleValue": 3.14,
 							},
 						},
 						{
 							"key": "array.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType": "array",
-								"arrayValue": []map[string]interface{}{
+								"arrayValue": []map[string]any{
 									{
 										"valueType": "int",
 										"intValue":  10,
@@ -389,10 +389,10 @@ func TestGetTrace_AnyValueTypes(t *testing.T) {
 						},
 						{
 							"key": "kvlist.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType": "kvlist",
-								"kvlistValue": map[string]interface{}{
-									"en": map[string]interface{}{
+								"kvlistValue": map[string]any{
+									"en": map[string]any{
 										"valueType":   "string",
 										"stringValue": "success",
 									},
@@ -401,28 +401,28 @@ func TestGetTrace_AnyValueTypes(t *testing.T) {
 						},
 						{
 							"key": "empty.attr",
-							"value": map[string]interface{}{
+							"value": map[string]any{
 								"valueType": "empty",
 							},
 						},
 					},
 					"droppedAttributesCount": 0,
-					"events":                 []interface{}{},
+					"events":                 []any{},
 					"droppedEventsCount":     0,
-					"links":                  []interface{}{},
+					"links":                  []any{},
 					"droppedLinksCount":      0,
-					"status": map[string]interface{}{
+					"status": map[string]any{
 						"message": "",
 						"code":    "unset",
 					},
-					"resource": map[string]interface{}{
-						"attributes":             []interface{}{},
+					"resource": map[string]any{
+						"attributes":             []any{},
 						"droppedAttributesCount": 0,
 					},
-					"scope": map[string]interface{}{
+					"scope": map[string]any{
 						"name":                   "",
 						"version":                "",
-						"attributes":             []interface{}{},
+						"attributes":             []any{},
 						"droppedAttributesCount": 0,
 					},
 				},

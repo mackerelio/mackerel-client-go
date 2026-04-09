@@ -20,7 +20,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"aws_integrations": {
 				{
 					"id":           "9rxGOHfVF8F",
@@ -32,7 +32,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 					"region":       "ap-northeast-1",
 					"includedTags": "Name:web-server,Environment:staging,Product:web",
 					"excludedTags": "Name:test-server,Environment:staging,Product:test",
-					"services": map[string]map[string]interface{}{
+					"services": map[string]map[string]any{
 						"EC2": {
 							"enable":              true,
 							"role":                "web-group",
@@ -61,7 +61,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 					"region":       "eu-central-1",
 					"includedTags": "Name:web-server,Environment:staging,Product:web",
 					"excludedTags": "Name:test-server,Environment:staging,Product:test",
-					"services": map[string]map[string]interface{}{
+					"services": map[string]map[string]any{
 						"EC2": {
 							"enable":              false,
 							"role":                (*string)(nil),
@@ -130,7 +130,7 @@ func TestFindAWSIntegration(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":           "9rxGOHfVF8F",
 			"name":         "my-aws-integrations-1",
 			"memo":         "my-aws-integrations-1",
@@ -140,7 +140,7 @@ func TestFindAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"services": map[string]map[string]interface{}{
+			"services": map[string]map[string]any{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
@@ -218,7 +218,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 			t.Errorf("Wrong data for aws integration services: %v", awsIntegration.Services["EC2"])
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":           "9rxGOHfVF8F",
 			"name":         "my-aws-integrations-1",
 			"memo":         "my-aws-integrations-1",
@@ -229,7 +229,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"services": map[string]map[string]interface{}{
+			"services": map[string]map[string]any{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
@@ -339,7 +339,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 			t.Errorf("Wrong data for aws integration services: %v", awsIntegration.Services["EC2"])
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":           "9rxGOHfVF8F",
 			"name":         "my-aws-integrations-1",
 			"memo":         "my-aws-integrations-1",
@@ -350,7 +350,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"services": map[string]map[string]interface{}{
+			"services": map[string]map[string]any{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",
@@ -438,7 +438,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":           "9rxGOHfVF8F",
 			"name":         "my-aws-integrations-1",
 			"memo":         "my-aws-integrations-1",
@@ -448,7 +448,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 			"region":       "ap-northeast-1",
 			"includedTags": "Name:web-server,Environment:staging,Product:web",
 			"excludedTags": "Name:test-server,Environment:staging,Product:test",
-			"services": map[string]map[string]interface{}{
+			"services": map[string]map[string]any{
 				"EC2": {
 					"enable":              true,
 					"role":                "web-group",

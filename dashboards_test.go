@@ -15,9 +15,9 @@ func TestFindDashboards(t *testing.T) {
 			t.Error("request URL should be /api/v0/dashboards but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"dashboards": []interface{}{
-				map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"dashboards": []any{
+				map[string]any{
 					"id":        "2c5bLca8d",
 					"title":     "My Dashboard 1",
 					"urlPath":   "2u4PP3TJqbu",
@@ -75,19 +75,19 @@ func TestFindDashboard(t *testing.T) {
 		}
 
 		respJSON, _ := json.Marshal(
-			map[string]interface{}{
+			map[string]any{
 				"id":        "2c5bLca8e",
 				"createdAt": 1552909732,
 				"updatedAt": 1552992837,
 				"title":     "My Custom Dashboard(Current)",
 				"urlPath":   "2u4PP3TJqbv",
 				"memo":      "A test Current Dashboard",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":     "markdown",
 						"title":    "markdown_widget",
 						"markdown": "# body",
-						"layout": map[string]interface{}{
+						"layout": map[string]any{
 							"x":      0,
 							"y":      0,
 							"width":  24,
@@ -97,18 +97,18 @@ func TestFindDashboard(t *testing.T) {
 					{
 						"type":  "graph",
 						"title": "graph_widget",
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":   "host",
 							"hostId": "2u4PP3TJqbw",
 							"name":   "loadavg.loadavg15",
 						},
-						"layout": map[string]interface{}{
+						"layout": map[string]any{
 							"x":      0,
 							"y":      7,
 							"width":  8,
 							"height": 10,
 						},
-						"referenceLines": []map[string]interface{}{
+						"referenceLines": []map[string]any{
 							{
 								"label": "critical",
 								"value": 1.23,
@@ -120,18 +120,18 @@ func TestFindDashboard(t *testing.T) {
 						"title":        "value_widget",
 						"fractionSize": 2,
 						"suffix":       "total",
-						"formatRules": []map[string]interface{}{
+						"formatRules": []map[string]any{
 							{
 								"name":      "SLO",
 								"threshold": 2.34,
 								"operator":  ">",
 							},
 						},
-						"metric": map[string]interface{}{
+						"metric": map[string]any{
 							"type":       "expression",
 							"expression": "alias(scale(\nsum(\n  group(\n    host(2u4PP3TJqbx,loadavg.*)\n  )\n),\n1\n), 'test')",
 						},
-						"layout": map[string]interface{}{
+						"layout": map[string]any{
 							"x":      0,
 							"y":      17,
 							"width":  8,
@@ -142,7 +142,7 @@ func TestFindDashboard(t *testing.T) {
 						"type":         "alertStatus",
 						"title":        "alert_status_widget",
 						"roleFullname": "test:dashboard",
-						"layout": map[string]interface{}{
+						"layout": map[string]any{
 							"x":      9,
 							"y":      3,
 							"width":  6,
@@ -304,14 +304,14 @@ func TestCreateDashboard(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":        "2c5bLca8d",
 			"title":     "My Dashboard",
 			"urlPath":   "2u4PP3TJqbu",
 			"createdAt": 1439346145003,
 			"updatedAt": 1439346145003,
 			"memo":      "My Dashboard Memo",
-			"widgets":   []map[string]interface{}{},
+			"widgets":   []map[string]any{},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -391,14 +391,14 @@ func TestUpdateDashboard(t *testing.T) {
 			t.Fatal("request body should be decoded as json", string(body))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":        "2c5bLca8d",
 			"title":     "My Dashboard",
 			"urlPath":   "2u4PP3TJqbu",
 			"createdAt": 1439346145003,
 			"updatedAt": 1439346145003,
 			"memo":      "My Dashboard Memo",
-			"widgets":   []map[string]interface{}{},
+			"widgets":   []map[string]any{},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}
@@ -461,14 +461,14 @@ func TestDeleteDashboard(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":        "2c5bLca8d",
 			"title":     "My Dashboard",
 			"urlPath":   "2u4PP3TJqbu",
 			"createdAt": 1439346145003,
 			"updatedAt": 1439346145003,
 			"memo":      "My Dashboard Memo",
-			"widgets":   []map[string]interface{}{},
+			"widgets":   []map[string]any{},
 		})
 
 		res.Header()["Content-Type"] = []string{"application/json"}

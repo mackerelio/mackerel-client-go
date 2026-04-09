@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-client-go
 
-go 1.24.0
+go 1.25.0
 
 require github.com/kylelemons/godebug v1.1.0
 

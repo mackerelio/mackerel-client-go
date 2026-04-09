@@ -19,7 +19,7 @@ func TestFindUsers(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"users": {
 				{
 					"id":                      "ABCDEFGHIJK",
@@ -91,7 +91,7 @@ func TestDeleteUser(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":                      "ABCDEFGHIJK",
 			"screenName":              "myname",
 			"email":                   "test@example.com",

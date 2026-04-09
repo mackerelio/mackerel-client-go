@@ -37,14 +37,14 @@ func TestFindHost(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]map[string]any{
 			"host": {
 				"id":     "9rxGOHfVF8F",
 				"name":   "mydb001",
 				"status": "working",
 				"memo":   "hello",
 				"roles":  map[string][]string{"My-Service": {"db-master", "db-slave"}},
-				"interfaces": []map[string]interface{}{
+				"interfaces": []map[string]any{
 					{
 						"name":          "lo0",
 						"ipAddress":     "127.0.0.1",
@@ -111,7 +111,7 @@ func TestFindHosts(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"hosts": {
 				{
 					"id":     "9rxGOHfVF8F",
@@ -169,7 +169,7 @@ func TestFindHostByCustomIdentifier(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]map[string]any{
 			"host": {
 				"id":               "9rxGOHfVF8F",
 				"name":             "mydb001",
@@ -221,7 +221,7 @@ func TestFindHostByCustomIdentifier_Simple(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]map[string]any{
 			"host": {
 				"id":               "9rxGOHfVF8F",
 				"name":             "mydb001",
@@ -526,7 +526,7 @@ func TestRetireHost(t *testing.T) {
 
 		body, _ := io.ReadAll(req.Body)
 
-		var data interface{}
+		var data any
 		err := json.Unmarshal(body, &data)
 		if err != nil {
 			t.Fatal("request body should be decoded as json", string(body))
@@ -718,7 +718,7 @@ func TestListMonitoredStatues(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"monitoredStatuses": {
 				{
 					"status":    "OK",

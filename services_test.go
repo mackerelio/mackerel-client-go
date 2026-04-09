@@ -19,7 +19,7 @@ func TestFindServices(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"services": {
 				{
 					"name":  "My-Service",
@@ -61,7 +61,7 @@ func TestCreateService(t *testing.T) {
 			t.Error("request method should be POST but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"name":  "My-Service",
 			"memo":  "hello",
 			"roles": []string{},
@@ -109,7 +109,7 @@ func TestDeleteService(t *testing.T) {
 			t.Error("request method should be DELETE but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"name":  "My-Service",
 			"memo":  "hello",
 			"roles": []string{"ancient-role"},

@@ -15,7 +15,7 @@ func TestFindAlerts(t *testing.T) {
 			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"alerts": {
 				{
 					"id":        "2wpLU5fBXbG",
@@ -71,8 +71,8 @@ func TestFindAlertsWithNextId(t *testing.T) {
 			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"alerts": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"alerts": []map[string]any{
 				{
 					"id":        "2wpLU5fBXbG",
 					"status":    "CRITICAL",
@@ -136,8 +136,8 @@ func TestFindAlertsByNextId(t *testing.T) {
 			t.Error("request Query should be /api/v/alerts?nextId=", nextID, " but: ", req.URL.RawQuery)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"alerts": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"alerts": []map[string]any{
 				{
 					"id":        "2fsf8jRxFG1",
 					"status":    "CRITICAL",
@@ -196,7 +196,7 @@ func TestFindWithClosedAlerts(t *testing.T) {
 			t.Error("request URL should be /api/v0/alerts but: ", req.URL.Path)
 		}
 
-		respJSON, _ := json.Marshal(map[string][]map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string][]map[string]any{
 			"alerts": {
 				{
 					"id":        "2wpLU5fBXbG",
@@ -270,8 +270,8 @@ func TestFindWithClosedAlertsByNextId(t *testing.T) {
 			t.Error("request withClosed should be true but: ", q.Get("withClosed"))
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"alerts": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"alerts": []map[string]any{
 				{
 					"id":        "2wpLU5fBXbG",
 					"status":    "CRITICAL",
@@ -346,7 +346,7 @@ func TestGetAlert(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
 			"id":        "2wpLU5fBXbG",
 			"status":    "CRITICAL",
 			"monitorId": "2cYjfibBkaj",
@@ -393,8 +393,8 @@ func TestFindAlertLogs(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"logs": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"logs": []map[string]any{
 				{
 					"id":          "5m7fewuu5tS",
 					"createdAt":   1735290407,
@@ -402,9 +402,9 @@ func TestFindAlertLogs(t *testing.T) {
 					"trigger":     "monitoring",
 					"monitorId":   "5m72DB7s7sU",
 					"targetValue": (*float64)(nil),
-					"statusDetail": map[string]interface{}{
+					"statusDetail": map[string]any{
 						"type": "check",
-						"detail": map[string]interface{}{
+						"detail": map[string]any{
 							"message": "Uptime WARNING: 0 day(s) 0 hour(s) 6 minute(s) (398 second(s))",
 							"memo":    "",
 						},
@@ -502,8 +502,8 @@ func TestFindAlertLogsWithOption(t *testing.T) {
 			t.Error("request method should be GET but: ", req.Method)
 		}
 
-		respJSON, _ := json.Marshal(map[string]interface{}{
-			"logs": []map[string]interface{}{
+		respJSON, _ := json.Marshal(map[string]any{
+			"logs": []map[string]any{
 				{
 					"id":          "5m7fewuu5tS",
 					"createdAt":   1735290407,
@@ -511,9 +511,9 @@ func TestFindAlertLogsWithOption(t *testing.T) {
 					"trigger":     "monitoring",
 					"monitorId":   "5m72DB7s7sU",
 					"targetValue": (*float64)(nil),
-					"statusDetail": map[string]interface{}{
+					"statusDetail": map[string]any{
 						"type": "check",
-						"detail": map[string]interface{}{
+						"detail": map[string]any{
 							"message": "Uptime WARNING: 0 day(s) 0 hour(s) 6 minute(s) (398 second(s))",
 							"memo":    "",
 						},
