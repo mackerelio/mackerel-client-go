@@ -31,6 +31,9 @@ type Channel struct {
 
 	// Exists when the type is "email", "slack", or "webhook"
 	Events *[]string `json:"events,omitempty"`
+
+	// AddToDefaultNotificationGroup when the type is "email", "slack", or "webhook", only CreateChannel, CreateChannelContext
+	AddToDefaultNotificationGroup *bool `json:"addToDefaultNotificationGroup,omitempty"`
 }
 
 // Mentions represents the structure used for slack channel mentions
