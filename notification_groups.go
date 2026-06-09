@@ -14,10 +14,23 @@ const (
 	NotificationLevelCritical NotificationLevel = "critical"
 )
 
+// NotificationGroupType represents a type of notification group.
+type NotificationGroupType string
+
+// NotificationGroupTypes
+const (
+	NotificationGroupTypeGroup        NotificationGroupType = "group"
+	NotificationGroupTypeGroupDefault NotificationGroupType = "group-default"
+)
+
 // NotificationGroup represents a Mackerel notification group.
 // ref. https://mackerel.io/api-docs/entry/notification-groups
 type NotificationGroup struct {
-	ID                        string                      `json:"id,omitempty"`
+	// ID is excluded when used to call CreateNotificationGroup.
+	ID string `json:"id,omitempty"`
+
+	// Type is excluded when used to call CreateNotificationGroup or UpdateNotificationGroup.
+	Type                      NotificationGroupType       `json:"type,omitempty"`
 	Name                      string                      `json:"name"`
 	NotificationLevel         NotificationLevel           `json:"notificationLevel"`
 	ChildNotificationGroupIDs []string                    `json:"childNotificationGroupIds"`

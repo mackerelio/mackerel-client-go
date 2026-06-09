@@ -29,6 +29,7 @@ func TestCreateNotificationGroup(t *testing.T) {
 
 		respJSON, _ := json.Marshal(map[string]any{
 			"id":                        "3JwREyrZGQ9",
+			"type":                      "group",
 			"name":                      notificationGroup.Name,
 			"notificationLevel":         notificationGroup.NotificationLevel,
 			"childNotificationGroupIds": notificationGroup.ChildNotificationGroupIDs,
@@ -66,6 +67,7 @@ func TestCreateNotificationGroup(t *testing.T) {
 
 	want := &NotificationGroup{
 		ID:                        "3JwREyrZGQ9",
+		Type:                      NotificationGroupTypeGroup,
 		Name:                      param.Name,
 		NotificationLevel:         param.NotificationLevel,
 		ChildNotificationGroupIDs: param.ChildNotificationGroupIDs,
@@ -92,6 +94,7 @@ func TestFindNotificationGroups(t *testing.T) {
 			"notificationGroups": {
 				{
 					"id":                        "3Ja3HG3bTwq",
+					"type":                      "group-default",
 					"name":                      "Default",
 					"notificationLevel":         "all",
 					"childNotificationGroupIDs": []string{},
@@ -99,6 +102,7 @@ func TestFindNotificationGroups(t *testing.T) {
 				},
 				{
 					"id":                        "3UJaU9eREvw",
+					"type":                      "group",
 					"name":                      "Notification Group #01",
 					"notificationLevel":         "all",
 					"childNotificationGroupIds": []string{"3Tdq1pz9aLm"},
@@ -106,6 +110,7 @@ func TestFindNotificationGroups(t *testing.T) {
 				},
 				{
 					"id":                        "3Tdq1pz9aLm",
+					"type":                      "group",
 					"name":                      "Notification Group #02",
 					"notificationLevel":         "critical",
 					"childNotificationGroupIds": []string{},
@@ -135,6 +140,7 @@ func TestFindNotificationGroups(t *testing.T) {
 	want := []*NotificationGroup{
 		{
 			ID:                        "3Ja3HG3bTwq",
+			Type:                      NotificationGroupTypeGroupDefault,
 			Name:                      "Default",
 			NotificationLevel:         NotificationLevelAll,
 			ChildNotificationGroupIDs: []string{},
@@ -142,6 +148,7 @@ func TestFindNotificationGroups(t *testing.T) {
 		},
 		{
 			ID:                        "3UJaU9eREvw",
+			Type:                      NotificationGroupTypeGroup,
 			Name:                      "Notification Group #01",
 			NotificationLevel:         NotificationLevelAll,
 			ChildNotificationGroupIDs: []string{"3Tdq1pz9aLm"},
@@ -149,6 +156,7 @@ func TestFindNotificationGroups(t *testing.T) {
 		},
 		{
 			ID:                        "3Tdq1pz9aLm",
+			Type:                      NotificationGroupTypeGroup,
 			Name:                      "Notification Group #02",
 			NotificationLevel:         NotificationLevelCritical,
 			ChildNotificationGroupIDs: []string{},
@@ -186,6 +194,7 @@ func TestUpdateNotificationGroup(t *testing.T) {
 
 		respJSON, _ := json.Marshal(map[string]any{
 			"id":                        id,
+			"type":                      "group",
 			"name":                      notificationGroup.Name,
 			"notificationLevel":         notificationGroup.NotificationLevel,
 			"childNotificationGroupIds": notificationGroup.ChildNotificationGroupIDs,
@@ -223,6 +232,7 @@ func TestUpdateNotificationGroup(t *testing.T) {
 
 	want := &NotificationGroup{
 		ID:                        id,
+		Type:                      NotificationGroupTypeGroup,
 		Name:                      param.Name,
 		NotificationLevel:         param.NotificationLevel,
 		ChildNotificationGroupIDs: param.ChildNotificationGroupIDs,
@@ -248,6 +258,7 @@ func TestDeleteNotificationGroup(t *testing.T) {
 
 		respJSON, _ := json.Marshal(map[string]any{
 			"id":                        id,
+			"type":                      "group",
 			"name":                      "My Notification Group",
 			"notificationLevel":         "all",
 			"childNotificationGroupIds": []string{},
@@ -274,6 +285,7 @@ func TestDeleteNotificationGroup(t *testing.T) {
 
 	want := &NotificationGroup{
 		ID:                        id,
+		Type:                      NotificationGroupTypeGroup,
 		Name:                      "My Notification Group",
 		NotificationLevel:         NotificationLevelAll,
 		ChildNotificationGroupIDs: []string{},
