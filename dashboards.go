@@ -110,6 +110,7 @@ type Widget struct {
 	Range          Range           `json:"range,omitempty"`
 	Markdown       string          `json:"markdown,omitempty"`
 	ReferenceLines []ReferenceLine `json:"referenceLines,omitempty"`
+	LegendList     []string        `json:"legendList,omitempty"`
 	// If this field is nil, it will be treated as a two-digit display after the decimal point.
 	FractionSize *int64       `json:"fractionSize,omitempty"`
 	Suffix       string       `json:"suffix,omitempty"`

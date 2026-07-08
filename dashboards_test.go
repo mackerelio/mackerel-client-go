@@ -114,6 +114,7 @@ func TestFindDashboard(t *testing.T) {
 								"value": 1.23,
 							},
 						},
+						"legendList": []string{"loadavg.loadavg1", "loadavg.loadavg5"},
 					},
 					{
 						"type":         "value",
@@ -237,6 +238,10 @@ func TestFindDashboard(t *testing.T) {
 
 	if dashboard.Widgets[1].ReferenceLines[0].Value != 1.23 {
 		t.Error("request sends json including widgets.graph.referenceLines.value but:", dashboard)
+	}
+
+	if dashboard.Widgets[1].LegendList[0] != "loadavg.loadavg1" || dashboard.Widgets[1].LegendList[1] != "loadavg.loadavg5" {
+		t.Error("request sends json including widgets.legendList but:", dashboard)
 	}
 
 	// Widget Test : Metric ( && Expression Type)
