@@ -1,6 +1,10 @@
 package mackerel
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"net/url"
+)
 
 // CheckStatus represents check monitoring status
 type CheckStatus string
@@ -61,6 +65,48 @@ func NewCheckSourceHost(hostID string) CheckSource {
 // CheckReports represents check reports for API
 type CheckReports struct {
 	Reports []*CheckReport `json:"reports"`
+}
+
+// CheckMonitor represents a check monitor
+type CheckMonitor struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// FindCheckMonitorsParam is the parameters for FindCheckMonitors
+type FindCheckMonitorsParam struct {
+	NextID *string
+	Limit  *int
+}
+
+func (p FindCheckMonitorsParam) toValues() url.Values {
+	values := url.Values{}
+	if p.NextID != nil {
+		values.Set("nextId", *p.NextID)
+	}
+	if p.Limit != nil {
+		values.Set("limit", fmt.Sprintf("%d", *p.Limit))
+	}
+	return values
+}
+
+// FindCheckMonitorsResp is for FindCheckMonitors
+type FindCheckMonitorsResp struct {
+	Checks []*CheckMonitor `json:"checks"`
+	NextID string          `json:"nextId,omitempty"`
+}
+
+// FindCheckMonitors finds check monitors.
+func (c *Client) FindCheckMonitors(params *FindCheckMonitorsParam) (*FindCheckMonitorsResp, error) {
+	return c.FindCheckMonitorsContext(context.Background(), params)
+}
+
+// FindCheckMonitorsContext finds check monitors.
+func (c *Client) FindCheckMonitorsContext(ctx context.Context, params *FindCheckMonitorsParam) (*FindCheckMonitorsResp, error) {
+	if params == nil {
+		return requestGetContext[FindCheckMonitorsResp](ctx, c, "/api/v0/monitoring/checks")
+	}
+	return requestGetWithParamsContext[FindCheckMonitorsResp](ctx, c, "/api/v0/monitoring/checks", params.toValues())
 }
 
 // PostCheckReports reports check monitoring results.
