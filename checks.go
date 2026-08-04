@@ -73,6 +73,20 @@ type CheckMonitor struct {
 	Name string `json:"name"`
 }
 
+type FindCheckMonitorResp struct {
+	Check CheckMonitor `json:"check"`
+}
+
+// FindCheckMonitor finds check monitor.
+func (c *Client) FindCheckMonitor(monitorID string) (*FindCheckMonitorResp, error) {
+	return c.FindCheckMonitorContext(context.Background(), monitorID)
+}
+
+// FindCheckMonitorsContext finds check monitors.
+func (c *Client) FindCheckMonitorContext(ctx context.Context, monitorID string) (*FindCheckMonitorResp, error) {
+	return requestGetContext[FindCheckMonitorResp](ctx, c, fmt.Sprintf("/api/v0/monitoring/checks/%s", monitorID))
+}
+
 // FindCheckMonitorsParam is the parameters for FindCheckMonitors
 type FindCheckMonitorsParam struct {
 	NextID *string
