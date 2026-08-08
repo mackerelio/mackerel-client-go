@@ -364,13 +364,13 @@ func (c *Client) FindMonitorsContext(ctx context.Context) ([]Monitor, error) {
 		var e *unknownMonitorTypeError
 		if err != nil {
 			if errors.As(err, &e) {
-				break
+				continue
 			}
 			return nil, err
 		}
 		ms = append(ms, m)
 	}
-	return ms, err
+	return ms, nil
 }
 
 // GetMonitor gets a monitor.
