@@ -1,7 +1,9 @@
 package mackerel
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -138,6 +140,36 @@ func TestListTracesSeq(t *testing.T) {
 	}
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("the response should equal to %v", want)
+	}
+}
+
+func TestListTracesSeqCanceledContext(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		respJSON, _ := json.Marshal(&ListTracesResponse{HasNextPage: true})
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(respJSON) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+
+	var errs []error
+	for _, err := range client.ListTracesSeq(ctx, &ListTracesParam{
+		ServiceName: "shoppingcart",
+		From:        1718801900,
+		To:          1718802200,
+	}) {
+		if errs = append(errs, err); len(errs) > 1 {
+			t.Fatal("the iterator should stop on a canceled context but it retried: ", len(errs))
+		}
+	}
+	if len(errs) != 1 {
+		t.Fatal("the iterator should report exactly 1 error but: ", errs)
+	}
+	if !errors.Is(errs[0], context.Canceled) {
+		t.Error("the error should be context.Canceled but: ", errs[0])
 	}
 }
 
