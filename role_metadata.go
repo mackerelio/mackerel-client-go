@@ -26,7 +26,7 @@ func (c *Client) GetRoleMetaData(serviceName, roleName, namespace string) (*Role
 // GetRoleMetaDataContext gets a role metadata.
 func (c *Client) GetRoleMetaDataContext(ctx context.Context, serviceName, roleName, namespace string) (*RoleMetaDataResp, error) {
 	path := fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace)
-	metadata, header, err := requestGetAndReturnHeaderContext[HostMetaData](ctx, c, path)
+	metadata, header, err := requestGetAndReturnHeaderContext[RoleMetaData](ctx, c, path)
 	if err != nil {
 		return nil, err
 	}
@@ -73,9 +73,7 @@ func (c *Client) PutRoleMetaDataContext(ctx context.Context, serviceName, roleNa
 
 // DeleteRoleMetaData deletes a role metadata.
 func (c *Client) DeleteRoleMetaData(serviceName, roleName, namespace string) error {
-	path := fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace)
-	_, err := requestDeleteContext[any](context.Background(), c, path)
-	return err
+	return c.DeleteRoleMetaDataContext(context.Background(), serviceName, roleName, namespace)
 }
 
 // DeleteRoleMetaDataContext is like [DeleteRoleMetaData].

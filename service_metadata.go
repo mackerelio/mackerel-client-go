@@ -18,15 +18,15 @@ type ServiceMetaDataResp struct {
 // ServiceMetaData represents service metadata body.
 type ServiceMetaData any
 
-// GetServiceMetaData gets service metadata.
+// GetServiceMetaData gets a service metadata.
 func (c *Client) GetServiceMetaData(serviceName, namespace string) (*ServiceMetaDataResp, error) {
 	return c.GetServiceMetaDataContext(context.Background(), serviceName, namespace)
 }
 
-// GetServiceMetaDataContext gets service metadata.
+// GetServiceMetaDataContext gets a service metadata.
 func (c *Client) GetServiceMetaDataContext(ctx context.Context, serviceName, namespace string) (*ServiceMetaDataResp, error) {
 	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
-	metadata, header, err := requestGetAndReturnHeaderContext[HostMetaData](ctx, c, path)
+	metadata, header, err := requestGetAndReturnHeaderContext[ServiceMetaData](ctx, c, path)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *Client) PutServiceMetaData(serviceName, namespace string, metadata Serv
 	return c.PutServiceMetaDataContext(context.Background(), serviceName, namespace, metadata)
 }
 
-// v puts a service metadata.
+// PutServiceMetaDataContext puts a service metadata.
 func (c *Client) PutServiceMetaDataContext(ctx context.Context, serviceName, namespace string, metadata ServiceMetaData) error {
 	path := fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace)
 	_, err := requestPutContext[any](ctx, c, path, metadata)
