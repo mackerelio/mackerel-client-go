@@ -126,7 +126,7 @@ const (
 	HostStatusStandby = "standby"
 	// HostStatusMaintenance represents "maintenance" status
 	HostStatusMaintenance = "maintenance"
-	// HostStatusPoweroff represents "poeroff" status
+	// HostStatusPoweroff represents "poweroff" status
 	HostStatusPoweroff = "poweroff"
 )
 
@@ -158,7 +158,7 @@ func (h *Host) IPAddresses() map[string]string {
 		return nil
 	}
 
-	ipAddresses := make(map[string]string, 0)
+	ipAddresses := make(map[string]string, len(h.Interfaces))
 	for _, iface := range h.Interfaces {
 		ipAddresses[iface.Name] = iface.IPAddress
 	}
