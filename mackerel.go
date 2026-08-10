@@ -68,13 +68,10 @@ func NewClientWithOptions(apikey string, rawurl string, verbose bool) (*Client, 
 }
 
 func (c *Client) urlFor(path string, params url.Values) *url.URL {
-	newURL, err := url.Parse(c.BaseURL.String())
-	if err != nil {
-		panic("invalid base url")
-	}
+	newURL := *c.BaseURL
 	newURL.Path = path
 	newURL.RawQuery = params.Encode()
-	return newURL
+	return &newURL
 }
 
 func (c *Client) buildReq(req *http.Request) *http.Request {
