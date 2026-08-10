@@ -86,6 +86,17 @@ func TestFindMonitors(t *testing.T) {
 					"type":         "unknown",
 					"unknownField": "unknownValue",
 				},
+				{
+					"id":       "57We5nNtpZA",
+					"type":     "query",
+					"name":     "query monitor",
+					"memo":     "a monitor for query",
+					"query":    "container.cpu.utilization",
+					"operator": ">",
+					"warning":  30,
+					"critical": 300,
+					"legend":   "cpu utilization",
+				},
 			},
 		})
 
@@ -99,6 +110,10 @@ func TestFindMonitors(t *testing.T) {
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
+	}
+
+	if len(monitors) != 5 {
+		t.Fatal("monitors should have 5 monitors but: ", len(monitors))
 	}
 
 	{
@@ -195,6 +210,24 @@ func TestFindMonitors(t *testing.T) {
 		}
 		if m.WarningSensitivity != "insensitive" {
 			t.Error("request sends json including warningSensitivity but: ", m)
+		}
+	}
+	{
+		m, ok := monitors[4].(*MonitorQuery)
+		if !ok || m.Type != "query" {
+			t.Error("request sends json including query but: ", monitors[4])
+		}
+		if m.Memo != "a monitor for query" {
+			t.Error("request sends json including memo but: ", m)
+		}
+		if m.Query != "container.cpu.utilization" {
+			t.Error("request sends json including query but: ", m)
+		}
+		if *m.Critical != 300 {
+			t.Error("request sends json including critical but: ", m)
+		}
+		if m.Legend != "cpu utilization" {
+			t.Error("request sends json including legend but: ", m)
 		}
 	}
 }
