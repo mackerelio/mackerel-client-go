@@ -118,6 +118,8 @@ func (c *Client) ListTracesContext(ctx context.Context, params *ListTracesParam)
 // on subsequent calls until a successful response is received.
 // Note that the iterator does not include a delay between retries.
 // Therefore, the consumer should wait for sufficient period before each retry.
+// As an exception, the iterator does not retry once ctx is done; it reports the
+// error to the consumer and then ends.
 func (c *Client) ListTracesSeq(ctx context.Context, params *ListTracesParam) iter.Seq2[*ListTracesResult, error] {
 	return func(yield func(*ListTracesResult, error) bool) {
 		page := 1
@@ -135,6 +137,9 @@ func (c *Client) ListTracesSeq(ctx context.Context, params *ListTracesParam) ite
 			res, err := c.ListTracesContext(ctx, &params)
 			if err != nil {
 				if !yield(nil, err) {
+					return
+				}
+				if ctx.Err() != nil {
 					return
 				}
 				continue
