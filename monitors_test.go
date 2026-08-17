@@ -708,6 +708,7 @@ var testCases = []struct {
 			RequestBody:      "Request Body",
 			ContainsString:   "",
 			Headers:          []HeaderField{},
+			Dualstack:        DualstackIPv4,
 		},
 		`{
 			"id"  : "2cSZzK3XfmY",
@@ -717,7 +718,8 @@ var testCases = []struct {
 			"url": "https://example.com",
 			"headers": [],
 			"requestBody": "Request Body",
-			"maxCheckAttempts": 5
+			"maxCheckAttempts": 5,
+			"dualstack": "ipv4"
 		}`,
 	},
 	{
@@ -746,6 +748,7 @@ var testCases = []struct {
 					Value: "no-cache",
 				},
 			},
+			Dualstack: DualstackIPv6,
 		},
 		`{
 			"id"  : "2cSZzK3XfmH",
@@ -759,7 +762,8 @@ var testCases = []struct {
 			"maxCheckAttempts": 5,
 			"responseTimeWarning": 3000,
 			"responseTimeDuration": 7,
-			"certificationExpirationCritical": 30
+			"certificationExpirationCritical": 30,
+			"dualstack": "ipv6"
 		}`,
 	},
 	{

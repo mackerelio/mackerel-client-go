@@ -250,6 +250,8 @@ type MonitorExternalHTTP struct {
 	// list as headers explicitly if you want to remove all headers instead of
 	// using nil.
 	Headers []HeaderField `json:"headers"`
+
+	Dualstack Dualstack `json:"dualstack,omitempty"`
 }
 
 // HeaderField represents key-value pairs in an HTTP header for external http
@@ -258,6 +260,14 @@ type HeaderField struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
+
+type Dualstack string
+
+const (
+	DualstackIPv4 Dualstack = "ipv4"
+	DualstackIPv6 Dualstack = "ipv6"
+	DualstackAuto Dualstack = "auto"
+)
 
 // MonitorType returns monitor type.
 func (m *MonitorExternalHTTP) MonitorType() string { return monitorTypeExternalHTTP }
