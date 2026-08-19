@@ -251,7 +251,7 @@ type MonitorExternalHTTP struct {
 	// using nil.
 	Headers []HeaderField `json:"headers"`
 
-	Dualstack Dualstack `json:"dualstack,omitempty"`
+	Dualstack *Dualstack `json:"dualstack,omitempty"`
 }
 
 // HeaderField represents key-value pairs in an HTTP header for external http
