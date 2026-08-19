@@ -708,7 +708,7 @@ var testCases = []struct {
 			RequestBody:      "Request Body",
 			ContainsString:   "",
 			Headers:          []HeaderField{},
-			Dualstack:        DualstackIPv4,
+			Dualstack:        ToPtr(DualstackIPv4),
 		},
 		`{
 			"id"  : "2cSZzK3XfmY",
@@ -748,7 +748,7 @@ var testCases = []struct {
 					Value: "no-cache",
 				},
 			},
-			Dualstack: DualstackIPv6,
+			Dualstack: ToPtr(DualstackIPv6),
 		},
 		`{
 			"id"  : "2cSZzK3XfmH",
