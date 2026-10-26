@@ -311,7 +311,7 @@ func TestListLogsSeqPrevious(t *testing.T) {
 		ServiceName: "shop", From: 1, To: 2,
 		PageCursor: &LogPageCursor{Direction: LogPageCursorDirectionPREVIOUS, Cursor: "c10"},
 	}))
-	if want := []string{"c8", "c9", "c7"}; !reflect.DeepEqual(want, got) {
+	if want := []string{"c9", "c8", "c7"}; !reflect.DeepEqual(want, got) {
 		t.Errorf("the logs should be %v but: %v", want, got)
 	}
 	if want := []string{"PREVIOUS:c10", "PREVIOUS:c8"}; !reflect.DeepEqual(want, requested) {

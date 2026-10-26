@@ -3,6 +3,7 @@ package mackerel
 import (
 	"context"
 	"iter"
+	"slices"
 	"time"
 )
 
@@ -197,7 +198,13 @@ func (c *Client) ListLogsSeq(ctx context.Context, params *ListLogsParam) iter.Se
 				}
 				continue
 			}
-			for _, r := range res.Results {
+			results := res.Results
+			if direction == LogPageCursorDirectionPREVIOUS {
+				// The API returns a PREVIOUS page in the sort order, so reverse it to keep moving away from the cursor.
+				results = slices.Clone(results)
+				slices.Reverse(results)
+			}
+			for _, r := range results {
 				if !yield(r, nil) {
 					return
 				}
