@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"context"
+	"iter"
 	"time"
 )
 
@@ -172,6 +173,48 @@ func (c *Client) ListLogs(params *ListLogsParam) (*ListLogsResponse, error) {
 // ListLogsContext is like [ListLogs].
 func (c *Client) ListLogsContext(ctx context.Context, params *ListLogsParam) (*ListLogsResponse, error) {
 	return requestPostContext[ListLogsResponse](ctx, c, "/api/v0/logs", params)
+}
+
+// ListLogsSeq returns an iterator over logs that are selected by params.
+// When it reaches the end of the logs in a response, it automatically fetches
+// the subsequent page from the API using the same params except [ListLogsParam.PageCursor],
+// then the iterator continues its results.
+func (c *Client) ListLogsSeq(ctx context.Context, params *ListLogsParam) iter.Seq2[*LogEntry, error] {
+	return func(yield func(*LogEntry, error) bool) {
+		direction := LogPageCursorDirectionNEXT
+		if params.PageCursor != nil {
+			direction = params.PageCursor.Direction
+		}
+		params := *params
+		for {
+			res, err := c.ListLogsContext(ctx, &params)
+			if err != nil {
+				if !yield(nil, err) {
+					return
+				}
+				if ctx.Err() != nil {
+					return
+				}
+				continue
+			}
+			for _, r := range res.Results {
+				if !yield(r, nil) {
+					return
+				}
+			}
+			if res.Pagination == nil {
+				break
+			}
+			hasMore, cursor := res.Pagination.HasNextPage, res.Pagination.EndCursor
+			if direction == LogPageCursorDirectionPREVIOUS {
+				hasMore, cursor = res.Pagination.HasPreviousPage, res.Pagination.StartCursor
+			}
+			if !hasMore || cursor == nil {
+				break
+			}
+			params.PageCursor = &LogPageCursor{Direction: direction, Cursor: *cursor}
+		}
+	}
 }
 
 // FindSavedLogSearches lists saved log searches

@@ -1,8 +1,11 @@
 package mackerel
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -224,5 +227,185 @@ func TestLogAttributeValue_keepsEmptyString(t *testing.T) {
 	}
 	if want := `{"valueType":"string","stringValue":""}`; string(b) != want {
 		t.Errorf("marshaled value should be %s but: %s", want, b)
+	}
+}
+
+// newLogsPagingServer serves pages keyed by "<direction>:<cursor>" ("" for no cursor),
+// and records the keys of the requests.
+func newLogsPagingServer(t *testing.T, pages map[string]*ListLogsResponse, requested *[]string) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		var p ListLogsParam
+		if err := json.NewDecoder(req.Body).Decode(&p); err != nil {
+			t.Error(err)
+		}
+		key := ""
+		if p.PageCursor != nil {
+			key = string(p.PageCursor.Direction) + ":" + p.PageCursor.Cursor
+		}
+		*requested = append(*requested, key)
+		page, ok := pages[key]
+		if !ok {
+			t.Errorf("unexpected page cursor: %q", key)
+			res.WriteHeader(400)
+			return
+		}
+		respJSON, _ := json.Marshal(page)
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(respJSON) // nolint
+	}))
+}
+
+func collectLogs(t *testing.T, seq func(func(*LogEntry, error) bool)) []string {
+	var got []string
+	for r, err := range seq {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, r.Cursor)
+	}
+	return got
+}
+
+func TestListLogsSeq(t *testing.T) {
+	pages := map[string]*ListLogsResponse{
+		"": {
+			Results:    []*LogEntry{{Cursor: "c1"}, {Cursor: "c2"}},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c2")},
+		},
+		"NEXT:c2": {
+			Results:    []*LogEntry{{Cursor: "c3"}},
+			Pagination: &LogPagination{HasPreviousPage: true, StartCursor: ToPtr("c3"), EndCursor: ToPtr("c3")},
+		},
+	}
+	var requested []string
+	ts := newLogsPagingServer(t, pages, &requested)
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	got := collectLogs(t, client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}))
+	if want := []string{"c1", "c2", "c3"}; !reflect.DeepEqual(want, got) {
+		t.Errorf("the logs should be %v but: %v", want, got)
+	}
+	if want := []string{"", "NEXT:c2"}; !reflect.DeepEqual(want, requested) {
+		t.Errorf("the requested cursors should be %v but: %v", want, requested)
+	}
+}
+
+func TestListLogsSeqPrevious(t *testing.T) {
+	pages := map[string]*ListLogsResponse{
+		"PREVIOUS:c10": {
+			Results:    []*LogEntry{{Cursor: "c8"}, {Cursor: "c9"}},
+			Pagination: &LogPagination{HasNextPage: true, HasPreviousPage: true, StartCursor: ToPtr("c8"), EndCursor: ToPtr("c9")},
+		},
+		"PREVIOUS:c8": {
+			Results:    []*LogEntry{{Cursor: "c7"}},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c7"), EndCursor: ToPtr("c7")},
+		},
+	}
+	var requested []string
+	ts := newLogsPagingServer(t, pages, &requested)
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	got := collectLogs(t, client.ListLogsSeq(t.Context(), &ListLogsParam{
+		ServiceName: "shop", From: 1, To: 2,
+		PageCursor: &LogPageCursor{Direction: LogPageCursorDirectionPREVIOUS, Cursor: "c10"},
+	}))
+	if want := []string{"c8", "c9", "c7"}; !reflect.DeepEqual(want, got) {
+		t.Errorf("the logs should be %v but: %v", want, got)
+	}
+	if want := []string{"PREVIOUS:c10", "PREVIOUS:c8"}; !reflect.DeepEqual(want, requested) {
+		t.Errorf("the requested cursors should be %v but: %v", want, requested)
+	}
+}
+
+func TestListLogsSeqStopsOnBreak(t *testing.T) {
+	pages := map[string]*ListLogsResponse{
+		"": {
+			Results:    []*LogEntry{{Cursor: "c1"}, {Cursor: "c2"}},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c2")},
+		},
+	}
+	var requested []string
+	ts := newLogsPagingServer(t, pages, &requested)
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	for r, err := range client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if r.Cursor == "c1" {
+			break
+		}
+	}
+	if len(requested) != 1 {
+		t.Errorf("the iterator should not fetch the next page after break but requested: %v", requested)
+	}
+}
+
+func TestListLogsSeqRetriesOnError(t *testing.T) {
+	var bodies []string
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		b, _ := io.ReadAll(req.Body)
+		bodies = append(bodies, string(b))
+		if len(bodies) == 1 {
+			res.WriteHeader(429)
+			fmt.Fprint(res, `{"error": {"message": "Too Many Requests"}}`) // nolint
+			return
+		}
+		respJSON, _ := json.Marshal(&ListLogsResponse{
+			Results:    []*LogEntry{{Cursor: "c1"}},
+			Pagination: &LogPagination{StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
+		})
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(respJSON) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	var errs []error
+	var got []string
+	for r, err := range client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		got = append(got, r.Cursor)
+	}
+	if len(errs) != 1 {
+		t.Fatal("the iterator should report exactly 1 error but: ", errs)
+	}
+	if want := []string{"c1"}; !reflect.DeepEqual(want, got) {
+		t.Errorf("the logs should be %v but: %v", want, got)
+	}
+	if len(bodies) != 2 || bodies[0] != bodies[1] {
+		t.Errorf("the iterator should retry with the same params but: %v", bodies)
+	}
+}
+
+func TestListLogsSeqCanceledContext(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		respJSON, _ := json.Marshal(&ListLogsResponse{Pagination: &LogPagination{HasNextPage: true, EndCursor: ToPtr("c1")}})
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(respJSON) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+
+	var errs []error
+	for _, err := range client.ListLogsSeq(ctx, &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+		if errs = append(errs, err); len(errs) > 1 {
+			t.Fatal("the iterator should stop on a canceled context but it retried: ", len(errs))
+		}
+	}
+	if len(errs) != 1 {
+		t.Fatal("the iterator should report exactly 1 error but: ", errs)
+	}
+	if !errors.Is(errs[0], context.Canceled) {
+		t.Error("the error should be context.Canceled but: ", errs[0])
 	}
 }
