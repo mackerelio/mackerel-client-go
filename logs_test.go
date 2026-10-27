@@ -204,6 +204,7 @@ func TestFindSavedLogSearches(t *testing.T) {
 
 func TestListLogs_Error(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Header().Set("Retry-After", "3")
 		res.WriteHeader(429)
 		fmt.Fprint(res, `{"error": {"message": "Too Many Requests"}}`) // nolint
 	}))
@@ -215,7 +216,7 @@ func TestListLogs_Error(t *testing.T) {
 	if !ok {
 		t.Fatalf("error should be APIError but: %#v", err)
 	}
-	if apiErr.StatusCode != 429 || apiErr.Message != "Too Many Requests" {
+	if apiErr.StatusCode != 429 || apiErr.Message != "Too Many Requests" || apiErr.RetryAfter != 3*time.Second {
 		t.Errorf("unexpected APIError: %#v", apiErr)
 	}
 }
@@ -420,7 +421,7 @@ func TestListLogsSeqCanceledContext(t *testing.T) {
 }
 
 func TestListLogsSeqStopsOnClientError(t *testing.T) {
-	for _, status := range []int{400, 429} {
+	for _, status := range []int{400, 403} {
 		t.Run(fmt.Sprint(status), func(t *testing.T) {
 			setListLogsInterval(t, time.Millisecond)
 			requests := 0
@@ -449,46 +450,101 @@ func TestListLogsSeqStopsOnClientError(t *testing.T) {
 	}
 }
 
+func TestListLogsSeqRetriesOnTooManyRequests(t *testing.T) {
+	tests := []struct {
+		name       string
+		retryAfter string
+		interval   time.Duration
+		wantWait   time.Duration
+	}{
+		{"waits for Retry-After", "1", time.Millisecond, time.Second},
+		{"waits for the interval without Retry-After", "", 100 * time.Millisecond, 100 * time.Millisecond},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setListLogsInterval(t, tt.interval)
+			var bodies []string
+			var arrivals []time.Time
+			ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				b, _ := io.ReadAll(req.Body)
+				bodies = append(bodies, string(b))
+				arrivals = append(arrivals, time.Now())
+				if len(bodies) == 1 {
+					if tt.retryAfter != "" {
+						res.Header().Set("Retry-After", tt.retryAfter)
+					}
+					res.WriteHeader(429)
+					fmt.Fprint(res, `{"error": {"message": "Too Many Requests"}}`) // nolint
+					return
+				}
+				respJSON, _ := json.Marshal(&ListLogsResponse{
+					Results:    []*LogEntry{{Cursor: "c1"}},
+					Pagination: &LogPagination{StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
+				})
+				res.Header().Set("Content-Type", "application/json")
+				res.Write(respJSON) // nolint
+			}))
+			defer ts.Close()
+
+			client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+			var errs []error
+			var got []string
+			for r, err := range client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+				if err != nil {
+					errs = append(errs, err)
+					continue
+				}
+				got = append(got, r.Cursor)
+			}
+			var apiErr *APIError
+			if len(errs) != 1 || !errors.As(errs[0], &apiErr) || apiErr.StatusCode != 429 {
+				t.Fatal("the iterator should report exactly 1 APIError with status 429 but: ", errs)
+			}
+			if want := []string{"c1"}; !reflect.DeepEqual(want, got) {
+				t.Errorf("the logs should be %v but: %v", want, got)
+			}
+			if len(bodies) != 2 || bodies[0] != bodies[1] {
+				t.Fatalf("the iterator should retry with the same params but: %v", bodies)
+			}
+			if d := arrivals[1].Sub(arrivals[0]); d < tt.wantWait {
+				t.Errorf("the iterator should wait %s before retrying but retried after %s", tt.wantWait, d)
+			}
+		})
+	}
+}
+
 func TestListLogsSeqWaitsBetweenRequests(t *testing.T) {
 	const interval = 100 * time.Millisecond
+	const delay = 50 * time.Millisecond
 	setListLogsInterval(t, interval)
-	pages := map[string]*ListLogsResponse{
-		"": {
-			Results:    []*LogEntry{{Cursor: "c1"}},
-			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
-		},
-		"NEXT:c1": {
-			Results:    []*LogEntry{{Cursor: "c2"}},
-			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c2"), EndCursor: ToPtr("c2")},
-		},
-		"NEXT:c2": {
-			Results:    []*LogEntry{{Cursor: "c3"}},
-			Pagination: &LogPagination{StartCursor: ToPtr("c3"), EndCursor: ToPtr("c3")},
-		},
-	}
-	var requested []string
-	ts := newLogsPagingServer(t, pages, &requested)
+	var arrivals, responded []time.Time
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		arrivals = append(arrivals, time.Now())
+		n := len(arrivals)
+		time.Sleep(delay)
+		respJSON, _ := json.Marshal(&ListLogsResponse{
+			Results:    []*LogEntry{{Cursor: fmt.Sprint("c", n)}},
+			Pagination: &LogPagination{HasNextPage: n < 3, StartCursor: ToPtr(fmt.Sprint("c", n)), EndCursor: ToPtr(fmt.Sprint("c", n))},
+		})
+		responded = append(responded, time.Now())
+		res.Header().Set("Content-Type", "application/json")
+		res.Write(respJSON) // nolint
+	}))
 	defer ts.Close()
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	start := time.Now()
-	var firstAt time.Duration
-	for _, err := range client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
-		if err != nil {
-			t.Fatal(err)
+	got := collectLogs(t, client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}))
+	if want := []string{"c1", "c2", "c3"}; !reflect.DeepEqual(want, got) {
+		t.Fatalf("the logs should be %v but: %v", want, got)
+	}
+	if d := arrivals[0].Sub(start); d >= interval {
+		t.Errorf("the first request should not wait but took %s", d)
+	}
+	for i := 1; i < len(arrivals); i++ {
+		if d := arrivals[i].Sub(responded[i-1]); d < interval {
+			t.Errorf("the request %d should be sent %s after the previous response but: %s", i+1, interval, d)
 		}
-		if firstAt == 0 {
-			firstAt = time.Since(start)
-		}
-	}
-	if firstAt >= interval {
-		t.Errorf("the first request should not wait but took %s", firstAt)
-	}
-	if elapsed := time.Since(start); elapsed < 2*interval {
-		t.Errorf("the iterator should wait %s between requests but 3 requests took %s", interval, elapsed)
-	}
-	if len(requested) != 3 {
-		t.Errorf("the iterator should request 3 pages but: %v", requested)
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"iter"
+	"net/http"
 	"slices"
 	"time"
 )
@@ -177,7 +178,7 @@ func (c *Client) ListLogsContext(ctx context.Context, params *ListLogsParam) (*L
 	return requestPostContext[ListLogsResponse](ctx, c, "/api/v0/logs", params)
 }
 
-// listLogsInterval is the minimum interval between requests of [Client.ListLogsSeq],
+// listLogsInterval is the minimum interval from a response to the next request of [Client.ListLogsSeq],
 // as the Logs API accepts one request per second.
 var listLogsInterval = time.Second
 
@@ -199,6 +200,9 @@ func sleepContext(ctx context.Context, d time.Duration) error {
 // When it reaches the end of the logs in a response, it automatically fetches
 // the subsequent page from the API using the same params except [ListLogsParam.PageCursor],
 // then the iterator continues its results.
+// It waits between requests to keep the rate limit of the API.
+// When a request fails, it yields the error and then retries the request,
+// waiting for Retry-After on 429, unless the error is another 4xx error or ctx is done.
 func (c *Client) ListLogsSeq(ctx context.Context, params *ListLogsParam) iter.Seq2[*LogEntry, error] {
 	return func(yield func(*LogEntry, error) bool) {
 		direction := LogPageCursorDirectionNEXT
@@ -206,16 +210,17 @@ func (c *Client) ListLogsSeq(ctx context.Context, params *ListLogsParam) iter.Se
 			direction = params.PageCursor.Direction
 		}
 		params := *params
-		var requestedAt time.Time
+		var respondedAt time.Time
+		var wait time.Duration
 		for {
-			if !requestedAt.IsZero() {
-				if err := sleepContext(ctx, time.Until(requestedAt.Add(listLogsInterval))); err != nil {
+			if !respondedAt.IsZero() {
+				if err := sleepContext(ctx, time.Until(respondedAt.Add(wait))); err != nil {
 					yield(nil, err)
 					return
 				}
 			}
-			requestedAt = time.Now()
 			res, err := c.ListLogsContext(ctx, &params)
+			respondedAt, wait = time.Now(), listLogsInterval
 			if err != nil {
 				if !yield(nil, err) {
 					return
@@ -225,7 +230,10 @@ func (c *Client) ListLogsSeq(ctx context.Context, params *ListLogsParam) iter.Se
 				}
 				var apiErr *APIError
 				if errors.As(err, &apiErr) && apiErr.StatusCode >= 400 && apiErr.StatusCode < 500 {
-					return
+					if apiErr.StatusCode != http.StatusTooManyRequests {
+						return
+					}
+					wait = max(wait, apiErr.RetryAfter)
 				}
 				continue
 			}
