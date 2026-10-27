@@ -255,6 +255,12 @@ func newLogsPagingServer(t *testing.T, pages map[string]*ListLogsResponse, reque
 	}))
 }
 
+func setListLogsInterval(t *testing.T, d time.Duration) {
+	orig := listLogsInterval
+	listLogsInterval = d
+	t.Cleanup(func() { listLogsInterval = orig })
+}
+
 func collectLogs(t *testing.T, seq func(func(*LogEntry, error) bool)) []string {
 	var got []string
 	for r, err := range seq {
@@ -267,6 +273,7 @@ func collectLogs(t *testing.T, seq func(func(*LogEntry, error) bool)) []string {
 }
 
 func TestListLogsSeq(t *testing.T) {
+	setListLogsInterval(t, time.Millisecond)
 	pages := map[string]*ListLogsResponse{
 		"": {
 			Results:    []*LogEntry{{Cursor: "c1"}, {Cursor: "c2"}},
@@ -292,6 +299,7 @@ func TestListLogsSeq(t *testing.T) {
 }
 
 func TestListLogsSeqPrevious(t *testing.T) {
+	setListLogsInterval(t, time.Millisecond)
 	pages := map[string]*ListLogsResponse{
 		"PREVIOUS:c10": {
 			Results:    []*LogEntry{{Cursor: "c8"}, {Cursor: "c9"}},
@@ -344,14 +352,15 @@ func TestListLogsSeqStopsOnBreak(t *testing.T) {
 	}
 }
 
-func TestListLogsSeqRetriesOnError(t *testing.T) {
+func TestListLogsSeqRetriesOnServerError(t *testing.T) {
+	setListLogsInterval(t, time.Millisecond)
 	var bodies []string
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		b, _ := io.ReadAll(req.Body)
 		bodies = append(bodies, string(b))
 		if len(bodies) == 1 {
-			res.WriteHeader(429)
-			fmt.Fprint(res, `{"error": {"message": "Too Many Requests"}}`) // nolint
+			res.WriteHeader(500)
+			fmt.Fprint(res, `{"error": {"message": "Internal Server Error"}}`) // nolint
 			return
 		}
 		respJSON, _ := json.Marshal(&ListLogsResponse{
@@ -407,5 +416,111 @@ func TestListLogsSeqCanceledContext(t *testing.T) {
 	}
 	if !errors.Is(errs[0], context.Canceled) {
 		t.Error("the error should be context.Canceled but: ", errs[0])
+	}
+}
+
+func TestListLogsSeqStopsOnClientError(t *testing.T) {
+	for _, status := range []int{400, 429} {
+		t.Run(fmt.Sprint(status), func(t *testing.T) {
+			setListLogsInterval(t, time.Millisecond)
+			requests := 0
+			ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				requests++
+				res.WriteHeader(status)
+				fmt.Fprint(res, `{"error": {"message": "error"}}`) // nolint
+			}))
+			defer ts.Close()
+
+			client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+			var errs []error
+			for _, err := range client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+				if errs = append(errs, err); len(errs) > 1 {
+					t.Fatal("the iterator should not retry on a client error but it retried: ", len(errs))
+				}
+			}
+			var apiErr *APIError
+			if len(errs) != 1 || !errors.As(errs[0], &apiErr) || apiErr.StatusCode != status {
+				t.Fatalf("the iterator should report exactly 1 APIError with status %d but: %v", status, errs)
+			}
+			if requests != 1 {
+				t.Errorf("the iterator should request only once but requested %d times", requests)
+			}
+		})
+	}
+}
+
+func TestListLogsSeqWaitsBetweenRequests(t *testing.T) {
+	const interval = 100 * time.Millisecond
+	setListLogsInterval(t, interval)
+	pages := map[string]*ListLogsResponse{
+		"": {
+			Results:    []*LogEntry{{Cursor: "c1"}},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
+		},
+		"NEXT:c1": {
+			Results:    []*LogEntry{{Cursor: "c2"}},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c2"), EndCursor: ToPtr("c2")},
+		},
+		"NEXT:c2": {
+			Results:    []*LogEntry{{Cursor: "c3"}},
+			Pagination: &LogPagination{StartCursor: ToPtr("c3"), EndCursor: ToPtr("c3")},
+		},
+	}
+	var requested []string
+	ts := newLogsPagingServer(t, pages, &requested)
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	start := time.Now()
+	var firstAt time.Duration
+	for _, err := range client.ListLogsSeq(t.Context(), &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if firstAt == 0 {
+			firstAt = time.Since(start)
+		}
+	}
+	if firstAt >= interval {
+		t.Errorf("the first request should not wait but took %s", firstAt)
+	}
+	if elapsed := time.Since(start); elapsed < 2*interval {
+		t.Errorf("the iterator should wait %s between requests but 3 requests took %s", interval, elapsed)
+	}
+	if len(requested) != 3 {
+		t.Errorf("the iterator should request 3 pages but: %v", requested)
+	}
+}
+
+func TestListLogsSeqCanceledWhileWaiting(t *testing.T) {
+	setListLogsInterval(t, time.Minute)
+	pages := map[string]*ListLogsResponse{
+		"": {
+			Results:    []*LogEntry{{Cursor: "c1"}},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
+		},
+	}
+	var requested []string
+	ts := newLogsPagingServer(t, pages, &requested)
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	var errs []error
+	for r, err := range client.ListLogsSeq(ctx, &ListLogsParam{ServiceName: "shop", From: 1, To: 2}) {
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		if r.Cursor == "c1" {
+			cancel()
+		}
+	}
+	if len(errs) != 1 || !errors.Is(errs[0], context.Canceled) {
+		t.Fatal("the iterator should report exactly 1 context.Canceled but: ", errs)
+	}
+	if len(requested) != 1 {
+		t.Errorf("the iterator should not request the next page after cancel but requested: %v", requested)
 	}
 }

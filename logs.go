@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"context"
+	"errors"
 	"iter"
 	"slices"
 	"time"
@@ -176,6 +177,24 @@ func (c *Client) ListLogsContext(ctx context.Context, params *ListLogsParam) (*L
 	return requestPostContext[ListLogsResponse](ctx, c, "/api/v0/logs", params)
 }
 
+// listLogsInterval is the minimum interval between requests of [Client.ListLogsSeq],
+// as the Logs API accepts one request per second.
+var listLogsInterval = time.Second
+
+func sleepContext(ctx context.Context, d time.Duration) error {
+	if d <= 0 {
+		return ctx.Err()
+	}
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-t.C:
+		return nil
+	}
+}
+
 // ListLogsSeq returns an iterator over logs that are selected by params.
 // When it reaches the end of the logs in a response, it automatically fetches
 // the subsequent page from the API using the same params except [ListLogsParam.PageCursor],
@@ -187,13 +206,25 @@ func (c *Client) ListLogsSeq(ctx context.Context, params *ListLogsParam) iter.Se
 			direction = params.PageCursor.Direction
 		}
 		params := *params
+		var requestedAt time.Time
 		for {
+			if !requestedAt.IsZero() {
+				if err := sleepContext(ctx, time.Until(requestedAt.Add(listLogsInterval))); err != nil {
+					yield(nil, err)
+					return
+				}
+			}
+			requestedAt = time.Now()
 			res, err := c.ListLogsContext(ctx, &params)
 			if err != nil {
 				if !yield(nil, err) {
 					return
 				}
 				if ctx.Err() != nil {
+					return
+				}
+				var apiErr *APIError
+				if errors.As(err, &apiErr) && apiErr.StatusCode >= 400 && apiErr.StatusCode < 500 {
 					return
 				}
 				continue
