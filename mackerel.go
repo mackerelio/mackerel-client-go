@@ -122,9 +122,9 @@ func (c *Client) Request(req *http.Request) (resp *http.Response, err error) {
 		message, err := extractErrorMessage(resp.Body)
 		defer resp.Body.Close() // nolint
 		if err != nil {
-			return nil, &APIError{StatusCode: resp.StatusCode, Message: resp.Status}
+			message = resp.Status
 		}
-		return nil, &APIError{StatusCode: resp.StatusCode, Message: message}
+		return nil, &APIError{StatusCode: resp.StatusCode, Message: message, RetryAfter: parseRetryAfter(resp.Header.Get("Retry-After"))}
 	}
 	return resp, nil
 }
