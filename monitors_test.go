@@ -867,8 +867,7 @@ func TestDecodeUnknownMonitor(t *testing.T) {
 	if err == nil {
 		t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 	} else {
-		var e *unknownMonitorTypeError
-		if !errors.As(err, &e) {
+		if _, ok := errors.AsType[*unknownMonitorTypeError](err); !ok {
 			t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 		}
 	}
