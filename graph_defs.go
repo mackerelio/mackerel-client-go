@@ -11,6 +11,9 @@ type GraphDefsParam struct {
 	DisplayName string             `json:"displayName,omitempty"`
 	Unit        string             `json:"unit,omitempty"`
 	Metrics     []*GraphDefsMetric `json:"metrics"`
+	// If this field is nil, the server treats it as true.
+	// false can be specified only if a metric name in Metrics contains a wildcard.
+	IsAutoDeleteEnabled *bool `json:"isAutoDeleteEnabled,omitempty"`
 }
 
 // GraphDefsMetric graph metric

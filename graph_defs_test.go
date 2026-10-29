@@ -22,10 +22,11 @@ func TestCreateGraphDefs(t *testing.T) {
 		body, _ := io.ReadAll(req.Body)
 
 		var datas []struct {
-			Name        string             `json:"name"`
-			DisplayName string             `json:"displayName"`
-			Unit        string             `json:"unit"`
-			Metrics     []*GraphDefsMetric `json:"metrics"`
+			Name                string             `json:"name"`
+			DisplayName         string             `json:"displayName"`
+			Unit                string             `json:"unit"`
+			Metrics             []*GraphDefsMetric `json:"metrics"`
+			IsAutoDeleteEnabled *bool              `json:"isAutoDeleteEnabled"`
 		}
 
 		err := json.Unmarshal(body, &datas)
@@ -39,6 +40,9 @@ func TestCreateGraphDefs(t *testing.T) {
 		}
 		if data.DisplayName != "HorseMackerel" {
 			t.Errorf("request sends json including DisplayName but: %s", data.Name)
+		}
+		if data.IsAutoDeleteEnabled == nil || *data.IsAutoDeleteEnabled {
+			t.Errorf("request sends json including isAutoDeleteEnabled=false but: %v", data.IsAutoDeleteEnabled)
 		}
 		if !reflect.DeepEqual(
 			data.Metrics[0],
@@ -61,9 +65,10 @@ func TestCreateGraphDefs(t *testing.T) {
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	err := client.CreateGraphDefs([]*GraphDefsParam{
 		{
-			Name:        "mackerel",
-			DisplayName: "HorseMackerel",
-			Unit:        "percentage",
+			Name:                "mackerel",
+			DisplayName:         "HorseMackerel",
+			Unit:                "percentage",
+			IsAutoDeleteEnabled: new(false),
 			Metrics: []*GraphDefsMetric{
 				{
 					Name:        "saba1",
