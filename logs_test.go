@@ -74,7 +74,7 @@ func TestListLogs(t *testing.T) {
 				Severity:       LogSeverityERROR,
 				SeverityNumber: 17,
 				Body:           "something failed",
-				TraceID:        ToPtr("0123456789abcdef0123456789abcdef"),
+				TraceID:        new("0123456789abcdef0123456789abcdef"),
 				ServiceName:    "shop",
 				Attributes: []*LogAttribute{
 					{Key: "k", Value: &LogAttributeValue{ValueType: "string", StringValue: "v"}},
@@ -82,7 +82,7 @@ func TestListLogs(t *testing.T) {
 				ResourceAttributes: []*LogAttribute{},
 				ScopeAttributes:    []*LogAttribute{},
 			}},
-			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: new("c1"), EndCursor: new("c1")},
 		}
 		if !reflect.DeepEqual(want, got) {
 			t.Errorf("the response should equal to %v but: %v", want, got)
@@ -107,18 +107,18 @@ func TestListLogs(t *testing.T) {
 	t.Run("all params", func(t *testing.T) {
 		_, err := client.ListLogs(&ListLogsParam{
 			ServiceName:      "shop",
-			ServiceNamespace: ToPtr("ns"),
+			ServiceNamespace: new("ns"),
 			From:             100,
 			To:               200,
 			Keywords:         []string{"a,b", "c"},
 			Severities:       []LogSeverity{LogSeverityWARN, LogSeverityERROR},
-			TraceID:          ToPtr("0123456789abcdef0123456789abcdef"),
+			TraceID:          new("0123456789abcdef0123456789abcdef"),
 			BodyAttributes: []LogBodyAttributeFilter{
 				{KeyPath: []string{"req", "method"}, Value: "GET", Operator: LogBodyAttributeOperatorEQ, Type: LogBodyAttributeValueTypeString},
 			},
-			Order:      &LogOrder{Column: ToPtr(LogOrderColumnTIMESTAMP), Direction: ToPtr(OrderDirectionASC)},
+			Order:      &LogOrder{Column: new(LogOrderColumnTIMESTAMP), Direction: new(OrderDirectionASC)},
 			PageCursor: &LogPageCursor{Direction: LogPageCursorDirectionNEXT, Cursor: "c1"},
-			PerPage:    ToPtr(10),
+			PerPage:    new(10),
 		})
 		if err != nil {
 			t.Fatal(err)
@@ -278,11 +278,11 @@ func TestListLogsSeq(t *testing.T) {
 	pages := map[string]*ListLogsResponse{
 		"": {
 			Results:    []*LogEntry{{Cursor: "c1"}, {Cursor: "c2"}},
-			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c2")},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: new("c1"), EndCursor: new("c2")},
 		},
 		"NEXT:c2": {
 			Results:    []*LogEntry{{Cursor: "c3"}},
-			Pagination: &LogPagination{HasPreviousPage: true, StartCursor: ToPtr("c3"), EndCursor: ToPtr("c3")},
+			Pagination: &LogPagination{HasPreviousPage: true, StartCursor: new("c3"), EndCursor: new("c3")},
 		},
 	}
 	var requested []string
@@ -304,11 +304,11 @@ func TestListLogsSeqPrevious(t *testing.T) {
 	pages := map[string]*ListLogsResponse{
 		"PREVIOUS:c10": {
 			Results:    []*LogEntry{{Cursor: "c8"}, {Cursor: "c9"}},
-			Pagination: &LogPagination{HasNextPage: true, HasPreviousPage: true, StartCursor: ToPtr("c8"), EndCursor: ToPtr("c9")},
+			Pagination: &LogPagination{HasNextPage: true, HasPreviousPage: true, StartCursor: new("c8"), EndCursor: new("c9")},
 		},
 		"PREVIOUS:c8": {
 			Results:    []*LogEntry{{Cursor: "c7"}},
-			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c7"), EndCursor: ToPtr("c7")},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: new("c7"), EndCursor: new("c7")},
 		},
 	}
 	var requested []string
@@ -332,7 +332,7 @@ func TestListLogsSeqStopsOnBreak(t *testing.T) {
 	pages := map[string]*ListLogsResponse{
 		"": {
 			Results:    []*LogEntry{{Cursor: "c1"}, {Cursor: "c2"}},
-			Pagination: &LogPagination{HasNextPage: true, StartCursor: ToPtr("c1"), EndCursor: ToPtr("c2")},
+			Pagination: &LogPagination{HasNextPage: true, StartCursor: new("c1"), EndCursor: new("c2")},
 		},
 	}
 	var requested []string
@@ -366,7 +366,7 @@ func TestListLogsSeqRetriesOnServerError(t *testing.T) {
 		}
 		respJSON, _ := json.Marshal(&ListLogsResponse{
 			Results:    []*LogEntry{{Cursor: "c1"}},
-			Pagination: &LogPagination{StartCursor: ToPtr("c1"), EndCursor: ToPtr("c1")},
+			Pagination: &LogPagination{StartCursor: new("c1"), EndCursor: new("c1")},
 		})
 		res.Header().Set("Content-Type", "application/json")
 		res.Write(respJSON) // nolint
@@ -396,7 +396,7 @@ func TestListLogsSeqRetriesOnServerError(t *testing.T) {
 
 func TestListLogsSeqCanceledContext(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		respJSON, _ := json.Marshal(&ListLogsResponse{Pagination: &LogPagination{HasNextPage: true, EndCursor: ToPtr("c1")}})
+		respJSON, _ := json.Marshal(&ListLogsResponse{Pagination: &LogPagination{HasNextPage: true, EndCursor: new("c1")}})
 		res.Header().Set("Content-Type", "application/json")
 		res.Write(respJSON) // nolint
 	}))

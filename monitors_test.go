@@ -13,14 +13,6 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
-func pfloat64(x float64) *float64 {
-	return &x
-}
-
-func puint64(x uint64) *uint64 {
-	return &x
-}
-
 func TestFindMonitors(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/monitors" {
@@ -472,8 +464,8 @@ var testCases = []struct {
 			NotificationInterval: 0,
 			Metric:               "disk.aa-00.writes.delta",
 			Operator:             ">",
-			Warning:              pfloat64(20000.000000),
-			Critical:             pfloat64(400000.000000),
+			Warning:              new(20000.000000),
+			Critical:             new(400000.000000),
 			Duration:             3,
 			MaxCheckAttempts:     3,
 			Scopes: []string{
@@ -511,7 +503,7 @@ var testCases = []struct {
 			NotificationInterval: 0,
 			Metric:               "custom.foo.bar",
 			Operator:             ">",
-			Warning:              pfloat64(200.0),
+			Warning:              new(200.0),
 			Critical:             nil,
 			Duration:             3,
 			MaxCheckAttempts:     5,
@@ -541,7 +533,7 @@ var testCases = []struct {
 			Metric:               "custom.foo.baz",
 			Operator:             "<",
 			Warning:              nil,
-			Critical:             pfloat64(300),
+			Critical:             new(300.0),
 			Duration:             7,
 			MaxCheckAttempts:     2,
 			Scopes:               nil,
@@ -570,8 +562,8 @@ var testCases = []struct {
 			Service:              "Hatena-Blog",
 			Metric:               "access_num.4xx_count",
 			Operator:             ">",
-			Warning:              pfloat64(50.000000),
-			Critical:             pfloat64(100.000000),
+			Warning:              new(50.000000),
+			Critical:             new(100.000000),
 			Duration:             1,
 			MaxCheckAttempts:     5,
 		},
@@ -601,7 +593,7 @@ var testCases = []struct {
 			Metric:               "access_num.5xx_count",
 			Operator:             ">",
 			Warning:              nil,
-			Critical:             pfloat64(0.0),
+			Critical:             new(0.0),
 			Duration:             3,
 			MaxCheckAttempts:     3,
 		},
@@ -664,13 +656,13 @@ var testCases = []struct {
 			URL:                             "https://example.com",
 			MaxCheckAttempts:                7,
 			Service:                         "Hatena-Blog",
-			ResponseTimeCritical:            pfloat64(3000.0),
-			ResponseTimeWarning:             pfloat64(2000.0),
-			ResponseTimeDuration:            puint64(7),
+			ResponseTimeCritical:            new(3000.0),
+			ResponseTimeWarning:             new(2000.0),
+			ResponseTimeDuration:            new(uint64(7)),
 			RequestBody:                     "Request Body",
 			ContainsString:                  "",
-			CertificationExpirationCritical: puint64(60),
-			CertificationExpirationWarning:  puint64(90),
+			CertificationExpirationCritical: new(uint64(60)),
+			CertificationExpirationWarning:  new(uint64(90)),
 			SkipCertificateVerification:     false,
 			Headers: []HeaderField{
 				{
@@ -708,7 +700,7 @@ var testCases = []struct {
 			RequestBody:      "Request Body",
 			ContainsString:   "",
 			Headers:          []HeaderField{},
-			Dualstack:        ToPtr(DualstackIPv4),
+			Dualstack:        new(DualstackIPv4),
 		},
 		`{
 			"id"  : "2cSZzK3XfmY",
@@ -735,11 +727,11 @@ var testCases = []struct {
 			MaxCheckAttempts:                5,
 			Service:                         "Hatena-Blog",
 			ResponseTimeCritical:            nil,
-			ResponseTimeWarning:             pfloat64(3000.0),
-			ResponseTimeDuration:            puint64(7),
+			ResponseTimeWarning:             new(3000.0),
+			ResponseTimeDuration:            new(uint64(7)),
 			RequestBody:                     "Request Body",
 			ContainsString:                  "",
-			CertificationExpirationCritical: puint64(30),
+			CertificationExpirationCritical: new(uint64(30)),
 			CertificationExpirationWarning:  nil,
 			SkipCertificateVerification:     false,
 			Headers: []HeaderField{
@@ -748,7 +740,7 @@ var testCases = []struct {
 					Value: "no-cache",
 				},
 			},
-			Dualstack: ToPtr(DualstackIPv6),
+			Dualstack: new(DualstackIPv6),
 		},
 		`{
 			"id"  : "2cSZzK3XfmH",
@@ -776,9 +768,9 @@ var testCases = []struct {
 			NotificationInterval:    60,
 			Expression:              "avg(roleSlots(\"server:role\",\"loadavg5\"))",
 			Operator:                ">",
-			Warning:                 pfloat64(5.000000),
-			Critical:                pfloat64(10.000000),
-			EvaluateBackwardMinutes: puint64(3),
+			Warning:                 new(5.000000),
+			Critical:                new(10.000000),
+			EvaluateBackwardMinutes: new(uint64(3)),
 		},
 		`{
 			"id"  : "2cSZzK3XfmE",
@@ -826,7 +818,7 @@ var testCases = []struct {
 			NotificationInterval: 60,
 			Query:                "custom.counter",
 			Operator:             ">",
-			Warning:              pfloat64(10.0),
+			Warning:              new(10.0),
 			Critical:             nil,
 		},
 		`{
@@ -875,8 +867,7 @@ func TestDecodeUnknownMonitor(t *testing.T) {
 	if err == nil {
 		t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 	} else {
-		var e *unknownMonitorTypeError
-		if !errors.As(err, &e) {
+		if _, ok := errors.AsType[*unknownMonitorTypeError](err); !ok {
 			t.Errorf("err should be unknownMonitorTypeError but: %v", err)
 		}
 	}

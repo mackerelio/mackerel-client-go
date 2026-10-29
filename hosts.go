@@ -104,7 +104,7 @@ type UpdateHostParam CreateHostParam
 type MonitoredStatus struct {
 	MonitorID string                `json:"monitorId"`
 	Status    string                `json:"status"`
-	Detail    MonitoredStatusDetail `json:"detail,omitempty"`
+	Detail    MonitoredStatusDetail `json:"detail"`
 }
 
 // MonitoredStatusDetail monitored status detail

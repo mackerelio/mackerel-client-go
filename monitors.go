@@ -371,9 +371,8 @@ func (c *Client) FindMonitorsContext(ctx context.Context) ([]Monitor, error) {
 	ms := make([]Monitor, 0, len(data.Monitors))
 	for _, rawmes := range data.Monitors {
 		m, err := decodeMonitor(rawmes)
-		var e *unknownMonitorTypeError
 		if err != nil {
-			if errors.As(err, &e) {
+			if _, ok := errors.AsType[*unknownMonitorTypeError](err); ok {
 				continue
 			}
 			return nil, err
