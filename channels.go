@@ -21,7 +21,7 @@ type Channel struct {
 	UserIDs *[]string `json:"userIds,omitempty"`
 
 	// Exists when the type is "slack"
-	Mentions Mentions `json:"mentions,omitempty"`
+	Mentions Mentions `json:"mentions"`
 	// In order to support both 'not setting this field' and 'setting the field as false',
 	// this field needed to be *bool not bool.
 	EnabledGraphImage *bool `json:"enabledGraphImage,omitempty"`

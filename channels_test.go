@@ -10,8 +10,10 @@ import (
 )
 
 // boolPointer is a helper function to initialize a bool pointer
+//
+//go:fix inline
 func boolPointer(b bool) *bool {
-	return &b
+	return new(b)
 }
 
 func TestFindChannels(t *testing.T) {
@@ -237,7 +239,7 @@ func TestCreateChannel(t *testing.T) {
 			OK:      "ok message",
 			Warning: "warning message",
 		},
-		EnabledGraphImage: boolPointer(true),
+		EnabledGraphImage: new(true),
 		Events:            &[]string{"alert"},
 	})
 
@@ -303,7 +305,7 @@ func TestUpdateChannel(t *testing.T) {
 			OK:      "ok message",
 			Warning: "warning message",
 		},
-		EnabledGraphImage: boolPointer(true),
+		EnabledGraphImage: new(true),
 		Events:            &[]string{"alert"},
 	})
 

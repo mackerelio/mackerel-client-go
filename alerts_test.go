@@ -538,8 +538,8 @@ func TestFindAlertLogsWithOption(t *testing.T) {
 
 	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
 	_, err := client.FindAlertLogs("2wpLU5fBXbG", &FindAlertLogsParam{
-		NextId: ToPtr("2fsf8jRxFG1"),
-		Limit:  ToPtr(10),
+		NextId: new("2fsf8jRxFG1"),
+		Limit:  new(10),
 	})
 	if err != nil {
 		t.Error("err should be nil but: ", err)

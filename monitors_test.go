@@ -13,12 +13,14 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
+//go:fix inline
 func pfloat64(x float64) *float64 {
-	return &x
+	return new(x)
 }
 
+//go:fix inline
 func puint64(x uint64) *uint64 {
-	return &x
+	return new(x)
 }
 
 func TestFindMonitors(t *testing.T) {
@@ -472,8 +474,8 @@ var testCases = []struct {
 			NotificationInterval: 0,
 			Metric:               "disk.aa-00.writes.delta",
 			Operator:             ">",
-			Warning:              pfloat64(20000.000000),
-			Critical:             pfloat64(400000.000000),
+			Warning:              new(20000.000000),
+			Critical:             new(400000.000000),
 			Duration:             3,
 			MaxCheckAttempts:     3,
 			Scopes: []string{
@@ -511,7 +513,7 @@ var testCases = []struct {
 			NotificationInterval: 0,
 			Metric:               "custom.foo.bar",
 			Operator:             ">",
-			Warning:              pfloat64(200.0),
+			Warning:              new(200.0),
 			Critical:             nil,
 			Duration:             3,
 			MaxCheckAttempts:     5,
@@ -570,8 +572,8 @@ var testCases = []struct {
 			Service:              "Hatena-Blog",
 			Metric:               "access_num.4xx_count",
 			Operator:             ">",
-			Warning:              pfloat64(50.000000),
-			Critical:             pfloat64(100.000000),
+			Warning:              new(50.000000),
+			Critical:             new(100.000000),
 			Duration:             1,
 			MaxCheckAttempts:     5,
 		},
@@ -601,7 +603,7 @@ var testCases = []struct {
 			Metric:               "access_num.5xx_count",
 			Operator:             ">",
 			Warning:              nil,
-			Critical:             pfloat64(0.0),
+			Critical:             new(0.0),
 			Duration:             3,
 			MaxCheckAttempts:     3,
 		},
@@ -664,8 +666,8 @@ var testCases = []struct {
 			URL:                             "https://example.com",
 			MaxCheckAttempts:                7,
 			Service:                         "Hatena-Blog",
-			ResponseTimeCritical:            pfloat64(3000.0),
-			ResponseTimeWarning:             pfloat64(2000.0),
+			ResponseTimeCritical:            new(3000.0),
+			ResponseTimeWarning:             new(2000.0),
 			ResponseTimeDuration:            puint64(7),
 			RequestBody:                     "Request Body",
 			ContainsString:                  "",
@@ -708,7 +710,7 @@ var testCases = []struct {
 			RequestBody:      "Request Body",
 			ContainsString:   "",
 			Headers:          []HeaderField{},
-			Dualstack:        ToPtr(DualstackIPv4),
+			Dualstack:        new(DualstackIPv4),
 		},
 		`{
 			"id"  : "2cSZzK3XfmY",
@@ -735,7 +737,7 @@ var testCases = []struct {
 			MaxCheckAttempts:                5,
 			Service:                         "Hatena-Blog",
 			ResponseTimeCritical:            nil,
-			ResponseTimeWarning:             pfloat64(3000.0),
+			ResponseTimeWarning:             new(3000.0),
 			ResponseTimeDuration:            puint64(7),
 			RequestBody:                     "Request Body",
 			ContainsString:                  "",
@@ -748,7 +750,7 @@ var testCases = []struct {
 					Value: "no-cache",
 				},
 			},
-			Dualstack: ToPtr(DualstackIPv6),
+			Dualstack: new(DualstackIPv6),
 		},
 		`{
 			"id"  : "2cSZzK3XfmH",
@@ -776,8 +778,8 @@ var testCases = []struct {
 			NotificationInterval:    60,
 			Expression:              "avg(roleSlots(\"server:role\",\"loadavg5\"))",
 			Operator:                ">",
-			Warning:                 pfloat64(5.000000),
-			Critical:                pfloat64(10.000000),
+			Warning:                 new(5.000000),
+			Critical:                new(10.000000),
 			EvaluateBackwardMinutes: puint64(3),
 		},
 		`{
@@ -826,7 +828,7 @@ var testCases = []struct {
 			NotificationInterval: 60,
 			Query:                "custom.counter",
 			Operator:             ">",
-			Warning:              pfloat64(10.0),
+			Warning:              new(10.0),
 			Critical:             nil,
 		},
 		`{

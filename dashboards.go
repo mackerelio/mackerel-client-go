@@ -105,9 +105,9 @@ type Widget struct {
 	Type           string          `json:"type"`
 	Title          string          `json:"title"`
 	Layout         Layout          `json:"layout"`
-	Metric         Metric          `json:"metric,omitempty"`
-	Graph          Graph           `json:"graph,omitempty"`
-	Range          Range           `json:"range,omitempty"`
+	Metric         Metric          `json:"metric"`
+	Graph          Graph           `json:"graph"`
+	Range          Range           `json:"range"`
 	Markdown       string          `json:"markdown,omitempty"`
 	ReferenceLines []ReferenceLine `json:"referenceLines,omitempty"`
 	LegendList     []string        `json:"legendList,omitempty"`
