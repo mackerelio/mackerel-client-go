@@ -9,13 +9,6 @@ import (
 	"testing"
 )
 
-// boolPointer is a helper function to initialize a bool pointer
-//
-//go:fix inline
-func boolPointer(b bool) *bool {
-	return new(b)
-}
-
 func TestFindChannels(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/channels" {

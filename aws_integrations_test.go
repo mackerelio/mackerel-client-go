@@ -567,11 +567,6 @@ func TestListAWSIntegrationExcludableMetrics(t *testing.T) {
 	}
 }
 
-//go:fix inline
-func toPointer(s string) *string {
-	return new(s)
-}
-
 func TestAWSIntegrationService_MarshalJSON(t *testing.T) {
 	tests := []struct {
 		caption  string

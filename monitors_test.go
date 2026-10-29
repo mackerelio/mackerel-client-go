@@ -13,16 +13,6 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
-//go:fix inline
-func pfloat64(x float64) *float64 {
-	return new(x)
-}
-
-//go:fix inline
-func puint64(x uint64) *uint64 {
-	return new(x)
-}
-
 func TestFindMonitors(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/monitors" {
@@ -543,7 +533,7 @@ var testCases = []struct {
 			Metric:               "custom.foo.baz",
 			Operator:             "<",
 			Warning:              nil,
-			Critical:             pfloat64(300),
+			Critical:             new(300.0),
 			Duration:             7,
 			MaxCheckAttempts:     2,
 			Scopes:               nil,
@@ -668,11 +658,11 @@ var testCases = []struct {
 			Service:                         "Hatena-Blog",
 			ResponseTimeCritical:            new(3000.0),
 			ResponseTimeWarning:             new(2000.0),
-			ResponseTimeDuration:            puint64(7),
+			ResponseTimeDuration:            new(uint64(7)),
 			RequestBody:                     "Request Body",
 			ContainsString:                  "",
-			CertificationExpirationCritical: puint64(60),
-			CertificationExpirationWarning:  puint64(90),
+			CertificationExpirationCritical: new(uint64(60)),
+			CertificationExpirationWarning:  new(uint64(90)),
 			SkipCertificateVerification:     false,
 			Headers: []HeaderField{
 				{
@@ -738,10 +728,10 @@ var testCases = []struct {
 			Service:                         "Hatena-Blog",
 			ResponseTimeCritical:            nil,
 			ResponseTimeWarning:             new(3000.0),
-			ResponseTimeDuration:            puint64(7),
+			ResponseTimeDuration:            new(uint64(7)),
 			RequestBody:                     "Request Body",
 			ContainsString:                  "",
-			CertificationExpirationCritical: puint64(30),
+			CertificationExpirationCritical: new(uint64(30)),
 			CertificationExpirationWarning:  nil,
 			SkipCertificateVerification:     false,
 			Headers: []HeaderField{
@@ -780,7 +770,7 @@ var testCases = []struct {
 			Operator:                ">",
 			Warning:                 new(5.000000),
 			Critical:                new(10.000000),
-			EvaluateBackwardMinutes: puint64(3),
+			EvaluateBackwardMinutes: new(uint64(3)),
 		},
 		`{
 			"id"  : "2cSZzK3XfmE",
