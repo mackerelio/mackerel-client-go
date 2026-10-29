@@ -216,8 +216,6 @@ func (c *Client) compatRequestJSON(ctx context.Context, method string, path stri
 }
 
 // ToPtr returns a pointer to the given value of any type.
-//
-//go:fix inline
 func ToPtr[T any](v T) *T {
 	return new(v)
 }
