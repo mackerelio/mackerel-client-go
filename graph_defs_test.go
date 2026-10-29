@@ -54,8 +54,8 @@ func TestCreateGraphDefs(t *testing.T) {
 		) {
 			t.Error("request sends json including GraphDefsMetric but: ", data.Metrics[0])
 		}
-		respJSON, _ := json.Marshal(map[string]string{
-			"result": "OK",
+		respJSON, _ := json.Marshal(map[string]bool{
+			"success": true,
 		})
 		res.Header()["Content-Type"] = []string{"application/json"}
 		fmt.Fprint(res, string(respJSON)) // nolint
@@ -86,6 +86,38 @@ func TestCreateGraphDefs(t *testing.T) {
 
 	if err != nil {
 		t.Error("err should be nil but: ", err)
+	}
+}
+
+func TestCreateGraphDefs_Failed(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		respJSON, _ := json.Marshal(map[string]any{
+			"success":           false,
+			"invalidGraphNames": []string{"custom.aaa.aaa"},
+		})
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON)) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+	err := client.CreateGraphDefs([]*GraphDefsParam{
+		{
+			Name: "custome.aaa.aaa",
+			Metrics: []*GraphDefsMetric{
+				{
+					Name:      "invalid",
+					IsStacked: false,
+				},
+			},
+		},
+	})
+
+	if err == nil {
+		t.Error("err should be exists")
+	}
+	if s := `failed create graph defs. GraphNames: ["custom.aaa.aaa"]`; err.Error() != s {
+		t.Errorf("err should be %q, but got %q", s, err.Error())
 	}
 }
 
