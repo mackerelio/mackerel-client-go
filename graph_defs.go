@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -28,10 +29,29 @@ func (c *Client) CreateGraphDefs(graphDefs []*GraphDefsParam) error {
 	return c.CreateGraphDefsContext(context.Background(), graphDefs)
 }
 
+type CreateGraphDefsResponse struct {
+	InvalidGraphNames []string `json:"invalidGraphNames"`
+}
+
+func (e *CreateGraphDefsResponse) Error() string {
+	return fmt.Sprintf("failed create graph defs. GraphNames: %q", e.InvalidGraphNames)
+}
+
+type createGraphDefsResp struct {
+	Success           bool     `json:"success"`
+	InvalidGraphNames []string `json:"invalidGraphNames"`
+}
+
 // CreateGraphDefsContext creates graph definitions.
 func (c *Client) CreateGraphDefsContext(ctx context.Context, graphDefs []*GraphDefsParam) error {
-	_, err := requestPostContext[any](ctx, c, "/api/v0/graph-defs/create", graphDefs)
-	return err
+	data, err := requestPostContext[createGraphDefsResp](ctx, c, "/api/v0/graph-defs/create", graphDefs)
+	if err != nil {
+		return err
+	}
+	if data.Success {
+		return nil
+	}
+	return &CreateGraphDefsResponse{InvalidGraphNames: data.InvalidGraphNames}
 }
 
 // DeleteGraphDef deletes a graph definition.
