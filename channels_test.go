@@ -260,6 +260,78 @@ func TestCreateChannel(t *testing.T) {
 	}
 }
 
+func TestCreateChannel_googleChat(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/api/v0/channels" {
+			t.Error("request URL should be /api/v0/channels but: ", req.URL.Path)
+		}
+
+		if req.Method != "POST" {
+			t.Error("request method should be POST but: ", req.Method)
+		}
+
+		var body map[string]any
+		if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
+			t.Fatal("request body should be valid JSON but: ", err)
+		}
+		expected := map[string]any{
+			"name":                          "google chat channel",
+			"type":                          "google-chat",
+			"url":                           "https://chat.googleapis.com/v1/spaces/AAAA/messages?key=KEY&token=TOKEN",
+			"enabledGraphImage":             true,
+			"events":                        []any{"alert", "alertGroup"},
+			"addToDefaultNotificationGroup": false,
+			"mentions":                      map[string]any{},
+		}
+		if !reflect.DeepEqual(body, expected) {
+			t.Errorf("request body should be %v but: %v", expected, body)
+		}
+
+		respJSON, _ := json.Marshal(map[string]any{
+			"id":                "abcdefabc",
+			"name":              "google chat channel",
+			"type":              "google-chat",
+			"url":               "https://chat.googleapis.com/v1/spaces/AAAA/messages?key=KEY&token=TOKEN",
+			"enabledGraphImage": true,
+			"events":            []string{"alert", "alertGroup"},
+		})
+
+		res.Header()["Content-Type"] = []string{"application/json"}
+		fmt.Fprint(res, string(respJSON)) // nolint
+	}))
+	defer ts.Close()
+
+	client, _ := NewClientWithOptions("dummy-key", ts.URL, false)
+
+	channel, err := client.CreateChannel(&Channel{
+		Name:                          "google chat channel",
+		Type:                          "google-chat",
+		URL:                           "https://chat.googleapis.com/v1/spaces/AAAA/messages?key=KEY&token=TOKEN",
+		EnabledGraphImage:             new(true),
+		Events:                        &[]string{"alert", "alertGroup"},
+		AddToDefaultNotificationGroup: new(false),
+	})
+	if err != nil {
+		t.Fatal("err should be nil but: ", err)
+	}
+
+	if channel.ID != "abcdefabc" {
+		t.Error("response has ID but: ", channel.ID)
+	}
+	if channel.Type != "google-chat" {
+		t.Error("response has Type but: ", channel.Type)
+	}
+	if channel.URL != "https://chat.googleapis.com/v1/spaces/AAAA/messages?key=KEY&token=TOKEN" {
+		t.Error("response has URL but: ", channel.URL)
+	}
+	if !*channel.EnabledGraphImage {
+		t.Error("response has enabledGraphImage but: ", *channel.EnabledGraphImage)
+	}
+	if !reflect.DeepEqual(*channel.Events, []string{"alert", "alertGroup"}) {
+		t.Errorf("Wrong data for events: %v", *channel.Events)
+	}
+}
+
 func TestUpdateChannel(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/api/v0/channels/9rxGOHfVF8F" {
