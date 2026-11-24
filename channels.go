@@ -26,13 +26,13 @@ type Channel struct {
 	// this field needed to be *bool not bool.
 	EnabledGraphImage *bool `json:"enabledGraphImage,omitempty"`
 
-	// Exists when the type is "slack" or "webhook"
+	// Exists when the type is "slack", "webhook", or "google-chat"
 	URL string `json:"url,omitempty"`
 
-	// Exists when the type is "email", "slack", or "webhook"
+	// Exists when the type is "email", "slack", "webhook", or "google-chat"
 	Events *[]string `json:"events,omitempty"`
 
-	// AddToDefaultNotificationGroup when the type is "email", "slack", or "webhook", only CreateChannel, CreateChannelContext
+	// AddToDefaultNotificationGroup when the type is "email", "slack", "webhook", or "google-chat", only CreateChannel, CreateChannelContext
 	AddToDefaultNotificationGroup *bool `json:"addToDefaultNotificationGroup,omitempty"`
 }
 
